@@ -1,0 +1,2 @@
+MH: 20161004
+This project aims to provide a website that can be used by a group of people who share a common interest in an asset (e.g. a Summer House)
