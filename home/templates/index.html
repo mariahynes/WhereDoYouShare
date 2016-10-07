@@ -1,8 +1,44 @@
 {% extends 'base.html' %}
 
-    {% block content %}
 
-        <h1>Not me!</h1>
-        <p>Some content..</p>
+
+    {% block content %}
+    {% load staticfiles %}
+        		<!-- Slider
+		============================================= -->
+		<section id="slider" class="full-screen slider-parallax">
+
+			<div class="full-screen section nopadding nomargin noborder ohidden" style="background: url({% static 'myimages/ought3.jpg' %}) bottom center no-repeat; background-size: cover;">
+
+				<div class="container dark">
+					<div class="vertical-middle">
+
+						<div class="emphasis-title nobottommargin">
+							<!--
+                                <h1 class="t700 uppercase ls3 bottommargin-sm" style="font-family: 'Montserrat', sans-serif;">WHERE <span style="font-family: 'Playfair Display'; font-style: italic; text-transform: lowercase; color: #FFF;">do you</span> <br><span class="text-rotater nocolor" data-separator="|" data-rotate="fadeInLeft" data-speed="4000">
+                                    <span class="t-rotate">Where do you SHARE?|SHARE?|SHARE?|SHARE?|SHARE?</span>
+                                </span></h1>
+                                <div class="inline-block"><a id="play-hero-video" href="http://vimeo.com/117770305" class="big-video-button small-video-button pulse animated infinite" data-lightbox="iframe"><i class="icon-line-play"></i></a><span style="font-size:20px; margin-left:15px;">Play Video</span></div>
+                            -->
+                            <div class="emphasis-title vertical-middle left">
+							<h1 data-animate="fadeInUp" class="t700 uppercase ls3 bottommargin-sm" style="font-family: 'Montserrat', sans-serif;">WHERE <span style="font-family: 'Playfair Display'; font-style: italic; text-transform: lowercase; color: #FFF;">do you</span> <br> <strong>Share?</strong></h1>
+						    </div>
+
+                        </div>
+
+					</div>
+				</div>
+
+				<!--
+				<a href="#" data-scrollto="#section-about" data-easing="easeInOutExpo" data-speed="1250" data-offset="65" class="one-page-arrow dark"><i class="icon-angle-down infinite animated fadeInDown"></i></a>
+                -->
+
+			</div>
+
+		</section><!-- #slider end -->
+
+
 
     {% endblock %}
+
+

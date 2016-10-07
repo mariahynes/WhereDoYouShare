@@ -26,7 +26,7 @@ SECRET_KEY = ')6h^q-zr8&)whv8a7d*ijp&f0bzh9vc0gb-7=af3hc6xvyubp5'
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+SITE_ID = 2
 
 # Application definition
 
@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'django.contrib.flatpages',
     'home',
 ]
 
@@ -48,6 +50,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
 ]
 
 ROOT_URLCONF = 'HouseShare.urls'
@@ -119,3 +123,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = '' # this wasn't in original settings file
+
+STATICFILES_DIRS = (
+
+    os.path.join(BASE_DIR, 'static'),
+
+)

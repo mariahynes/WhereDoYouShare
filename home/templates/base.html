@@ -1,13 +1,311 @@
+{% load staticfiles %}
 <!DOCTYPE html>
-<html lang="en">
+<html dir="ltr" lang="en-US">
 <head>
-    <meta charset="UTF-8">
-    <title>Who's got O U G H T A R A R D ???! </title>
+
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="author" content="SemiColonWeb" />
+
+	<!-- Stylesheets
+	============================================= -->
+	<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700|Roboto:300,400,500,700|Playfair+Display:400italic" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}" type="text/css" />
+	<link rel="stylesheet" href="{% static 'style.css' %}" type="text/css" />
+
+	<!-- One Page Module Specific Stylesheet -->
+	<link rel="stylesheet" href="{% static 'style.css' %}" type="text/css" />
+	<!-- / -->
+
+	<link rel="stylesheet" href="{% static 'css/dark.css' %}" type="text/css" />
+	<link rel="stylesheet" href="{% static 'css/font-icons.css' %}" type="text/css" />
+	<!--<link rel="stylesheet" href="{% static 'one-page/css/et-line.css' %}" type="text/css" /> -->
+	<link rel="stylesheet" href="{% static 'css/animate.css' %}" type="text/css" />
+	<link rel="stylesheet" href="{% static 'css/magnific-popup.css' %}" type="text/css" />
+
+	<!--<link rel="stylesheet" href="{% static 'one-page/css/fonts.css' %}" type="text/css" />-->
+
+	<link rel="stylesheet" href="{% static 'css/responsive.css' %}" type="text/css" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<!--[if lt IE 9]>
+		<script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script>
+	<![endif]-->
+
+	<!-- Document Title
+	============================================= -->
+	<title>Where do you | Share?</title>
+
+	<style>
+		.small-video-button {
+			width: 54px;
+			height: 54px;
+			line-height: 54px;
+			font-size: 22px;
+		}
+	</style>
+
 </head>
-<body>
-<div class="container">
-       {% block content %}
-       {% endblock %}
-   </div>
+
+<body class="stretched">
+
+	<!-- Document Wrapper
+	============================================= -->
+	<div id="wrapper" class="clearfix">
+
+		<!-- Header
+		============================================= -->
+		<!--<header id="header" class="full-header border-full-header transparent-header dark static-sticky" data-sticky-class="not-dark" data-sticky-offset="full" data-sticky-offset-negative="100">-->
+        <header id="header" class="transparent-header semi-transparent full-header" data-sticky-class="not-dark">
+			<div id="header-wrap">
+
+				<div class="container clearfix">
+
+					<div id="primary-menu-trigger"><i class="icon-reorder"></i></div>
+
+					<!-- Logo
+					============================================= -->
+					<div id="logo">
+						<a href="index.html" class="standard-logo" data-dark-logo="{% static 'images/logo-dark.png' %}"><img src="{% static 'images/logo.png' %}" alt="Canvas Logo"></a>
+						<a href="index.html" class="retina-logo" data-dark-logo="{% static 'images/logo-dark@2x.png' %}"><img src="{% static 'images/logo@2x.png' %}" alt="Canvas Logo"></a>
+					</div><!-- #logo end -->
+
+					<!-- Primary Navigation class="one-page-menu" data-easing="easeInOutExpo" data-speed="1250" data-offset="65"
+					============================================= -->
+					<nav id="primary-menu">
+
+						<ul >
+							<li><a href="/" ><div>Home</div></a></li>
+							<li><a href="/pages/share"><div>Sharing</div></a></li>
+							<li><a href="/pages/login"><div>Log-In</div></a></li>
+							<li><a href="/pages/register"><div>Register</div></a></li>
+                            <li><a href="/pages/about"><div>About</div></a></li>
+							<li><a href="/pages/contact"><div>Contact</div></a></li>
+						</ul>
+
+					</nav><!-- #primary-menu end -->
+
+				</div>
+
+			</div>
+
+		</header><!-- #header end -->
+
+
+
+        {% block content %}
+        {% endblock %}
+
+
+
+
+
+
+
+
+		<!-- Footer
+		============================================= -->
+		<footer id="footer" class="dark noborder">
+
+			<div class="container center">
+				<div class="footer-widgets-wrap">
+
+					<div class="row divcenter clearfix">
+
+						<div class="col-md-4">
+
+							<div class="widget clearfix">
+								<h4>Site Links</h4>
+
+								<ul class="list-unstyled footer-site-links nobottommargin">
+									<li><a href="#" data-scrollto="#wrapper" data-easing="easeInOutExpo" data-speed="1250" data-offset="70">Top</a></li>
+									<li><a href="#" data-scrollto="#section-about" data-easing="easeInOutExpo" data-speed="1250" data-offset="70">About</a></li>
+									<li><a href="#" data-scrollto="#section-works" data-easing="easeInOutExpo" data-speed="1250" data-offset="70">Works</a></li>
+									<li><a href="#" data-scrollto="#section-services" data-easing="easeInOutExpo" data-speed="1250" data-offset="70">Services</a></li>
+									<li><a href="#" data-scrollto="#section-blog" data-easing="easeInOutExpo" data-speed="1250" data-offset="70">Blog</a></li>
+									<li><a href="#" data-scrollto="#section-contact" data-easing="easeInOutExpo" data-speed="1250" data-offset="70">Contact</a></li>
+								</ul>
+							</div>
+
+						</div>
+
+						<div class="col-md-4">
+
+							<div class="widget clearfix">
+								<h4>Subscribe</h4>
+
+								<div id="widget-subscribe-form-result" data-notify-type="success" data-notify-msg=""></div>
+								<form id="widget-subscribe-form" action="../include/subscribe.php" role="form" method="post" class="nobottommargin">
+									<input type="email" id="widget-subscribe-form-email" name="widget-subscribe-form-email" class="form-control input-lg not-dark required email" placeholder="Your Email Address">
+									<button class="button button-border button-circle button-light topmargin-sm" type="submit">Subscribe Now</button>
+								</form>
+							</div>
+
+						</div>
+
+						<div class="col-md-4">
+
+							<div class="widget clearfix">
+								<h4>Contact</h4>
+
+								<p class="lead">795 Folsom Ave, Suite 600<br>San Francisco, CA 94107</p>
+
+								<div class="center topmargin-sm">
+									<a href="#" class="social-icon inline-block noborder si-small si-facebook" title="Facebook">
+										<i class="icon-facebook"></i>
+										<i class="icon-facebook"></i>
+									</a>
+									<a href="#" class="social-icon inline-block noborder si-small si-twitter" title="Twitter">
+										<i class="icon-twitter"></i>
+										<i class="icon-twitter"></i>
+									</a>
+									<a href="#" class="social-icon inline-block noborder si-small si-github" title="Github">
+										<i class="icon-github"></i>
+										<i class="icon-github"></i>
+									</a>
+									<a href="#" class="social-icon inline-block noborder si-small si-pinterest" title="Pinterest">
+										<i class="icon-pinterest"></i>
+										<i class="icon-pinterest"></i>
+									</a>
+								</div>
+							</div>
+
+						</div>
+
+					</div>
+
+				</div>
+			</div>
+
+			<div id="copyrights">
+				<div class="container center clearfix">
+					Copyright Canvas 2015 | All Rights Reserved
+				</div>
+			</div>
+
+		</footer><!-- #footer end -->
+
+	</div><!-- #wrapper end -->
+
+	<!-- Go To Top
+	============================================= -->
+	<div id="gotoTop" class="icon-angle-up"></div>
+
+	<!-- External JavaScripts
+	============================================= -->
+	<script type="text/javascript" src="{% static 'js/jquery.js' %}"></script>
+	<script type="text/javascript" src="{% static 'js/plugins.js' %}"></script>
+
+	<script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=true"></script>
+	<script type="text/javascript" src="../js/jquery.gmap.js' %}"></script>
+
+	<!-- Footer Scripts
+	============================================= -->
+	<script type="text/javascript" src="{% static 'js/functions.js' %}"></script>
+
+	<script type="text/javascript">
+
+		// Portfolio Script
+		jQuery(window).load(function(){
+
+			var jQuerycontainer = jQuery('#portfolio');
+			jQuerycontainer.isotope({
+				transitionDuration: '0.65s',
+				masonry: {
+					columnWidth: jQuerycontainer.find('.portfolio-item:not(.wide)')[0]
+				}
+			});
+			jQuery(window).resize(function() {
+				jQuerycontainer.isotope('layout');
+				SEMICOLON.portfolio.portfolioDescMargin();
+			});
+			var t = setTimeout(function(){ SEMICOLON.portfolio.portfolioDescMargin(); }, 200);
+
+			// Google Map
+			jQuery('#headquarters-map').gMap({
+				address: 'Melbourne, Australia',
+				maptype: 'ROADMAP',
+				zoom: 14,
+				markers: [
+					{
+						address: "Melbourne, Australia",
+						html: "Melbourne, Australia",
+						icon: {
+							image: "images/icons/map-icon-red.png",
+							iconsize: [32, 32],
+							iconanchor: [14,44]
+						}
+					}
+				],
+				doubleclickzoom: false,
+				controls: {
+					panControl: false,
+					zoomControl: false,
+					mapTypeControl: false,
+					scaleControl: false,
+					streetViewControl: false,
+					overviewMapControl: false
+				},
+				styles: [{"featureType":"all","elementType":"labels.text.fill","stylers":[{"saturation":36},{"color":"#000000"},{"lightness":40}]},{"featureType":"all","elementType":"labels.text.stroke","stylers":[{"visibility":"on"},{"color":"#000000"},{"lightness":16}]},{"featureType":"all","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"administrative","elementType":"geometry.fill","stylers":[{"color":"#000000"},{"lightness":20}]},{"featureType":"administrative","elementType":"geometry.stroke","stylers":[{"color":"#000000"},{"lightness":17},{"weight":1.2}]},{"featureType":"administrative","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"administrative.country","elementType":"all","stylers":[{"visibility":"simplified"}]},{"featureType":"administrative.country","elementType":"geometry","stylers":[{"visibility":"simplified"}]},{"featureType":"administrative.country","elementType":"labels.text","stylers":[{"visibility":"simplified"}]},{"featureType":"administrative.province","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"administrative.locality","elementType":"all","stylers":[{"visibility":"simplified"},{"saturation":"-100"},{"lightness":"30"}]},{"featureType":"administrative.neighborhood","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"administrative.land_parcel","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"landscape","elementType":"all","stylers":[{"visibility":"simplified"},{"gamma":"0.00"},{"lightness":"74"}]},{"featureType":"landscape","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":20}]},{"featureType":"landscape.man_made","elementType":"all","stylers":[{"lightness":"3"}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"poi","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":21}]},{"featureType":"road","elementType":"geometry","stylers":[{"visibility":"simplified"}]},{"featureType":"road.highway","elementType":"geometry.fill","stylers":[{"color":"#000000"},{"lightness":17}]},{"featureType":"road.highway","elementType":"geometry.stroke","stylers":[{"color":"#000000"},{"lightness":29},{"weight":0.2}]},{"featureType":"road.arterial","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":18}]},{"featureType":"road.local","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":16}]},{"featureType":"transit","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":19}]},{"featureType":"water","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":17}]}]
+			});
+
+		});
+
+		// Owl Carousel
+		jQuery(document).ready(function($) {
+
+			var ocClients = $("#oc-clients");
+			ocClients.owlCarousel({
+				margin: 80,
+				loop: true,
+				nav: false,
+				autoplay: true,
+				dots: false,
+				autoplayHoverPause: true,
+				responsive:{
+					0:{ items:2 },
+					480:{ items:3 },
+					768:{ items:4 },
+					992:{ items:5 },
+					1200:{ items:6 }
+				}
+			});
+
+		});
+
+		// Contact Form
+		$("#template-contactform").validate({
+				submitHandler: function(form) {
+					$('.form-process').fadeIn();
+					$(form).ajaxSubmit({
+						target: '#contact-form-result',
+						success: function() {
+							$('.form-process').fadeOut();
+							$(form).find('.sm-form-control').val('');
+							$('#contact-form-result').attr('data-notify-msg', $('#contact-form-result').html()).html('');
+							SEMICOLON.widget.notifications($('#contact-form-result'));
+						}
+					});
+				}
+			});
+
+			// Widget Subscribe Form
+			$("#widget-subscribe-form").validate({
+				submitHandler: function(form) {
+					$(form).find('.input-group-addon').find('.icon-email2').removeClass('icon-email2').addClass('icon-line-loader icon-spin');
+					$(form).ajaxSubmit({
+						target: '#widget-subscribe-form-result',
+						success: function() {
+							$(form).find('.input-group-addon').find('.icon-line-loader').removeClass('icon-line-loader icon-spin').addClass('icon-email2');
+							$('#widget-subscribe-form').find('.form-control').val('');
+							$('#widget-subscribe-form-result').attr('data-notify-msg', $('#widget-subscribe-form-result').html()).html('');
+							SEMICOLON.widget.notifications($('#widget-subscribe-form-result'));
+						}
+					});
+				}
+			});
+
+
+
+	</script><!-- Portfolio Script End -->
+
 </body>
 </html>
