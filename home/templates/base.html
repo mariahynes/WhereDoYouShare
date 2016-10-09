@@ -34,22 +34,17 @@
 	============================================= -->
 	<title>Where do you | Share?</title>
 
-	<style>
-		.small-video-button {
-			width: 54px;
-			height: 54px;
-			line-height: 54px;
-			font-size: 22px;
-		}
-	</style>
+    {% block head_js %}{% endblock %}
+    {% block head_style %}{% endblock %}
+
 
 </head>
 
 <body class="stretched">
 
-	<!-- Document Wrapper
+	<!-- Document Wrapper class="clearfix"
 	============================================= -->
-	<div id="wrapper" class="clearfix">
+	<div id="wrapper" >
 
 		<!-- Header
 		============================================= -->
@@ -64,8 +59,8 @@
 					<!-- Logo
 					============================================= -->
 					<div id="logo">
-						<a href="index.html" class="standard-logo" data-dark-logo="{% static 'images/logo-dark.png' %}"><img src="{% static 'images/logo.png' %}" alt="Canvas Logo"></a>
-						<a href="index.html" class="retina-logo" data-dark-logo="{% static 'images/logo-dark@2x.png' %}"><img src="{% static 'images/logo@2x.png' %}" alt="Canvas Logo"></a>
+			<!--			<a href="index.html" class="standard-logo" data-dark-logo="{% static 'images/logo-dark.png' %}"><img src="{% static 'images/logo.png' %}" alt="Canvas Logo"></a> -->
+			<!--			<a href="index.html" class="retina-logo" data-dark-logo="{% static 'images/logo-dark@2x.png' %}"><img src="{% static 'images/logo@2x.png' %}" alt="Canvas Logo"></a> -->
 					</div><!-- #logo end -->
 
 					<!-- Primary Navigation class="one-page-menu" data-easing="easeInOutExpo" data-speed="1250" data-offset="65"
@@ -75,10 +70,29 @@
 						<ul >
 							<li><a href="/" ><div>Home</div></a></li>
 							<li><a href="/pages/share"><div>Sharing</div></a></li>
-							<li><a href="/pages/login"><div>Log-In</div></a></li>
-							<li><a href="/pages/register"><div>Register</div></a></li>
+
+                            {% if user.is_authenticated %}
+
+                                {% if user.is_superuser %}
+
+                                    <li><a href="/admin">Admin</a></li>
+
+                                {%  endif %}
+
+
+                                <li><a href="{% url 'profile' %}">Your Profile</a></li>
+							    <li><a href="{% url 'logout' %}"><div>Sign Out</div></a></li>
+
+                            {% else %}
+
+                                <li><a href="{% url 'login' %}">Sign In</a></li>
+							    <li><a href="{% url 'register' %}"><div>Register</div></a></li>
+
+                            {%  endif %}
+
                             <li><a href="/pages/about"><div>About</div></a></li>
 							<li><a href="/pages/contact"><div>Contact</div></a></li>
+
 						</ul>
 
 					</nav><!-- #primary-menu end -->
@@ -89,9 +103,18 @@
 
 		</header><!-- #header end -->
 
-
+        {% if messages %}
+            <div class="alert alert-success">
+                <div class="messages">
+                    {% for message in messages %}
+                        {{ message }}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
 
         {% block content %}
+
         {% endblock %}
 
 
@@ -116,14 +139,15 @@
 								<h4>Site Links</h4>
 
 								<ul class="list-unstyled footer-site-links nobottommargin">
-									<li><a href="#" data-scrollto="#wrapper" data-easing="easeInOutExpo" data-speed="1250" data-offset="70">Top</a></li>
-									<li><a href="#" data-scrollto="#section-about" data-easing="easeInOutExpo" data-speed="1250" data-offset="70">About</a></li>
-									<li><a href="#" data-scrollto="#section-works" data-easing="easeInOutExpo" data-speed="1250" data-offset="70">Works</a></li>
-									<li><a href="#" data-scrollto="#section-services" data-easing="easeInOutExpo" data-speed="1250" data-offset="70">Services</a></li>
-									<li><a href="#" data-scrollto="#section-blog" data-easing="easeInOutExpo" data-speed="1250" data-offset="70">Blog</a></li>
-									<li><a href="#" data-scrollto="#section-contact" data-easing="easeInOutExpo" data-speed="1250" data-offset="70">Contact</a></li>
+									<li><a href="/" data-easing="easeInOutExpo" data-speed="1250" data-offset="70">Home</a></li>
+									<li><a href="/pages/share" data-easing="easeInOutExpo" data-speed="1250" data-offset="70">Sharing</a></li>
+									<li><a href="/pages/login" data-scrollto="#section-works" data-easing="easeInOutExpo" data-speed="1250" data-offset="70">Sign In</a></li>
+									<li><a href="/pages/register" data-scrollto="#section-services" data-easing="easeInOutExpo" data-speed="1250" data-offset="70">Register</a></li>
+									<li><a href="/pages/about" data-scrollto="#section-blog" data-easing="easeInOutExpo" data-speed="1250" data-offset="70">About</a></li>
+									<li><a href="/pages/contact" data-scrollto="#section-contact" data-easing="easeInOutExpo" data-speed="1250" data-offset="70">Contact</a></li>
 								</ul>
 							</div>
+
 
 						</div>
 
@@ -133,7 +157,7 @@
 								<h4>Subscribe</h4>
 
 								<div id="widget-subscribe-form-result" data-notify-type="success" data-notify-msg=""></div>
-								<form id="widget-subscribe-form" action="../include/subscribe.php" role="form" method="post" class="nobottommargin">
+								<form id="widget-subscribe-form" action="{% static 'include/subscribe.php' %}" role="form" method="post" class="nobottommargin">
 									<input type="email" id="widget-subscribe-form-email" name="widget-subscribe-form-email" class="form-control input-lg not-dark required email" placeholder="Your Email Address">
 									<button class="button button-border button-circle button-light topmargin-sm" type="submit">Subscribe Now</button>
 								</form>
@@ -146,7 +170,7 @@
 							<div class="widget clearfix">
 								<h4>Contact</h4>
 
-								<p class="lead">795 Folsom Ave, Suite 600<br>San Francisco, CA 94107</p>
+								<p class="lead"><span class="ls5" style="font-family: 'Playfair Display'; font-style: italic; text-transform: lowercase; color: #FFF;">DATABASIS</span><br>Dublin, Ireland</p>
 
 								<div class="center topmargin-sm">
 									<a href="#" class="social-icon inline-block noborder si-small si-facebook" title="Facebook">
@@ -177,7 +201,7 @@
 
 			<div id="copyrights">
 				<div class="container center clearfix">
-					Copyright Canvas 2015 | All Rights Reserved
+					Copyright <span class="ls5" style="font-family: 'Playfair Display'; font-style: italic; text-transform: lowercase; color: #FFF;"> Databasis</span> 2016 | All Rights Reserved
 				</div>
 			</div>
 
@@ -195,7 +219,7 @@
 	<script type="text/javascript" src="{% static 'js/plugins.js' %}"></script>
 
 	<script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=true"></script>
-	<script type="text/javascript" src="../js/jquery.gmap.js' %}"></script>
+	<script type="text/javascript" src="{% static 'js/jquery.gmap.js' %}"></script>
 
 	<!-- Footer Scripts
 	============================================= -->

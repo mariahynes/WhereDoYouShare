@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+    {% load bootstrap_tags %}
+    {% block content %}
+    {% load staticfiles %}
+        {% block head_style %}
+            <style>
+                .opacity5{
+                    opacity:0.5;
+                }
+                .opacity_none{
+                    opacity:1;
+                }
+                .width_narrow{
+                    width:50px;
+                }
+            </style>
+        {% endblock %}
+        <!-- Slider ============================================= -->
+		<section id="slider" class="full-screen  slider-parallax">
+
+			<div class="full-screen section nopadding nomargin noborder ohidden" style="background: url({% static 'myimages/ought5.jpg' %}) bottom center no-repeat; background-size: cover;">
+
+				<div class="container dark" >
+				    <div class="vertical-middle" >
+
+				        <div id="section-about" class="page-section">
+
+					        <div class="container clearfix opacity_none"> <!--clearfix removed-->
+
+                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">Register</h2>
+
+                                    <div data-animate="fadeIn" class="col_half">
+
+                                        <p  class="lead divleft bottommargin" style="max-width: 700px;">
+
+                                                <form role="form" method="post" id="register-form" action="{% url 'register' %}">
+
+                                                    <legend data-animate="fadeIn">Create a new account</legend>
+                                                    {% csrf_token %}
+                                                    {{ form | as_bootstrap }}
+                                                    <div class = "form-group width_narrow">
+                                                        <button type="submit" class="btn btn-primary">Create account</button>
+                                                    </div>
+                                                </form>
+
+                                        </p>
+
+                                </div>
+
+                                        <div class="clear"></div>
+
+                                        <div class="row topmargin-lg divcenter" style="max-width: 1000px;"></div>
+
+
+
+				            </div>
+
+                       </div>
+
+					</div>
+				</div>
+
+			</div>
+
+		</section> <!--#slider end -->
+
+
+
+    {% endblock %}

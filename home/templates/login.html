@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+    {% load bootstrap_tags %}
+    {% block content %}
+    {% load staticfiles %}
+        {% block head_style %}
+            <style>
+                .opacity9{
+                    opacity:2;
+                }
+            </style>
+        {% endblock %}
+        <!-- Slider ============================================= -->
+		<section id="slider" class="full-screen  slider-parallax">
+
+			<div class="full-screen section nopadding nomargin noborder ohidden" style="background: url({% static 'myimages/login.jpg' %}) bottom center no-repeat; background-size: cover;">
+
+				<div class="container dark" >
+				    <div class="vertical-middle">
+
+				        <div id="section-about" class="page-section">
+
+					        <div class="container clearfix"> <!--clearfix removed-->
+
+                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">Sign In</h2>
+
+                                    <div class="col_half">
+
+                                        <p data-animate="fadeInUp" class="lead divleft bottommargin" style="max-width: 700px;">
+
+                                                 <form role="form" method="post" action="{% url 'login' %}">
+                                                    <legend data-animate="fadeInUp">Login</legend>
+                                                    {% csrf_token %}
+                                                    {{ form| as_bootstrap }}
+                                                    <div class="form-group">
+                                                        <button type="submit" class="btn btn-primary">Sign In</button>
+                                                    </div>
+                                                </form>
+
+                                        </p>
+
+                                     </div>
+
+                                    <div class="clear"></div>
+
+                                    <div class="row topmargin-lg divcenter" style="max-width: 1000px;"></div>
+
+
+
+				            </div>
+
+                       </div>
+
+					</div>
+				</div>
+
+			</div>
+
+		</section> <!--#slider end -->
+
+
+
+    {% endblock %}
