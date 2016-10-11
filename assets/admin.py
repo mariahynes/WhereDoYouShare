@@ -1,5 +1,5 @@
 from django.contrib import admin
-from assets.models import Asset,Asset_User_Mapping,AssetType,DurationType
+from .models import Asset,Asset_User_Mapping,AssetType,DurationType
 
 # Register your models here.
 admin.site.register(Asset)

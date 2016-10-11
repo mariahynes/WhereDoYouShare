@@ -2,6 +2,7 @@
     {% load bootstrap_tags %}
     {% block content %}
     {% load staticfiles %}
+    {% load assets_extras %}
         {% block head_style %}
 
         {% endblock %}
@@ -19,10 +20,19 @@
 
                                 <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">Profile Settings</h2>
 
-                                        <p data-animate="fadeInUp" class="lead divleft bottommargin" style="max-width: 700px;">{{ user.first_name }}, you are logged in </p>
+                                        <p data-animate="fadeInUp" class="lead divleft bottommargin" style="max-width: 700px; ">
+                                            <span style="font-family: 'Playfair Display'">You are logged in as: </span>{{ user.first_name }} {{ user.last_name }} | {{ user.username }} </p>
+                                        <p>   <span style="font-family: 'Playfair Display'">You are linked to the following ({{ asset_user_mapping}} Assets): </span>
+                                                <ul>
+                                                    {% for asset in my_assets %}
+                                                      <li>
+                                                        <h2><a href="{{ asset.get_absolute_url }}">{{ asset.asset_display_name }}</a></h2>
+                                                      </li>
+                                                    {% endfor %}
+                                                    </ul>
+                                        </p>
 
-
-
+                                       {#  include "forum/comment_details.html" #}
 
                                         <div class="clear"></div>
 

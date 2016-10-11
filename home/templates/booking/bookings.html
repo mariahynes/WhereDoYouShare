@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+    {% load bootstrap_tags %}
+    {% block content %}
+    {% load staticfiles %}
+        {% block head_style %}
+            <style>
+                .opacity9{
+                    opacity:2;
+                }
+            </style>
+        {% endblock %}
+        <!-- Slider ============================================= -->
+		<section id="slider" class="full-screen  slider-parallax">
+
+			<div class="full-screen section nopadding nomargin noborder ohidden" style="background: url({% static 'myimages/login1.jpg' %}) bottom center no-repeat; background-size: cover;">
+
+				<div class="container " >
+				    <div class="vertical-middle">
+
+				        <div id="section-about" class="page-section">
+
+					        <div class="container clearfix"> <!--clearfix removed-->
+
+                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">Your Bookings</h2>
+
+                                    <div class="col_half">
+
+                                            <table class = "table table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Name</th>
+                                                        <th>From</th>
+                                                        <th>Until</th>
+                                                        <th>Confirmed?</th>
+                                                        <th>Owner</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for my_booking in bookings %}
+                                                    <tr>
+                                                        <td>{{ my_booking.asset_ID.asset_display_name }}</td>
+                                                        <td>{{ my_booking.start_date }}</td>
+                                                        <td>{{ my_booking.end_date }}</td>
+                                                        <td>{{ my_booking.is_confirmed }}</td>
+                                                        <td>{{ my_booking.slot_owner_id.first_name }} {{ my_booking.slot_owner_id.last_name }}</td>
+                                                    </tr>
+
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+
+
+                                     </div>
+
+                                    <div class="clear"></div>
+
+                                    <div class="row topmargin-lg divcenter" style="max-width: 1000px;"></div>
+
+
+
+				            </div>
+
+                       </div>
+
+					</div>
+				</div>
+
+			</div>
+
+		</section> <!--#slider end -->
+
+
+
+    {% endblock %}

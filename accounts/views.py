@@ -1,9 +1,10 @@
 from django.contrib import messages, auth
-from accounts.forms import UserRegistrationForm, UserLoginForm
+from .forms import UserRegistrationForm, UserLoginForm
 from django.core.urlresolvers import reverse
 from django.shortcuts import render, redirect
 from django.template.context_processors import csrf
 from django.contrib.auth.decorators import login_required
+from assets.models import Asset_User_Mapping
 
 def register(request):
     if request.method == 'POST':
@@ -32,7 +33,7 @@ def register(request):
 
 @login_required(login_url='/login/')
 def profile(request):
-    return render(request, 'profile.html')
+    return render(request, 'profile.html', {'asset_user_mapping': Asset_User_Mapping.objects.all()})
 
 
 def login(request):

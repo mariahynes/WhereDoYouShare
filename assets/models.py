@@ -16,7 +16,7 @@ class Asset(models.Model):
     slot_duration_unit = models.ForeignKey('DurationType', on_delete=models.CASCADE)
     number_of_slot_units = models.IntegerField(blank=False)
     date_created = models.DateTimeField(auto_now_add=True)
-    owners = models.ManyToManyField(settings.AUTH_USER_MODEL, through='Asset_User_Mapping')
+    asset_users = models.ManyToManyField(settings.AUTH_USER_MODEL, through='Asset_User_Mapping', through_fields=('asset_ID','user_ID'))
 
     def __unicode__(self):
         return self.asset_display_name
@@ -26,14 +26,15 @@ class Asset_User_Mapping(models.Model):
     class Meta:
         app_label = "assets"
 
-    user_ID = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user_ID = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name="asset_users")
     asset_ID = models.ForeignKey('Asset', on_delete=models.CASCADE)
     is_owner = models.BooleanField(blank=False)
     position_in_rotation = models.IntegerField(default=0)
     date_created = models.DateTimeField(auto_now_add=True)
     is_activated = models.BooleanField(blank=False)
     date_activated = models.DateTimeField(blank=True, null=True)
-    invited_by = models.CharField(max_length=50, blank=True, null=True)
+    invited_by = models.IntegerField(default=0,blank=True, null=True)
+    inviter = models.ForeignKey(settings.AUTH_USER_MODEL, default=0, on_delete=models.CASCADE,related_name="linked_to_owner")
 
     def activate_user_mapping(self):
         self.date_activated = timezone.now()

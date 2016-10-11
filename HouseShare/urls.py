@@ -19,7 +19,6 @@ from accounts import views as accounts_views
 from home import views as home_views
 
 
-
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', home_views.get_index, name='index'),
@@ -28,4 +27,5 @@ urlpatterns = [
     url(r'^pages/', include('django.contrib.flatpages.urls')),
     url(r'^login/$', accounts_views.login, name='login'),
     url(r'^logout/$', accounts_views.logout, name='logout'),
+    url(r'^booking/', include('bookings.urls')),
 ]
