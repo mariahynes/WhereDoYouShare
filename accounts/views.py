@@ -4,7 +4,9 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import render, redirect
 from django.template.context_processors import csrf
 from django.contrib.auth.decorators import login_required
-from assets.models import Asset_User_Mapping
+from assets.models import Asset
+from bookings.models import Booking
+import datetime
 
 def register(request):
     if request.method == 'POST':
@@ -33,7 +35,9 @@ def register(request):
 
 @login_required(login_url='/login/')
 def profile(request):
-    return render(request, 'profile.html', {'asset_user_mapping': Asset_User_Mapping.objects.all()})
+    return render(request, 'profile.html', {'assets': Asset.objects.all().filter(asset_users=request.user),
+                                            'bookings': Booking.objects.all().filter(requested_by_user_ID=request.user).filter(start_date__gt=datetime.date.today())
+                                            })
 
 
 def login(request):

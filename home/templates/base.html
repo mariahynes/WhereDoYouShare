@@ -12,9 +12,6 @@
     <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}" type="text/css" />
 	<link rel="stylesheet" href="{% static 'style.css' %}" type="text/css" />
 
-	<!-- One Page Module Specific Stylesheet -->
-	<link rel="stylesheet" href="{% static 'style.css' %}" type="text/css" />
-	<!-- / -->
 
 	<link rel="stylesheet" href="{% static 'css/dark.css' %}" type="text/css" />
 	<link rel="stylesheet" href="{% static 'css/font-icons.css' %}" type="text/css" />
@@ -29,6 +26,8 @@
 	<!--[if lt IE 9]>
 		<script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script>
 	<![endif]-->
+
+    <script type="text/javascript" src="{% static 'js/jquery.js' %}"></script>
 
 	<!-- Document Title
 	============================================= -->
@@ -82,7 +81,7 @@
 
                                 <li><a href="{% url 'profile' %}">Your Profile</a></li>
 							    <li><a href="{% url 'logout' %}"><div>Sign Out</div></a></li>
-                                <li><a href="{% url 'booking' %}"><div>Bookings</div></a></li>
+                                <li><a href="{% url 'bookings' %}"><div>Bookings</div></a></li>
 
                             {% else %}
 
@@ -105,13 +104,50 @@
 		</header><!-- #header end -->
 
         {% if messages %}
-            <div class="alert alert-success">
-                <div class="messages">
+{#            <div class="alert alert-success">#}
+{#                <div class="messages">#}
+{#                    {% for message in messages %}#}
+{#                        {{ message }}#}
+{#                    {% endfor %}#}
+{#                </div>#}
+{#            </div>#}
+
+        <script type="text/javascript">
+        $(document).ready(function(){
+            $(function() {
+              $('#myModal').modal({show: true});
+            });
+
+        });
+        </script>
+
+        {% endif %}
+        {% if messages %}
+        <div class="messages">
+            <div id="myModal" class="modal" role="dialog">
+              <div class="modal-dialog modal-sm">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Modal Header</h4>
+                  </div>
+                  <div class="modal-body">
+
                     {% for message in messages %}
                         {{ message }}
                     {% endfor %}
+
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  </div>
                 </div>
+
+              </div>
             </div>
+        </div>
         {% endif %}
 
         {% block content %}

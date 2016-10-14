@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Asset Detail</title>
+</head>
+<body>
+<h1>Asset Detail</h1>
+{% if asset %}
+  <li>
+    <h2>{{ asset.asset_display_name }}</h2>
+    <a href="{% url 'make_a_booking' asset.id %}" role="button" class = "btn btn-primary">Make a Booking</a>
+  </li>
+{% endif %}
+</body>
+</html>

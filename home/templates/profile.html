@@ -22,17 +22,85 @@
 
                                         <p data-animate="fadeInUp" class="lead divleft bottommargin" style="max-width: 700px; ">
                                             <span style="font-family: 'Playfair Display'">You are logged in as: </span>{{ user.first_name }} {{ user.last_name }} | {{ user.username }} </p>
-                                        <p>   <span style="font-family: 'Playfair Display'">You are linked to the following ({{ asset_user_mapping}} Assets): </span>
-                                                <ul>
-                                                    {% for asset in my_assets %}
-                                                      <li>
-                                                        <h2><a href="{{ asset.get_absolute_url }}">{{ asset.asset_display_name }}</a></h2>
-                                                      </li>
-                                                    {% endfor %}
-                                                    </ul>
-                                        </p>
 
-                                       {#  include "forum/comment_details.html" #}
+                                        {% if assets %}
+                                        <p> <span style="font-family: 'Playfair Display'">You are linked to the following
+                                            {%  with total=assets.count %}
+                                                Asset{{ total|pluralize }}: </span>
+                                            {%  endwith %}
+
+                                                    {% for asset in assets %}
+                                                        <p>
+                                                        <div class="dropdown">
+                                                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{{ asset.asset_display_name }} <span class="caret"></span></button>
+                                                        <ul class="dropdown-menu">
+                                                          <li><a href="{% url 'asset_detail' asset.id %}">View Details</a></li>
+                                                            {% if bookings %}
+                                                                {% for booking in bookings %}
+
+                                                                    {% ifequal booking.asset_ID_id asset.id %}
+                                                                        <li><a href="{% url 'booking_detail' booking.booking_id %}">View My Bookings</a></li>
+                                                                    {% endifequal %}
+                                                                {% endfor %}
+                                                            {% endif %}
+                                                            <li><a href="{% url 'make_a_booking' asset.id %}">Make a Booking</a></li>
+                                                          <li><a href="{% url 'all_bookings' asset.id %}">View All Bookings</a></li>
+                                                        </ul>
+                                                        </div>
+                                                        </p>
+                                                    {% endfor %}
+
+
+                                        </p>
+                                        {% else %}
+                                            You are not linked to any assets
+                                        {% endif %}
+
+                                        {% if bookings %}
+                                        <p> <span style="font-family: 'Playfair Display'">You have requested the following
+                                            {%  with total=bookings.count %}
+                                                 Booking{{ total|pluralize }}: </span>
+                                            {%  endwith %}
+                                            <div class="col_half">
+                                                <table class = "table table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Name</th>
+                                                            <th>From</th>
+                                                            <th>Until</th>
+                                                            <th>Confirmed?</th>
+                                                            <th>Owner</th>
+                                                            <th></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+
+                                                        {% for booking in bookings %}
+                                                            <tr>
+                                                                <td>{{ booking.asset_ID.asset_display_name }}</td>
+                                                                <td>{{ booking.start_date }}</td>
+                                                                <td>{{ booking.end_date }}</td>
+                                                                <td>{{ booking.is_confirmed }}</td>
+                                                                <td>{{ booking.slot_owner_id.first_name }} {{ booking.slot_owner_id.last_name }}</td>
+                                                                <td><a href="{% url 'booking_detail' booking.booking_id %}">View</a></td>
+
+                                                            </tr>
+
+                                                        {% endfor %}
+                                                     </tbody>
+                                                </table>
+                                            </div>
+
+
+                                        </p>
+                                        {% else %}
+                                            You have no upcoming bookings <br>
+                                            {% if assets.count == 1 %}
+                                                {% for asset in assets %}
+                                                    <a href="{% url 'make_a_booking' asset.id %}" role="button" class = "btn btn-primary">Make a Booking</a>
+                                                {% endfor %}
+                                            {% endif %}
+                                        {% endif %}
 
                                         <div class="clear"></div>
 
