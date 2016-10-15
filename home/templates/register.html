@@ -32,10 +32,10 @@
                                     <div data-animate="fadeIn" class="col_half">
 
                                         <p  class="lead divleft bottommargin" style="max-width: 700px;">
-
+                                            <legend data-animate="fadeInUp">Create a new account</legend>
                                                 <form role="form" method="post" id="register-form" action="{% url 'register' %}">
 
-                                                    <legend data-animate="fadeIn">Create a new account</legend>
+
                                                     {% csrf_token %}
                                                     {{ form | as_bootstrap }}
                                                     <div class = "form-group width_narrow">

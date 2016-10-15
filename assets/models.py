@@ -15,7 +15,7 @@ class Asset(models.Model):
     sharing_start_date = models.DateField(blank=False)
     slot_duration_unit = models.ForeignKey('DurationType', on_delete=models.CASCADE)
     number_of_slot_units = models.IntegerField(blank=False)
-    date_created = models.DateTimeField(auto_now_add=True)
+    date_created = models.DateTimeField(default=timezone.now)
     asset_users = models.ManyToManyField(settings.AUTH_USER_MODEL, through='Asset_User_Mapping', through_fields=('asset_ID','user_ID'))
 
     def __unicode__(self):
@@ -30,7 +30,7 @@ class Asset_User_Mapping(models.Model):
     asset_ID = models.ForeignKey('Asset', on_delete=models.CASCADE)
     is_owner = models.BooleanField(blank=False)
     position_in_rotation = models.IntegerField(default=0)
-    date_created = models.DateTimeField(auto_now_add=True)
+    date_created = models.DateTimeField(default=timezone.now)
     is_activated = models.BooleanField(blank=False)
     date_activated = models.DateTimeField(blank=True, null=True)
     invited_by = models.IntegerField(default=0,blank=True, null=True)

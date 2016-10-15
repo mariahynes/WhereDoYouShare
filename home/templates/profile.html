@@ -37,7 +37,6 @@
                                                           <li><a href="{% url 'asset_detail' asset.id %}">View Details</a></li>
                                                             {% if bookings %}
                                                                 {% for booking in bookings %}
-
                                                                     {% ifequal booking.asset_ID_id asset.id %}
                                                                         <li><a href="{% url 'booking_detail' booking.booking_id %}">View My Bookings</a></li>
                                                                     {% endifequal %}

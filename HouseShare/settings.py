@@ -37,9 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_forms_bootstrap',
     'home',
     'accounts',
-    'django_forms_bootstrap',
     'django.contrib.sites',
     'django.contrib.flatpages',
     'assets',
@@ -141,3 +141,12 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 
 )
+
+EMAIL_HOST = 'smtp1r.cp.blacknight.com'
+EMAIL_HOST_USER = 'maria@databasis.ie'
+EMAIL_HOST_PASSWORD = 'Ggarr3tt!'
+DEFAULT_FROM_EMAIL = 'maria@databasis.ie'
+SERVER_EMAIL = 'maria@databasis.ie'
+EMAIL_PORT = 25
+EMAIL_USE_TLS = False
+

@@ -1,11 +1,84 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>New Booking</title>
+{% extends 'base.html' %}
+    {% load bootstrap_tags %}
+    {% block content %}
+    {% load staticfiles %}
+        {% block head_js %}
 
-</head>
-<body>
-Making a new Booking for {{ the_asset.asset_display_name }}
-</body>
-</html>
+            <script type="text/javascript">
+
+                $(document).ready(function(){
+                    $(function() {
+                         $("#id_end_date").datepicker({ dateFormat: 'yy-mm-dd'});
+                         $("#id_start_date").datepicker({ dateFormat: 'yy-mm-dd'});
+                    });
+                });
+            </script>
+
+        {% endblock %}
+        <!-- Slider ============================================= -->
+		<section id="slider" class="full-screen  slider-parallax">
+
+			<div class="full-screen section nopadding nomargin noborder ohidden" style="background: url({% static 'myimages/login3.jpg' %}) bottom center no-repeat; background-size: cover;">
+
+				<div class="container dark" >
+				    <div class="vertical-middle">
+
+				        <div id="section-about" class="page-section">
+
+					        <div class="container clearfix"> <!--clearfix removed-->
+
+                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">New Booking for {{ the_asset.asset_display_name }}</h2>
+
+                                    <div class="col_half">
+
+                                        <p data-animate="fadeInUp" class="lead divleft bottommargin" style="max-width: 700px;">
+
+                                             <legend data-animate="fadeInUp">New Booking</legend>
+                                                 <form role="form" method="post" action="{% url 'make_a_booking' the_asset.id %}">
+                                                    {% csrf_token %}
+                                                    <div class="input-daterange">
+                                                     {{ booking_form | as_bootstrap }}
+                                                     </div>
+                                                    <div class="form-group">
+                                                        <button type="submit" class="btn btn-primary">Send Booking Request</button>
+                                                    </div>
+                                                </form>
+
+                                        </p>
+
+                                        <div class="input-daterange travel-date-group col-sm-9 bottommargin-sm">
+													<div class="row">
+														<div class="col-sm-6 col-xs-6">
+															<label for="">Departure</label>
+															<input type="text" value="" class="sm-form-control tleft" name="start" placeholder="MM/DD/YYYY">
+														</div>
+														<div class="col-sm-6 col-xs-6">
+															<label for="">Return</label>
+															<input type="text" value="" class="sm-form-control tleft" name="end" placeholder="MM/DD/YYYY">
+														</div>
+													</div>
+                                        </div>
+
+
+                                     </div>
+
+                                    <div class="clear"></div>
+
+                                    <div class="row topmargin-lg divcenter" style="max-width: 1000px;"></div>
+
+
+
+				            </div>
+
+                       </div>
+
+					</div>
+				</div>
+
+			</div>
+
+		</section> <!--#slider end -->
+
+
+
+    {% endblock %}

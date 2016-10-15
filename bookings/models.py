@@ -18,6 +18,7 @@ class Booking(models.Model):
     end_date = models.DateField(blank=False)
     is_confirmed = models.BooleanField(default=False)
     deposit_paid = models.BooleanField(default=False)
+    date_created = models.DateTimeField(default=timezone.now)
 
     def __unicode__(self):
         return "%s | from %s to %s | userId: %s" % (self.asset_ID.asset_display_name, self.start_date, self.end_date, self.requested_by_user_ID.id)

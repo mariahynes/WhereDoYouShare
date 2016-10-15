@@ -6,7 +6,7 @@ from assets.models import Asset
 @login_required(login_url='/login/')
 def assets(request):
     my_id = request.user
-    my_assets = Asset.objects.filter(asset_users=my_id)
+    my_assets = Asset.objects.all().filter(asset_users=my_id)
     return render(request,"assets.html", {"assets": my_assets})
 
 @login_required(login_url='/login/')

@@ -13,6 +13,7 @@
 	<link rel="stylesheet" href="{% static 'style.css' %}" type="text/css" />
 
 
+
 	<link rel="stylesheet" href="{% static 'css/dark.css' %}" type="text/css" />
 	<link rel="stylesheet" href="{% static 'css/font-icons.css' %}" type="text/css" />
 	<!--<link rel="stylesheet" href="{% static 'one-page/css/et-line.css' %}" type="text/css" /> -->
@@ -28,10 +29,11 @@
 	<![endif]-->
 
     <script type="text/javascript" src="{% static 'js/jquery.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/components/daterangepicker.js' %}"></script>
 
 	<!-- Document Title
 	============================================= -->
-	<title>Where do you | Share?</title>
+	<title>Where | do you Share?</title>
 
     {% block head_js %}{% endblock %}
     {% block head_style %}{% endblock %}
@@ -91,7 +93,8 @@
                             {%  endif %}
 
                             <li><a href="/pages/about"><div>About</div></a></li>
-							<li><a href="/pages/contact"><div>Contact</div></a></li>
+{#							<li><a href="/pages/contact"><div>Contact</div></a></li>#}
+                            <li><a href="{% url 'contact' %}"><div>Contact</div></a></li>
 
 						</ul>
 
