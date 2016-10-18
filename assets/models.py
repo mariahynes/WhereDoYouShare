@@ -41,7 +41,7 @@ class Asset_User_Mapping(models.Model):
         self.save()
 
     def __unicode__(self):
-        return "%s %s | %s " %(self.user_ID.first_name, self.user_ID.last_name, self.asset_ID)
+        return "ID: %s | %s %s | %s | Sort: %s" %(self.user_ID_id, self.user_ID.first_name, self.user_ID.last_name, self.asset_ID, self.position_in_rotation)
 
 class AssetType(models.Model):
 

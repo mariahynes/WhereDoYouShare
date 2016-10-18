@@ -10,10 +10,16 @@ from .forms import BookingForm
 import datetime
 
 @login_required(login_url='/login/')
-def bookings(request):
+def my_bookings(request):
     my_id = request.user
     my_bookings = Booking.objects.all().filter(requested_by_user_ID=my_id)
     return render(request, "bookings.html", {"bookings": my_bookings})
+
+@login_required(login_url='/login/')
+def all_future_asset_bookings(request, asset_id):
+    the_asset = get_object_or_404(Asset, pk=asset_id)
+    all_bookings = Booking.objects.all().filter(asset_ID=the_asset).filter(start_date__gt=datetime.date.today())
+    return render(request, "all_bookings.html", {"asset": the_asset, "all_bookings": all_bookings})
 
 @login_required(login_url='/login/')
 def booking_detail(request, booking_id):
@@ -91,8 +97,5 @@ def make_a_booking(request, asset_id):
 
     return render(request, "new_booking.html", args)
 
-@login_required(login_url='/login/')
-def all_bookings(request, asset_id):
-    the_asset = get_object_or_404(Asset, pk=asset_id)
-    all_bookings = Booking.objects.all().filter(asset_ID=the_asset).filter(start_date__gt=datetime.date.today())
-    return render(request, "all_bookings.html", {"asset": the_asset, "all_bookings": all_bookings})
+
+
