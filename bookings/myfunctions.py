@@ -1,10 +1,11 @@
 from assets.models import Asset, Asset_User_Mapping
-
+import arrow
+import datetime
 
 def hello_world():
     return "Hi!"
 
-def get_owners_and_dates(asset_ID):
+def get_owners_and_dates(asset_ID, request_start, request_end):
 
     # empty object
     owners_and_dates = []
@@ -34,12 +35,70 @@ def get_owners_and_dates(asset_ID):
         sort_order_of_owners[mapping.position_in_rotation] = mapping.user_ID_id
 
 
+    # ensire the dates are python dates (may not be needed when coming from database)
+    dateformat = '%Y-%m-%d'
+    start_date = datetime.datetime.strptime(request_start,dateformat)
+    end_date = datetime.datetime.strptime(request_end, dateformat)
+
+    # calculate number of days requested (i.e. number of nights)
+    requested_num_days = end_date.toordinal() - start_date.toordinal()
+    print "%s nights" % requested_num_days
+
+    if str(slot_duration) == "Week":
+        slot_duration_days = 7
+    elif str(slot_duration) == "Day":
+        slot_duration_days = 1
+    else:
+        slot_duration_days = 99
+
+    # calculate number of days in the owner-duration period
+    num_days_per_period = slot_duration_days * num_slots
+
+    # requested start date is in someone's slot - get the start and end date of that slot
+    slot_start_for_start_date = get_start_slot_date(static_start_date, start_date, num_days_per_period, dateformat)
+    slot_end_for_start_date = get_end_slot_date(slot_start_for_start_date,num_days_per_period)
+
+    print "%s is start of slot with requested start date" % slot_start_for_start_date
+    print "%s is end of slot with requested start date" % slot_end_for_start_date
+
+    # get the number of slots from static start date to requested start date
+    # in order to work out which slot in the rotation order is being requested
 
 
 
-    return str(sort_order_of_owners)
 
 
+
+
+    return slot_end_for_start_date
+
+
+
+def get_start_slot_date(slot_static_start_date, requested_start_date, days_step, dateformat):
+
+    from_date = slot_static_start_date.toordinal()
+    to_date = requested_start_date.toordinal()
+
+    owner_slot_start_date = from_date
+
+    for j in range(from_date, to_date,days_step):
+
+        if owner_slot_start_date < to_date:
+
+            owner_slot_start_date = j
+
+    start_slot_date = datetime.date.fromordinal(owner_slot_start_date).strftime('%Y-%m-%d')
+    start_slot_date = datetime.datetime.strptime(start_slot_date,dateformat)
+
+    return start_slot_date
+
+
+
+def get_end_slot_date(start_date, days_step):
+
+    end_slot_date = start_date + datetime.timedelta(days_step)
+
+    return end_slot_date
 
 
 
