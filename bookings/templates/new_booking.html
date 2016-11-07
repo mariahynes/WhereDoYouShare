@@ -34,7 +34,26 @@
                                         <p data-animate="fadeInUp" class="lead divleft bottommargin" style="max-width: 700px;">
 
                                              <legend data-animate="fadeInUp">New Booking</legend>
-                                                 <form role="form" method="post" action="{% url 'make_a_booking' the_asset.id %}">
+                                                 <form role="form" method="get" action="{% url 'make_a_booking' the_asset.id %}">
+                                                    <div class="input-daterange">
+                                                     {{ booking_form | as_bootstrap }}
+                                                     </div>
+                                                    {%  if errors %}
+                                                            {% for error in errors %}
+                                                                <p style="color:red">{{ error }}</p>
+                                                            {% endfor %}
+                                                        {% endif %}
+                                                    <div class="form-group">
+                                                        <button type="submit" class="btn btn-primary">Who's the Owner?</button>
+                                                    </div>
+                                                </form>
+
+                                                {%  if owner_date_object %}
+                                                    <p>{{ owner_date_object | length }}</p>
+
+                                                {% endif %}
+
+                                                <form role="form" method="post" action="{% url 'make_a_booking' the_asset.id %}">
                                                     {% csrf_token %}
                                                     <div class="input-daterange">
                                                      {{ booking_form | as_bootstrap }}
@@ -46,18 +65,7 @@
 
                                         </p>
 
-                                        <div class="input-daterange travel-date-group col-sm-9 bottommargin-sm">
-													<div class="row">
-														<div class="col-sm-6 col-xs-6">
-															<label for="">Departure</label>
-															<input type="text" value="" class="sm-form-control tleft" name="start" placeholder="MM/DD/YYYY">
-														</div>
-														<div class="col-sm-6 col-xs-6">
-															<label for="">Return</label>
-															<input type="text" value="" class="sm-form-control tleft" name="end" placeholder="MM/DD/YYYY">
-														</div>
-													</div>
-                                        </div>
+
 
 
                                      </div>

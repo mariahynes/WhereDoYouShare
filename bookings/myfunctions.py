@@ -7,8 +7,29 @@ def hello_world():
 
 def get_owners_and_dates(asset_ID, request_start, request_end):
 
+    # define the owners_and_dates class that will be populated and returned
+
+    class Owners_And_Dates(object):
+
+        slots = 0
+
+        def __init__(self, owner_id, start_for_owner, end_for_owner):
+            self.owner_id = owner_id
+            self.start_for_owner = start_for_owner
+            self.end_for_owner = end_for_owner
+            Owners_And_Dates.slots += 1
+
+        def numberOfSlots(self):
+            return Owners_And_Dates.slots
+
+        def __repr__(self):
+            return "Owner is: %s | Start Date: %s | End Date: %s" % (self.owner_id, self.start_for_owner, self.end_for_owner)
+
+        def __str__(self):
+            return "Owner is: %s | Start Date: %s | End Date: %s" % (self.owner_id, self.start_for_owner, self.end_for_owner)
+
     # empty object
-    owners_and_dates = []
+    owners_and_dates_list = []
     # empty dictionary
     sort_order_of_owners = {}
 
@@ -86,12 +107,18 @@ def get_owners_and_dates(asset_ID, request_start, request_end):
     if delta.days >= 0:
 
         print "Only one owner to return"
-
-        owners_and_dates.append(slot_owner_on_requested_start_date,slot_start_for_start_date, slot_end_for_start_date)
+        slots_affected = 1
+        o_and_d = Owners_And_Dates(slot_owner_on_requested_start_date,slot_start_for_start_date, slot_end_for_start_date)
+        owners_and_dates_list.append(o_and_d)
 
     else:
 
         print "More than one owner to return"
+        # first slot details
+        o_and_d = Owners_And_Dates(slot_owner_on_requested_start_date, slot_start_for_start_date,
+                                   slot_end_for_start_date)
+
+        owners_and_dates_list.append(o_and_d)
 
         delta = slot_end_for_start_date - start_date
         num_days_slot_1 = delta.days
@@ -140,20 +167,32 @@ def get_owners_and_dates(asset_ID, request_start, request_end):
                 print "%s is end of next slot" % next_slot_end
                 print "%s days still to cover" % days_to_cover
 
+                o_and_d = Owners_And_Dates(next_slot_owner, next_slot_start_date,
+                                           next_slot_end)
+
+                owners_and_dates_list.append(o_and_d)
+
             else:
 
                 # finally, we have come to the end because remaining days to cover is less than one duration period
                 delta = end_date - next_slot_start_date
                 days_of_current_slot = delta.days
+                print "%s is owner ORDER" % next_slot_order
                 print "%s days required until end of the booking" % days_of_current_slot
-                print "%s days required from next (final) owner with ID:" % next_slot_owner
+                print "%s days required from next (final) owner with ID: %s" % (days_of_current_slot,next_slot_owner)
                 print "%s is start of next (final) slot" % next_slot_start_date
                 print "%s is end of next (final) slot" % next_slot_end
 
+                o_and_d = Owners_And_Dates(next_slot_owner, next_slot_start_date,
+                                           next_slot_end)
+
+                owners_and_dates_list.append(o_and_d)
+
                 # make sure to set to zero to end the loop
                 days_to_cover = 0
+                print "%s days still to cover" % days_to_cover
 
-    return "slots affected: %s" % slots_affected
+    return "owners and dates: %s | slots affected: %s" % (owners_and_dates_list,slots_affected)
 
 
 

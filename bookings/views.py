@@ -6,6 +6,7 @@ from django.template.context_processors import csrf
 from assets.models import Asset, Asset_User_Mapping
 from .models import Booking
 from .forms import BookingForm
+from myfunctions import get_owners_and_dates
 
 import datetime
 
@@ -16,9 +17,17 @@ def my_bookings(request):
     return render(request, "bookings.html", {"bookings": my_bookings})
 
 @login_required(login_url='/login/')
-def all_future_asset_bookings(request, asset_id):
+def all_future_asset_bookings(request, asset_id, for_user=0):
     the_asset = get_object_or_404(Asset, pk=asset_id)
-    all_bookings = Booking.objects.all().filter(asset_ID=the_asset).filter(start_date__gt=datetime.date.today())
+
+    # optional userID
+    if for_user == 0:
+        all_bookings = Booking.objects.all().filter(asset_ID=the_asset).filter(start_date__gt=datetime.date.today())
+    else:
+        my_id = request.user
+        all_bookings = Booking.objects.all().filter(asset_ID=the_asset).filter(requested_by_user_ID=my_id,
+                                                                               start_date__gt=datetime.date.today())
+
     return render(request, "all_bookings.html", {"asset": the_asset, "all_bookings": all_bookings})
 
 @login_required(login_url='/login/')
@@ -26,7 +35,7 @@ def booking_detail(request, booking_id):
     the_booking = get_object_or_404(Booking, pk=booking_id)
     return render(request, "booking_detail.html",{"booking": the_booking})
 
-def get_owner_id(the_asset, the_start_date, the_end_date):
+def get_owner_id_NOT_USED(the_asset, the_start_date, the_end_date):
 
     the_asset = Asset.objects.get(pk=the_asset)
     share_start_date = the_asset.sharing_start_date
@@ -53,7 +62,9 @@ def get_owner_id(the_asset, the_start_date, the_end_date):
 def make_a_booking(request, asset_id):
 
     the_asset = get_object_or_404(Asset, pk=asset_id)
-
+    errors = []
+    owner_date_object = []
+    
     if request.method == "POST":
         new_booking_form = BookingForm(request.POST)
         if new_booking_form.is_valid():
@@ -86,11 +97,37 @@ def make_a_booking(request, asset_id):
 
     else:
 
-        new_booking_form = BookingForm()
+
+        #request.method is GET,
+        #check which stage of get
+        if 'start_date' in request.GET:
+            start_date = request.GET['start_date']
+            start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d').date()
+
+            if 'end_date' in request.GET:
+                end_date = request.GET['end_date']
+                end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d').date()
+
+            if end_date.toordinal() - start_date.toordinal() < 0:
+                errors.append('Your end date is earlier than your start date - please correct!')
+
+                new_booking_form = BookingForm(request.GET)
+
+            else:
+                # dates are fine (unless I programme more validation) so now continue with
+                # displaying the ownership for the date range!
+                owner_date_object = get_owners_and_dates(asset_id, start_date, end_date)
+                new_booking_form = BookingForm(request.GET)
+
+        else:
+            # this is first time so just display the form
+            new_booking_form = BookingForm()
 
     args = {
         'booking_form': new_booking_form,
         'the_asset': the_asset,
+        'errors': errors,
+        'owner_date_object': owner_date_object,
     }
 
     args.update(csrf(request))

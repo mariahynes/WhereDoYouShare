@@ -35,13 +35,7 @@
                                                         <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{{ asset.asset_display_name }} <span class="caret"></span></button>
                                                         <ul class="dropdown-menu">
                                                           <li><a href="{% url 'asset_detail' asset.id %}">View Details</a></li>
-                                                            {% if bookings %}
-                                                                {% for booking in bookings %}
-                                                                    {% ifequal booking.asset_ID_id asset.id %}
-                                                                        <li><a href="{% url 'booking_detail' booking.booking_id %}">View My Bookings</a></li>
-                                                                    {% endifequal %}
-                                                                {% endfor %}
-                                                            {% endif %}
+                                                             <li><a href="{% url 'all_future_asset_bookings_for_user' asset.id 1 %}">View My Bookings</a></li>
                                                             <li><a href="{% url 'make_a_booking' asset.id %}">Make a Booking</a></li>
                                                           <li><a href="{% url 'all_future_asset_bookings' asset.id %}">View All Bookings</a></li>
                                                         </ul>

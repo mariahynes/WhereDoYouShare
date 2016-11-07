@@ -12,8 +12,8 @@ class BookingForm(forms.ModelForm):
 
     # start_date = forms.DateField(label="Start Date", widget=DateInput, input_formats=['%d-%m-%Y'])
     # end_date = forms.DateField(label="End Date", widget=DateInput,input_formats=['%d-%m-%Y'])
-    start_date = forms.DateField(label="Start Date", widget=DateInput)
-    end_date = forms.DateField(label="End Date", widget=DateInput)
+    start_date = forms.DateField(label="Start Date", widget=DateInput, initial="DD/MM/YYYY")
+    end_date = forms.DateField(label="End Date", widget=DateInput,initial="DD/MM/YYYY")
 
     class Meta:
         model = Booking
