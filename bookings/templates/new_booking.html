@@ -18,7 +18,7 @@
         <!-- Slider ============================================= -->
 		<section id="slider" class="full-screen  slider-parallax">
 
-			<div class="full-screen section nopadding nomargin noborder ohidden" style="background: url({% static 'myimages/login3.jpg' %}) bottom center no-repeat; background-size: cover;">
+			<div class="full-screen section nopadding nomargin noborder ohidden" style="background: url({% static 'myimages/booking.jpg' %}) bottom center no-repeat; background-size: cover;">
 
 				<div class="container dark" >
 				    <div class="vertical-middle">
@@ -35,7 +35,7 @@
 
                                              <legend data-animate="fadeInUp">New Booking</legend>
                                                  <form role="form" method="get" action="{% url 'make_a_booking' the_asset.id %}">
-                                                    <div class="input-daterange">
+                                                    <div>
                                                      {{ booking_form | as_bootstrap }}
                                                      </div>
                                                     {%  if errors %}
@@ -44,20 +44,48 @@
                                                             {% endfor %}
                                                         {% endif %}
                                                     <div class="form-group">
-                                                        <button type="submit" class="btn btn-primary">Who's the Owner?</button>
+                                                        <button type="submit" class="btn btn-primary">Check Owner</button>
                                                     </div>
                                                 </form>
 
-                                                {%  if owner_date_object %}
-                                                    <p>{{ owner_date_object | length }}</p>
+                                                {% if owner_date_object %}
+                                                    <p> <span style="font-family: 'Playfair Display'">Your date range (of {{ total_days_requested }} nights) belongs to the following
+                                                        {%  with total=owner_date_object|length %}
+                                                             Owner{{ total|pluralize }}: </span>
+                                                        {%  endwith %}
+                                                        <div class="col_full">
+                                                            <table class = "table table-striped">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>Owner</th>
+                                                                        <th>From</th>
+                                                                        <th>Until</th>
+                                                                        <th align="center">Nights Requested</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
 
+                                                                    {% for owner in owner_date_object %}
+                                                                        <tr>
+                                                                            <td>{{ owner.first_name }} {{ owner.last_name }}</td>
+                                                                            <td>{{ owner.start_for_owner}}</td>
+                                                                            <td>{{ owner.end_for_owner }}</td>
+                                                                            <td align="center">{{ owner.days_requested }}</td>
+
+                                                                        </tr>
+
+                                                                    {% endfor %}
+                                                                 </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </p>
                                                 {% endif %}
 
                                                 <form role="form" method="post" action="{% url 'make_a_booking' the_asset.id %}">
                                                     {% csrf_token %}
-                                                    <div class="input-daterange">
+                                                  <!-- <div class="input-daterange">
                                                      {{ booking_form | as_bootstrap }}
-                                                     </div>
+                                                     </div> -->
                                                     <div class="form-group">
                                                         <button type="submit" class="btn btn-primary">Send Booking Request</button>
                                                     </div>

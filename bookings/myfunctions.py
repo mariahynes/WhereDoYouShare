@@ -1,6 +1,8 @@
 from assets.models import Asset, Asset_User_Mapping
-import arrow
+from accounts.models import User
+from django.conf import settings
 import datetime
+
 
 def hello_world():
     return "Hi!"
@@ -13,17 +15,23 @@ def get_owners_and_dates(asset_ID, request_start, request_end):
 
         slots = 0
 
-        def __init__(self, owner_id, start_for_owner, end_for_owner):
+        def __init__(self, owner_id, first_name, last_name, start_for_owner, end_for_owner, days_requested):
             self.owner_id = owner_id
             self.start_for_owner = start_for_owner
             self.end_for_owner = end_for_owner
+            self.first_name = first_name
+            self.last_name = last_name
+            self.days_requested = days_requested
             Owners_And_Dates.slots += 1
+
+        def owner_display_name(self):
+            return "%s %s" % (self.first_name, self.last_name)
 
         def numberOfSlots(self):
             return Owners_And_Dates.slots
 
         def __repr__(self):
-            return "Owner is: %s | Start Date: %s | End Date: %s" % (self.owner_id, self.start_for_owner, self.end_for_owner)
+            return "Owner is: %s | Start Date: %s | End Date: %s" % (self.owner_id, self.owner_display_name, self.start_for_owner, self.end_for_owner)
 
         def __str__(self):
             return "Owner is: %s | Start Date: %s | End Date: %s" % (self.owner_id, self.start_for_owner, self.end_for_owner)
@@ -108,20 +116,28 @@ def get_owners_and_dates(asset_ID, request_start, request_end):
 
         print "Only one owner to return"
         slots_affected = 1
-        o_and_d = Owners_And_Dates(slot_owner_on_requested_start_date,slot_start_for_start_date, slot_end_for_start_date)
+        delta = slot_end_for_start_date - start_date
+        num_days_slot_1 = delta.days
+
+        o = User.objects.get(id=slot_owner_on_requested_start_date)
+        o_and_d = Owners_And_Dates(slot_owner_on_requested_start_date, o.first_name, o.last_name,
+                                   slot_start_for_start_date, slot_end_for_start_date, num_days_slot_1)
         owners_and_dates_list.append(o_and_d)
 
     else:
 
         print "More than one owner to return"
         # first slot details
-        o_and_d = Owners_And_Dates(slot_owner_on_requested_start_date, slot_start_for_start_date,
-                                   slot_end_for_start_date)
+        delta = slot_end_for_start_date - start_date
+        num_days_slot_1 = delta.days
+
+        o = User.objects.get(id=slot_owner_on_requested_start_date)
+        o_and_d = Owners_And_Dates(slot_owner_on_requested_start_date, o.first_name, o.last_name, slot_start_for_start_date,
+                                   slot_end_for_start_date,num_days_slot_1)
 
         owners_and_dates_list.append(o_and_d)
 
-        delta = slot_end_for_start_date - start_date
-        num_days_slot_1 = delta.days
+
         print "%s days required from owner slot 1: " % num_days_slot_1, slot_owner_on_requested_start_date
 
         days_to_cover = requested_num_days - num_days_slot_1
@@ -167,8 +183,9 @@ def get_owners_and_dates(asset_ID, request_start, request_end):
                 print "%s is end of next slot" % next_slot_end
                 print "%s days still to cover" % days_to_cover
 
-                o_and_d = Owners_And_Dates(next_slot_owner, next_slot_start_date,
-                                           next_slot_end)
+                o = User.objects.get(id=next_slot_owner)
+                o_and_d = Owners_And_Dates(next_slot_owner, o.first_name, o.last_name, next_slot_start_date,
+                                           next_slot_end,num_days_per_period)
 
                 owners_and_dates_list.append(o_and_d)
 
@@ -183,8 +200,9 @@ def get_owners_and_dates(asset_ID, request_start, request_end):
                 print "%s is start of next (final) slot" % next_slot_start_date
                 print "%s is end of next (final) slot" % next_slot_end
 
-                o_and_d = Owners_And_Dates(next_slot_owner, next_slot_start_date,
-                                           next_slot_end)
+                o = User.objects.get(id=next_slot_owner)
+                o_and_d = Owners_And_Dates(next_slot_owner, o.first_name, o.last_name, next_slot_start_date,
+                                           next_slot_end,days_of_current_slot)
 
                 owners_and_dates_list.append(o_and_d)
 
@@ -192,7 +210,8 @@ def get_owners_and_dates(asset_ID, request_start, request_end):
                 days_to_cover = 0
                 print "%s days still to cover" % days_to_cover
 
-    return "owners and dates: %s | slots affected: %s" % (owners_and_dates_list,slots_affected)
+    # return "owners and dates: %s | slots affected: %s" % (owners_and_dates_list,slots_affected)
+    return owners_and_dates_list
 
 
 
@@ -222,7 +241,12 @@ def get_end_slot_date(start_date, days_step):
     return end_slot_date
 
 
+def get_owner_display_name(owner_id):
 
+
+    settings.AUTH_USER_MODEL
+    my_bookings = Booking.objects.all().filter(requested_by_user_ID=my_id)
+    return
 
 
 

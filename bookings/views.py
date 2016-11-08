@@ -64,7 +64,8 @@ def make_a_booking(request, asset_id):
     the_asset = get_object_or_404(Asset, pk=asset_id)
     errors = []
     owner_date_object = []
-    
+    total_days_requested = 0
+
     if request.method == "POST":
         new_booking_form = BookingForm(request.POST)
         if new_booking_form.is_valid():
@@ -117,6 +118,9 @@ def make_a_booking(request, asset_id):
                 # dates are fine (unless I programme more validation) so now continue with
                 # displaying the ownership for the date range!
                 owner_date_object = get_owners_and_dates(asset_id, start_date, end_date)
+                for item in owner_date_object:
+                    total_days_requested += item.days_requested
+
                 new_booking_form = BookingForm(request.GET)
 
         else:
@@ -128,6 +132,7 @@ def make_a_booking(request, asset_id):
         'the_asset': the_asset,
         'errors': errors,
         'owner_date_object': owner_date_object,
+        'total_days_requested': total_days_requested,
     }
 
     args.update(csrf(request))
