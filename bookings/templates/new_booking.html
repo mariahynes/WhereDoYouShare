@@ -27,6 +27,8 @@
 
 					        <div class="container clearfix"> <!--clearfix removed-->
 
+                            {% if user_ok == True %}
+
                                 <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">New Booking for {{ the_asset.asset_display_name }}</h2>
 
                                     <div class="col_half">
@@ -97,6 +99,16 @@
 
 
                                      </div>
+                            {%  else %}
+
+
+                                    {% if errors %}
+                                        {% for error in errors %}
+                                            <p style="color:red">{{ error }}</p>
+                                        {% endfor %}
+                                    {% endif %}
+
+                            {% endif %}
 
                                     <div class="clear"></div>
 

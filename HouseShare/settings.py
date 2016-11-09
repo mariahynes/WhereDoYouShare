@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.flatpages',
     'assets',
     'bookings',
+    'blog',
 ]
 
 

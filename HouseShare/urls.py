@@ -30,4 +30,5 @@ urlpatterns = [
     url(r'^logout/$', accounts_views.logout, name='logout'),
     url(r'^booking/', include('bookings.urls')),
     url(r'^assets/', include('assets.urls')),
+    url(r'^blog/', include('blog.urls')),
 ]

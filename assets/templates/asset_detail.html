@@ -6,6 +6,13 @@
 </head>
 <body>
 <h1>Asset Detail</h1>
+{% if errors %}
+
+    {% for error in errors %}
+     <p style="color:red">{{ error }}</p>
+    {% endfor %}
+
+{% endif %}
 {% if asset %}
   <li>
     <h2>{{ asset.asset_display_name }}</h2>

@@ -7,6 +7,7 @@ from assets.models import Asset, Asset_User_Mapping
 from .models import Booking
 from .forms import BookingForm
 from myfunctions import get_owners_and_dates
+from home.myAuth import check_user_linked_to_asset
 
 import datetime
 
@@ -20,42 +21,30 @@ def my_bookings(request):
 def all_future_asset_bookings(request, asset_id, for_user=0):
     the_asset = get_object_or_404(Asset, pk=asset_id)
 
-    # optional userID
-    if for_user == 0:
-        all_bookings = Booking.objects.all().filter(asset_ID=the_asset).filter(start_date__gt=datetime.date.today())
-    else:
-        my_id = request.user
-        all_bookings = Booking.objects.all().filter(asset_ID=the_asset).filter(requested_by_user_ID=my_id,
-                                                                               start_date__gt=datetime.date.today())
+    errors = []
 
-    return render(request, "all_bookings.html", {"asset": the_asset, "all_bookings": all_bookings})
+    my_id = request.user
+    if check_user_linked_to_asset(my_id, asset_id):
+
+        # optional userID
+        if for_user == 0:
+            all_bookings = Booking.objects.all().filter(asset_ID=the_asset).filter(start_date__gt=datetime.date.today())
+        else:
+            my_id = request.user
+            all_bookings = Booking.objects.all().filter(asset_ID=the_asset).filter(requested_by_user_ID=my_id,
+                                                                                   start_date__gt=datetime.date.today())
+
+    else:
+        the_asset = []
+        all_bookings = []
+        errors.append("You are not authorised to view this Booking page")
+
+    return render(request, "all_bookings.html", {"asset": the_asset, "all_bookings": all_bookings, "errors": errors})
 
 @login_required(login_url='/login/')
 def booking_detail(request, booking_id):
     the_booking = get_object_or_404(Booking, pk=booking_id)
     return render(request, "booking_detail.html",{"booking": the_booking})
-
-def get_owner_id_NOT_USED(the_asset, the_start_date, the_end_date):
-
-    the_asset = Asset.objects.get(pk=the_asset)
-    share_start_date = the_asset.sharing_start_date
-    slot_duration = the_asset.slot_duration_unit.duration_type
-    num_durations = the_asset.number_of_slot_units
-
-    if the_asset.sharing_with_other_owners:
-
-        the_owners = Asset_User_Mapping.objects.all().filter(asset_ID=the_asset.id,is_owner=True)
-
-        if the_owners.count > 1:
-
-            # find out which one is the owner on the DATES given
-            # next line just temporary for testing
-            owner_id = the_owners[0].user_ID
-
-        else:
-            owner_id = the_owners[0].user_ID #or just user_ID (for email)
-
-    return owner_id
 
 
 @login_required(login_url='/login/')
@@ -65,6 +54,14 @@ def make_a_booking(request, asset_id):
     errors = []
     owner_date_object = []
     total_days_requested = 0
+    booking_form = []
+
+    my_id = request.user
+    if check_user_linked_to_asset(my_id, asset_id):
+        user_ok = True
+    else:
+        user_ok = False
+        errors.append("You are not allowed to view this script, so we're going to give you nothing instead")
 
     if request.method == "POST":
         new_booking_form = BookingForm(request.POST)
@@ -133,6 +130,7 @@ def make_a_booking(request, asset_id):
         'errors': errors,
         'owner_date_object': owner_date_object,
         'total_days_requested': total_days_requested,
+        'user_ok': user_ok,
     }
 
     args.update(csrf(request))

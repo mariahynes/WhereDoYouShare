@@ -5,15 +5,25 @@
     <title>All Bookings</title>
 </head>
 <body>
-<h1>All future bookings for {{ asset.asset_display_name }} </h1>
-{% if all_bookings %}
-    {% for booking in all_bookings %}
 
-        {{ booking.start_date }}
-
+{% if errors %}
+    {% for error in errors %}
+        <p style="color:red">{{ error }}</p>
     {% endfor %}
 {% else %}
-There are no future bookings listed
+
+    <h1>All future bookings for {{ asset.asset_display_name }} </h1>
+    {% if all_bookings %}
+        {% for booking in all_bookings %}
+
+            {{ booking.start_date }}
+
+        {% endfor %}
+    {% else %}
+    There are no future bookings listed
+    {% endif %}
+
 {% endif %}
+
 </body>
 </html>
