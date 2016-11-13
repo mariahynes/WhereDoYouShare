@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'home',
     'accounts',
     'django.contrib.sites',
+    'disqus',
     'django.contrib.flatpages',
     'assets',
     'bookings',
@@ -151,3 +152,8 @@ SERVER_EMAIL = 'maria@databasis.ie'
 EMAIL_PORT = 25
 EMAIL_USE_TLS = False
 
+
+DISQUS_WEBSITE_SHORTNAME = 'wheredoyoushare'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'

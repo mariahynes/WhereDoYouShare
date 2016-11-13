@@ -61,7 +61,7 @@ def make_a_booking(request, asset_id):
         user_ok = True
     else:
         user_ok = False
-        errors.append("You are not allowed to view this script, so we're going to give you nothing instead")
+        errors.append("You are not authorised to view this page")
 
     if request.method == "POST":
         new_booking_form = BookingForm(request.POST)

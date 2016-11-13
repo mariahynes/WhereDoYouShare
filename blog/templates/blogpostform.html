@@ -24,25 +24,21 @@
                                 <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">{{ asset.asset_display_name }} Blog</h2>
 
                                     {% if errors %}
+
                                         {% for error in errors %}
                                             <p style="color:red">{{ error }}</p>
                                         {% endfor %}
-                                    {% endif %}
 
-                                <p><button class="btn btn-default" onclick="location.href='new'">Add New Post >></button></p>
+                                    {% else %}
 
-                                {%  if posts %}
-                                        {% for post in posts %}
-                                            <div>
-                                                <div>
-                                                    {{ post.published_date }} | Views: {{ post.num_views }}
-                                                </div>
-                                                <h1><a href="">{{ post.title }}</a></h1>
-                                                <p>{{ post.content|truncatewords:30 }}</p>
-                                                <p><button class="btn btn-default" onclick="location.href='{{ post.id }}'">Read More >></button></p>
-                                                <hr>
-                                            </div>
-                                        {% endfor %}
+                                        <h1>New Post</h1>
+                                        <form method="POST" enctype="multipart/form-data">
+                                            {% csrf_token %}
+                                            {{ form | as_bootstrap }}
+                                            <button type="submit" class="btn btn-info">Save</button>
+
+                                        </form>
+
                                     {% endif %}
 
                                     <div class="clear"></div>

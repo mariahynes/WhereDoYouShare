@@ -27,22 +27,37 @@
                                         {% for error in errors %}
                                             <p style="color:red">{{ error }}</p>
                                         {% endfor %}
-                                    {% endif %}
 
-                                <p><button class="btn btn-default" onclick="location.href='new'">Add New Post >></button></p>
+                                    {% else %}
 
-                                {%  if posts %}
-                                        {% for post in posts %}
-                                            <div>
+                                        {%  if post %}
+
                                                 <div>
-                                                    {{ post.published_date }} | Views: {{ post.num_views }}
+                                                    <div>
+                                                        {{ post.published_date }} | Views: {{ post.num_views }}
+                                                    </div>
+                                                    <h1>{{ post.title }}</h1>
+                                                    {%  if post.image %}
+                                                       <div class="row">
+                                                        <div class="col-sm-2">
+                                                           <img class="img-rounded img-responsive"  src="/media/{{ post.image }}">
+                                                       </div>
+                                                    {%  endif %}
+                                                    <p>{{ post.content|linebreaks }}</p>
+                                                    {% if show_edit %}
+                                                    <p><button class="btn btn-default" onclick="location.href='/blog/blog/{{ asset_id }}/{{ post.id }}/edit'">Edit Post </button>
+                                                    {% endif %}
+                                                    <button class="btn btn-default" onclick="location.href='/blog/blog/{{ asset_id }}'"><< Back to Blog</button></p>
+
+                                                    {% load disqus_tags %}
+                                                    {% set_disqus_title post.title %}
+                                                    {% disqus_show_comments %}
+
                                                 </div>
-                                                <h1><a href="">{{ post.title }}</a></h1>
-                                                <p>{{ post.content|truncatewords:30 }}</p>
-                                                <p><button class="btn btn-default" onclick="location.href='{{ post.id }}'">Read More >></button></p>
-                                                <hr>
-                                            </div>
-                                        {% endfor %}
+
+
+                                        {% endif %}
+
                                     {% endif %}
 
                                     <div class="clear"></div>
