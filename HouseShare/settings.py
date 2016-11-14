@@ -37,15 +37,19 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'django.contrib.flatpages',
     'django_forms_bootstrap',
     'home',
     'accounts',
-    'django.contrib.sites',
     'disqus',
-    'django.contrib.flatpages',
     'assets',
     'bookings',
     'blog',
+    'debug_toolbar',
+    'tinymce',
+    'emoticons',
+    'forum',
 ]
 
 
@@ -65,6 +69,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'HouseShare.urls'
@@ -136,13 +141,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = '' # this wasn't in original settings file
+STATIC_ROOT = ''
 
 STATICFILES_DIRS = (
 
     os.path.join(BASE_DIR, 'static'),
 
 )
+
+TINYMCE_JS_ROOT = os.path.join(BASE_DIR, "static", 'js', 'tinymce', 'tinymce.min.js')
 
 EMAIL_HOST = 'smtp1r.cp.blacknight.com'
 EMAIL_HOST_USER = 'maria@databasis.ie'

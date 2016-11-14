@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+    {% load bootstrap_tags %}
+    {% block content %}
+    {% load staticfiles %}
+        {% block head_style %}
+            <style>
+                .opacity9{
+                    opacity:2;
+                }
+            </style>
+        {% endblock %}
+        <!-- Slider ============================================= -->
+		<section id="slider" class="full-screen  slider-parallax">
+
+			<div class="full-screen section nopadding nomargin noborder ohidden" style="background: url({% static 'myimages/login1.jpg' %}) bottom center no-repeat; background-size: cover;">
+
+				<div class="container " >
+				    <div class="vertical-middle">
+
+				        <div id="section-about" class="page-section">
+
+					        <div class="container clearfix"> <!--clearfix removed-->
+
+                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">{{ asset.asset_display_name }} Forum</h2>
+
+                                    {% if errors %}
+                                        {% for error in errors %}
+                                            <p style="color:red">{{ error }}</p>
+                                        {% endfor %}
+                                    {% else %}
+
+                                        {% if subject %}
+                                                <h2><{{ subject.name }}</h2>
+                                                {% for thread in subject.threads.all %}
+                                                        {{ thread.name }}
+                                                {% endfor %}
+
+
+
+                                        {% endif %}
+
+                                    {% endif %}
+
+                                    <div class="clear"></div>
+
+                                    <div class="row topmargin-lg divcenter" style="max-width: 1000px;"></div>
+
+
+
+				            </div>
+
+                       </div>
+
+					</div>
+				</div>
+
+			</div>
+
+		</section> <!--#slider end -->
+
+
+
+    {% endblock %}

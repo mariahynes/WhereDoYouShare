@@ -33,4 +33,5 @@ urlpatterns = [
     url(r'^booking/', include('bookings.urls')),
     url(r'^assets/', include('assets.urls')),
     url(r'^blog/', include('blog.urls')),
+    url(r'^forum/', include('forum.urls')),
 ] + static(MEDIA_URL, document_root=MEDIA_ROOT)
