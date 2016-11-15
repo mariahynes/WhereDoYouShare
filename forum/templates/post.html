@@ -1,0 +1,16 @@
+{% load staticfiles %}
+{% load emoticons_tags %}
+<section class="post">
+    <div>
+    <p>{{ post.user.first_name }} {{ post.user.last_name }}</p>
+    <p>{{ post.user.posts.count }}</p>
+    </div>
+    <div class="comment-content">
+     {% autoescape off %}
+       {{ post.comment|emoticons }}
+     {% endautoescape %}
+    </div>
+    <div>
+    {% include "comment_details.html" %}
+    </div>
+</section>

@@ -22,6 +22,7 @@ class Thread(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='threads')
     subject = models.ForeignKey(Subject, related_name='threads')
     created_at = models.DateTimeField(default=timezone.now)
+    num_views = models.IntegerField(default=0)
 
     def __unicode__(self):
         return self.name

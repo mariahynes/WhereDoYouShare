@@ -1,5 +1,6 @@
 from assets.models import Asset, Asset_User_Mapping
 from blog.models import Post
+from forum.models import Subject, Thread
 import json
 
 def check_user_linked_to_asset(user_id, asset_id):
@@ -21,7 +22,7 @@ def check_user_linked_to_asset(user_id, asset_id):
 
 def check_user_linked_to_post(user_id, asset_id, post_id):
 
-    # this function can be used
+    # this function can be used to check if the user is the author of a post
     # to check if the user is just chancing their arm trying to edit a blog post
 
     try:
@@ -37,6 +38,8 @@ def check_user_linked_to_post(user_id, asset_id, post_id):
 
 def blog_post_exists(asset_id, post_id):
 
+    # check if the post exists for the given asset
+
     try:
         the_post = Post.objects.get(id=post_id, asset_ID_id=asset_id)
 
@@ -47,6 +50,34 @@ def blog_post_exists(asset_id, post_id):
         post_exists = True
 
     return post_exists
+
+def check_thread_exists(subject_id, thread_id):
+
+    # check if the thread exists for the given subject
+    try:
+        the_thread = Thread.objects.get(id=thread_id, subject_id = subject_id)
+
+    except Thread.DoesNotExist:
+        thread_exists = False
+
+    else:
+        thread_exists = True
+
+    return thread_exists
+
+def check_subject_exists(asset_id, subject_id):
+
+    # check if the subject exists for the given asset
+    try:
+        the_subject = Subject.objects.get(id=subject_id, asset_id = asset_id)
+
+    except Subject.DoesNotExist:
+        subject_exists = False
+
+    else:
+        subject_exists = True
+
+    return subject_exists
 
 def check_user_linked_to_asset_with_session(request, asset_id):
 

@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load blog_extras %}
     {% load bootstrap_tags %}
     {% block content %}
     {% load staticfiles %}
@@ -34,16 +35,17 @@
 
                                                 <div>
                                                     <div>
-                                                        {{ post.published_date }} | Views: {{ post.num_views }}
+                                                        {{ post.created_date | started_time }} | {{ post.num_views }}
+                                                {%  with total=post.num_views %}view{{ total|pluralize }}{%  endwith %}
                                                     </div>
-                                                    <h1>{{ post.title }}</h1>
+                                                    <h1>{{ post.title }} <small><small>by {{ post.author.first_name }} {{ post.author.last_name }}</small></small></h1>
                                                     {%  if post.image %}
                                                        <div class="row">
                                                         <div class="col-sm-2">
                                                            <img class="img-rounded img-responsive"  src="/media/{{ post.image }}">
                                                        </div>
                                                     {%  endif %}
-                                                    <p>{{ post.content|linebreaks }}</p>
+                                                    <p> {% autoescape off %}{{ post.content|linebreaks }}{% endautoescape %}</p>
                                                     {% if show_edit %}
                                                     <p><button class="btn btn-default" onclick="location.href='/blog/blog/{{ asset_id }}/{{ post.id }}/edit'">Edit Post </button>
                                                     {% endif %}

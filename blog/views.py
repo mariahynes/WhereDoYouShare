@@ -4,8 +4,10 @@ from .models import Post
 from home.myAuth import check_user_linked_to_asset,blog_post_exists,check_user_linked_to_post
 from assets.models import Asset
 from .forms import BlogPostForm
+from django.contrib.auth.decorators import login_required
 import json
 
+@login_required(login_url='/login/')
 def post_list(request, asset_id):
 
     # this view will return the posts for the given asset_id
@@ -43,7 +45,7 @@ def post_list(request, asset_id):
 
     return render(request, "blogposts.html", {'posts': posts, 'asset':the_asset, 'errors':errors, 'num_linked_assets':j})
 
-
+@login_required(login_url='/login/')
 def post_detail(request, asset_id, id):
 
     errors = []
@@ -88,7 +90,8 @@ def post_detail(request, asset_id, id):
 
     return render(request, "postdetail.html", {'post':post, 'asset': the_asset, 'errors': errors, 'asset_id': asset_id,'post_id':id, 'show_edit':show_edit})
 
-def new_post(request, asset_id):
+@login_required(login_url='/login/')
+def new_blog_post(request, asset_id):
     errors = []
     the_asset = get_object_or_404(Asset, pk=asset_id)
 
@@ -115,7 +118,8 @@ def new_post(request, asset_id):
 
     return render(request, 'blogpostform.html', {'form': form, 'asset': the_asset, 'errors':errors})
 
-def edit_post(request, asset_id, id):
+@login_required(login_url='/login/')
+def edit_blog_post(request, asset_id, id):
 
     errors = []
 
@@ -153,7 +157,7 @@ def edit_post(request, asset_id, id):
             if form.is_valid():
                 post = form.save(commit=False)
                 post.author = request.user
-                post.published_date = timezone.now()
+                post.last_edited_date = timezone.now()
                 post.asset_ID_id = asset_id
                 post.save()
                 return redirect(post_detail, asset_id, post.pk)
@@ -162,3 +166,5 @@ def edit_post(request, asset_id, id):
             form = BlogPostForm(instance=post)
 
     return render(request, 'blogpostform.html', {'form': form, 'asset': the_asset, 'errors': errors})
+
+

@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+{% load forum_extras %}
+
     {% load bootstrap_tags %}
     {% block content %}
     {% load staticfiles %}
@@ -21,7 +23,7 @@
 
 					        <div class="container clearfix"> <!--clearfix removed-->
 
-                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">{{ asset.asset_display_name }} Forum</h2>
+                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';"> {{ asset.asset_display_name }} | {{ subject.name }} </h2>
 
                                     {% if errors %}
                                         {% for error in errors %}
@@ -30,9 +32,15 @@
                                     {% else %}
 
                                         {% if subject %}
+                                            <p>
+                                            <a href="{% url 'forum' asset.id %}"class = "btn btn-primary"><< Back to Forum</a>
+                                                <a href="{%  url 'new_thread' asset.id subject.id %}" class = "btn btn-primary">New Thread</a>
+
+                                            </p>
+
                                                 <h2><{{ subject.name }}</h2>
                                                 {% for thread in subject.threads.all %}
-                                                        {{ thread.name }}
+                                                        {% include "thread_item.html" %}
                                                 {% endfor %}
 
 

@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+{% load forum_extras %}
+
     {% load bootstrap_tags %}
     {% block content %}
     {% load staticfiles %}
@@ -41,12 +43,15 @@
                                                 </p>
                                                 <table>
                                                <tr>
-                                                   <th>Threads | </th>
+                                                   <th>Threads </th>
+                                                   <th>&nbsp|&nbsp</th>
                                                    <th> Posts</th>
                                                </tr>
                                                <tr>
                                                    <td>{{ subject.threads.count }} </td>
-                                                   {# <td> {{ subject|get_total_subject_posts }}</td>  #}
+                                                   <td></td>
+                                                   <td>{{ subject | get_total_subject_posts }}</td>
+                                                   <td></td>
                                                </tr>
                                            </table>
                                            </section>

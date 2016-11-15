@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
-{% load blog_extras %}
+{% load forum_extras %}
+
     {% load bootstrap_tags %}
     {% block content %}
     {% load staticfiles %}
@@ -22,29 +23,36 @@
 
 					        <div class="container clearfix"> <!--clearfix removed-->
 
-                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">{{ asset.asset_display_name }} Blog</h2>
+                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';"> {{ thread.name }} <small><small>({{ asset.asset_display_name }} | {{ subject.name }}) </small> </small></h2>
 
                                     {% if errors %}
                                         {% for error in errors %}
                                             <p style="color:red">{{ error }}</p>
                                         {% endfor %}
-                                    {% endif %}
+                                    {% else %}
 
-                                <p><button class="btn btn-default" onclick="location.href='new'">Add New Post >></button></p>
-
-                                {%  if posts %}
-                                        {% for post in posts %}
+                                        {% if thread %}
                                             <div>
-                                                <div>
-                                                    {{ post.created_date | started_time }} | {{ post.num_views }}
-                                                {%  with total=post.num_views %}view{{ total|pluralize }}{%  endwith %}
-                                                </div>
-                                                <h1><a href="{%  url 'post_detail' asset.id post.id %}">{{ post.title }}</a><small><small> by {{ post.author.first_name }} {{ post.author.last_name }}</small></small></h1>
-                                                <p> {% autoescape off %}{{ post.content|truncatewords:30 }}{% endautoescape %}</p>
-                                                <p><button class="btn btn-default" onclick="location.href='{{ post.id }}'">Read More >></button></p>
-                                                <hr>
+                                            {{ thread.user.first_name }} {{ thread.user.last_name }} |
+                                                    {{ thread.created_at | started_time}} | {{ thread.num_views }}
+                                                {%  with total=thread.num_views %}view{{ total|pluralize }}{%  endwith %}
+                                                <p><small>Latest post: {% last_posted_user_name thread %}</small></p>
                                             </div>
-                                        {% endfor %}
+
+                                            <p>
+                                                <a href="{% url 'new_post' asset.id subject.id thread.id %}" class="btn btn-primary">New post</a>
+                                            </p>
+
+                                            {% for post in thread.posts.all %}
+
+                                                {% include 'post.html' %}
+
+                                            {% endfor %}
+
+                                        {% endif %}
+
+
+
                                     {% endif %}
 
                                     <div class="clear"></div>

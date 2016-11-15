@@ -1,15 +1,16 @@
 {% extends 'base.html' %}
+{% load forum_extras %}
+
     {% load bootstrap_tags %}
     {% block content %}
     {% load staticfiles %}
 
         {% block head_js %}
-            <script src="{% static 'js/tinymce/tinymce.min.js' %}"></script>
-            <script>
-                tinyMCE.init({mode: "textareas", theme: 'modern', plugins: 'paste'})
-            </script>
+           <script src="{% static 'js/tinymce/tinymce.min.js' %}"></script>
+           <script>
+               tinyMCE.init({mode: "textareas", theme: 'modern', plugins: 'paste'})
+           </script>
         {% endblock %}
-
         {% block head_style %}
             <style>
                 .opacity9{
@@ -29,23 +30,26 @@
 
 					        <div class="container clearfix"> <!--clearfix removed-->
 
-                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">{{ asset.asset_display_name }} Blog</h2>
+                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">{{ asset.asset_display_name }} | {{ subject.name }}</h2>
 
                                     {% if errors %}
-
                                         {% for error in errors %}
                                             <p style="color:red">{{ error }}</p>
                                         {% endfor %}
-
                                     {% else %}
+                                        <section>
 
-                                        <h1>New Post</h1>
-                                        <form method="POST" enctype="multipart/form-data">
-                                            {% csrf_token %}
-                                            {{ form | as_bootstrap }}
-                                            <button type="submit" class="btn btn-info">Save</button>
+                                                   <form method="post" action="{{ form_action }}">
+                                                       {% csrf_token %}
+                                                       {{ form | as_bootstrap }}
 
-                                        </form>
+                                                       <div class="form-group">
+                                                           <button type="submit" class="btn-primary"> {{ button_text }}</button>
+                                                       </div>
+                                                   </form>
+
+                                           </section>
+
 
                                     {% endif %}
 
