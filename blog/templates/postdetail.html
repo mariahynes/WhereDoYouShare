@@ -46,10 +46,14 @@
                                                        </div>
                                                     {%  endif %}
                                                     <p> {% autoescape off %}{{ post.content|linebreaks }}{% endautoescape %}</p>
-                                                    {% if show_edit %}
-                                                    <p><button class="btn btn-default" onclick="location.href='/blog/blog/{{ asset_id }}/{{ post.id }}/edit'">Edit Post </button>
+
+                                                    <p><button class="btn btn-default" onclick="location.href='/blog/blog/{{ asset_id }}'"><i class="fa fa-backward"></i> Back to Blog</button>
+
+                                                    {% if show_edit or user.is_staff %}
+                                                    <button class="btn btn-default" onclick="location.href='/blog/blog/{{ asset_id }}/{{ post.id }}/edit'">Edit <i class="fa fa-pencil-square-o"></i> </button>
+                                                    <button class="btn btn-default" onclick="location.href='/blog/blog/{{ asset_id }}/{{ post.id }}/delete'">Delete <i class="fa fa-trash-o"></i> </button>
                                                     {% endif %}
-                                                    <button class="btn btn-default" onclick="location.href='/blog/blog/{{ asset_id }}'"><< Back to Blog</button></p>
+                                                    </p>
 
                                                     {% load disqus_tags %}
                                                     {% set_disqus_title post.title %}

@@ -23,6 +23,12 @@ def started_time(created_at):
 @register.simple_tag
 def last_posted_user_name(thread):
    posts = thread.posts.all().order_by('-created_at')
-   first_name = posts[posts.count()-1].user.first_name
-   last_name = posts[posts.count()-1].user.last_name
-   return "%s %s" % (first_name, last_name)
+
+   # MH 20160925: check if there are any posts and return empty string if not
+   # this avoids an index error
+   if posts:
+       first_name = posts[posts.count()-1].user.first_name
+       last_name = posts[posts.count()-1].user.last_name
+       return "%s %s" % (first_name, last_name)
+   else:
+       return ""

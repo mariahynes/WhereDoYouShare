@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Subject, Thread
-from home.myAuth import check_user_linked_to_asset, check_thread_exists,check_subject_exists
+from .models import Subject, Thread, Post
+from home.myAuth import check_user_linked_to_asset, check_thread_exists,check_subject_exists,check_user_linked_to_forum_post
 from assets.models import Asset
 from django.contrib.auth.decorators import login_required
 from .forms import ThreadForm, PostForm
@@ -131,9 +131,9 @@ def new_thread(request, asset_id, subject_id):
                 post.thread = thread
                 post.save()
 
-                messages.success(request, "Thanks for your new thread")
+                messages.success(request, "Thanks for your new Thread")
 
-                return redirect(reverse('thread', args={thread.pk}))
+                return redirect(reverse('thread', kwargs={"asset_id":asset_id, "subject_id":subject_id, "thread_id":thread.pk}))
 
         else:
             thread_form = ThreadForm()
@@ -158,6 +158,8 @@ def new_post(request, asset_id, subject_id, thread_id):
     thread = get_object_or_404(Thread, pk=thread_id)
     subject = get_object_or_404(Subject, pk=subject_id)
     the_asset = get_object_or_404(Asset, pk=asset_id)
+    # set this here so that it is assigned
+    form = PostForm()
 
     my_id = request.user
     if check_user_linked_to_asset(my_id, asset_id) == False:
@@ -180,6 +182,7 @@ def new_post(request, asset_id, subject_id, thread_id):
 
     else:
         if request.method == "POST":
+            form = PostForm(request.POST)
             if form.is_valid():
                 post = form.save(False)
                 post.thread = thread
@@ -188,7 +191,7 @@ def new_post(request, asset_id, subject_id, thread_id):
 
                 messages.success(request, "Your post has been added to %s" % thread.name)
 
-                return redirect(reverse('thread', args={thread.pk}))
+                return redirect(reverse('thread', kwargs={"asset_id":asset_id, "subject_id":subject_id, "thread_id":thread.pk}))
 
             else:
                 form = PostForm()
@@ -199,9 +202,118 @@ def new_post(request, asset_id, subject_id, thread_id):
             'subject': subject,
             'asset': the_asset,
             'form': form,
-            'form_action': reverse('new_post', args={thread.id}),
+            'form_action': reverse('new_post', kwargs={"asset_id":asset_id, "subject_id":subject_id, "thread_id":thread.id}),
             'button_text': "Update Post",
     }
     args.update(csrf(request))
 
     return render(request, 'post_form.html', args)
+
+@login_required(login_url='/login/')
+def edit_post(request, asset_id, subject_id, thread_id, post_id):
+    # this sends user to the post_form.html mentioned in the new_post view (for editing)
+    # and to thread.html for viewing after editing
+    errors = []
+    post = get_object_or_404(Post, pk=post_id)
+    thread = get_object_or_404(Thread, pk=thread_id)
+    subject = get_object_or_404(Subject, pk=subject_id)
+    the_asset = get_object_or_404(Asset, pk=asset_id)
+
+    my_id = request.user
+    if check_user_linked_to_asset(my_id, asset_id) == False:
+        errors.append("You are not authorised to view to this Forum")
+        post = []
+        thread = []
+        subject = []
+        the_asset = []
+
+    elif check_subject_exists(asset_id, subject_id) == False:
+        errors.append("Sorry this Subject does not exist in this Forum")
+        post = []
+        thread = []
+        subject = []
+        the_asset = []
+
+    elif check_thread_exists(subject_id, thread_id) == False:
+        errors.append("Thread does not exist")
+        post = []
+        thread = []
+        subject = []
+        the_asset = []
+
+    elif check_user_linked_to_forum_post(my_id, post_id) == False:
+        errors.append("You are not authorised to edit this Post")
+        post = []
+        thread = []
+        subject = []
+        the_asset = []
+
+    else:
+        if request.method == "POST":
+            form = PostForm(request.POST, instance=post)
+            if form.is_valid():
+                form.save()
+                messages.success(request,"This Post has been updated")
+
+                return redirect(reverse('thread', kwargs={"asset_id":asset_id, "subject_id":subject_id, "thread_id":thread.pk}))
+
+        else:
+            form = PostForm(instance=post)
+
+    args = {
+        'thread': thread,
+        'errors': errors,
+        'subject': subject,
+        'asset': the_asset,
+        'form': form,
+        'form_action': reverse('edit_post', kwargs={'asset_id':asset_id, "subject_id":subject_id, "thread_id":thread_id, "post_id":post_id}),
+        'button_text': "Update Post",
+    }
+    args.update(csrf(request))
+
+    return render(request, 'post_form.html', args)
+
+@login_required(login_url='/login/')
+def delete_post(request, asset_id, subject_id, thread_id, post_id):
+
+    errors = []
+    post = get_object_or_404(Post, pk=post_id)
+    thread = get_object_or_404(Thread, pk=thread_id)
+    subject = get_object_or_404(Subject, pk=subject_id)
+    the_asset = get_object_or_404(Asset, pk=asset_id)
+
+    my_id = request.user
+    if check_user_linked_to_asset(my_id, asset_id) == False:
+        errors.append("You are not authorised to view to this Forum")
+        post = []
+        thread = []
+        subject = []
+        the_asset = []
+
+    elif check_subject_exists(asset_id, subject_id) == False:
+        errors.append("Sorry this Subject does not exist in this Forum")
+        post = []
+        thread = []
+        subject = []
+        the_asset = []
+
+    elif check_thread_exists(subject_id, thread_id) == False:
+        errors.append("Thread does not exist")
+        post = []
+        thread = []
+        subject = []
+        the_asset = []
+
+    elif check_user_linked_to_forum_post(my_id, post_id) == False:
+        errors.append("You are not authorised to edit this Post")
+        post = []
+        thread = []
+        subject = []
+        the_asset = []
+
+    else:
+        post.delete()
+
+        messages.success(request, "This Post has been deleted")
+
+        return redirect(reverse('thread', kwargs={"asset_id":asset_id, "subject_id":subject_id, "thread_id":thread_id}))

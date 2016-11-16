@@ -2,6 +2,7 @@
 {% load forum_extras %}
 
     {% load bootstrap_tags %}
+{% load emoticons_tags %}
     {% block content %}
     {% load staticfiles %}
         {% block head_style %}
@@ -34,18 +35,47 @@
                                         {% if thread %}
                                             <div>
                                             {{ thread.user.first_name }} {{ thread.user.last_name }} |
-                                                    {{ thread.created_at | started_time}} | {{ thread.num_views }}
+                                                    <time datetime="{{ thread.created_at}}">{{ thread.created_at | started_time}}</time> | {{ thread.num_views }}
                                                 {%  with total=thread.num_views %}view{{ total|pluralize }}{%  endwith %}
                                                 <p><small>Latest post: {% last_posted_user_name thread %}</small></p>
                                             </div>
 
                                             <p>
-                                                <a href="{% url 'new_post' asset.id subject.id thread.id %}" class="btn btn-primary">New post</a>
+                                                <a href="{% url 'threads' asset.id subject.id %}" class="btn btn-primary">Back to {{ subject.name }}</a>
+                                                <a href="{% url 'new_post' asset.id subject.id thread.id %}" class="btn btn-primary">Add Post</a>
                                             </p>
 
                                             {% for post in thread.posts.all %}
 
-                                                {% include 'post.html' %}
+                                                <section class="post">
+                                                    <div>
+                                                    <p>{{ post.user.first_name }} {{ post.user.last_name }}</p>
+                                                    </div>
+                                                    <div class="comment-content">
+                                                     {% autoescape off %}
+                                                       {{ post.comment|emoticons }}
+                                                     {% endautoescape %}
+                                                    </div>
+                                                    <div>
+
+                                                        <div class="details">
+
+                                                            <div>Posted: <time datetime="{{ post.created_at }}">{{ post.created_at | started_time }}</time></div>
+
+                                                            <div>
+                                                                {% if user.is_staff or post.user == user %}
+
+                                                                    <a href="{% url 'edit_post' asset.id subject.id thread.id post.id %}">Edit <i class="fa fa-pencil-square-o"></i></a>
+                                                                    <a href="{% url 'delete_post' asset.id subject.id thread.id post.id %}">Delete <i class="fa fa-trash-o"></i></a>
+
+                                                                {% endif %}
+                                                            </div>
+                                                            <div class="clearfix"></div>
+
+                                                        </div>
+
+                                                    </div>
+                                                </section>
 
                                             {% endfor %}
 

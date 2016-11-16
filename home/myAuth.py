@@ -1,5 +1,6 @@
 from assets.models import Asset, Asset_User_Mapping
-from blog.models import Post
+from blog.models import Post as BlogPost
+from forum.models import Post as ForumPost
 from forum.models import Subject, Thread
 import json
 
@@ -20,15 +21,15 @@ def check_user_linked_to_asset(user_id, asset_id):
 
     return user_is_authorised
 
-def check_user_linked_to_post(user_id, asset_id, post_id):
+def check_user_linked_to_blog_post(user_id, asset_id, post_id):
 
-    # this function can be used to check if the user is the author of a post
+    # this function can be used to check if the user is the author of a blog post
     # to check if the user is just chancing their arm trying to edit a blog post
 
     try:
-        user_mapping = Post.objects.get(author_id=user_id, asset_ID_id=asset_id, id=post_id)
+        user_mapping = BlogPost.objects.get(author_id=user_id, asset_ID_id=asset_id, id=post_id)
 
-    except Post.DoesNotExist:
+    except BlogPost.DoesNotExist:
         user_is_authorised = False
 
     else:
@@ -36,14 +37,31 @@ def check_user_linked_to_post(user_id, asset_id, post_id):
 
     return user_is_authorised
 
+def check_user_linked_to_forum_post(user_id, post_id):
+
+    # this function can be used to check if the user is the author of a forum/thread post
+    # to check if the user is just chancing their arm trying to edit a forum/thread post
+
+    try:
+        user_mapping = ForumPost.objects.get(user_id=user_id, id=post_id)
+
+    except ForumPost.DoesNotExist:
+        user_is_authorised = False
+
+    else:
+        user_is_authorised = True
+
+    return user_is_authorised
+
+
 def blog_post_exists(asset_id, post_id):
 
     # check if the post exists for the given asset
 
     try:
-        the_post = Post.objects.get(id=post_id, asset_ID_id=asset_id)
+        the_post = BlogPost.objects.get(id=post_id, asset_ID_id=asset_id)
 
-    except Post.DoesNotExist:
+    except BlogPost.DoesNotExist:
         post_exists = False
 
     else:

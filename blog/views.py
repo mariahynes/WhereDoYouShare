@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from .models import Post
-from home.myAuth import check_user_linked_to_asset,blog_post_exists,check_user_linked_to_post
+from home.myAuth import check_user_linked_to_asset,blog_post_exists,check_user_linked_to_blog_post
 from assets.models import Asset
 from .forms import BlogPostForm
 from django.contrib.auth.decorators import login_required
@@ -84,7 +84,7 @@ def post_detail(request, asset_id, id):
             post.save()
 
             #is this person the author?
-            if check_user_linked_to_post(my_id,asset_id,id):
+            if check_user_linked_to_blog_post(my_id,asset_id,id):
                 show_edit = True
 
 
@@ -148,7 +148,7 @@ def edit_blog_post(request, asset_id, id):
         # and finally check if the user is the one who CREATED this post
         # only they should be allowed to edit
 
-        if check_user_linked_to_post(my_id, asset_id, id) == False:
+        if check_user_linked_to_blog_post(my_id, asset_id, id) == False:
             # redirect back to the full blog list for the asset
             return redirect(post_list,asset_id)
 
