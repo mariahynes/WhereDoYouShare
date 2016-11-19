@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load home_extras %}
     {% load bootstrap_tags %}
     {% block content %}
     {% load staticfiles %}
@@ -22,30 +23,61 @@
 
                                         <p data-animate="fadeInUp" class="lead divleft bottommargin" style="max-width: 700px; ">
                                             <span style="font-family: 'Playfair Display'">You are logged in as: </span>{{ user.first_name }} {{ user.last_name }} | {{ user.username }} </p>
+                                            <p>
 
+                                                <form role="form" method="post" action="">
+                                                    {% csrf_token %}
+                                                     {{ invitecodeform | as_bootstrap}}
+                                                    <div class="form-group">
+                                                        <button type="submit" class="btn btn-primary">Submit the Code</button>{% if code_message %}{{ code_message }}{% endif %}
+                                                    </div>
+                                                </form>
+
+
+
+                                            <small>Something new to share? <button class="btn btn-primary">Yes! </button></small>
+                                            </p>
                                         {% if assets %}
-                                        <p> <span style="font-family: 'Playfair Display'">You are linked to the following
+                                        <p> <span style="font-family: 'Playfair Display'">Your are sharing the following
                                             {%  with total=assets.count %}
                                                 Asset{{ total|pluralize }}: </span>
                                             {%  endwith %}
 
                                                     {% for asset in assets %}
-                                                        <p>
 
-                                                        <div class="dropdown">
 
-                                                            <button class="btn btn-primary btn-lg btn-block dropdown-toggle" type="button" data-toggle="dropdown">{{ asset.asset_display_name }} <span class="caret"></span></button>
 
-                                                                <ul class="dropdown-menu">
-                                                              <li><a href="{% url 'asset_detail' asset.id %}">View Details</a></li>
-                                                                 <li><a href="{% url 'all_future_asset_bookings_for_user' asset.id 1 %}">View My Bookings</a></li>
-                                                                <li><a href="{% url 'make_a_booking' asset.id %}">Make a Booking</a></li>
-                                                              <li><a href="{% url 'all_future_asset_bookings' asset.id %}">View All Bookings</a></li>
-                                                                    <li><a href="{% url 'post_list' asset.id %}">{{ asset.asset_display_name }} Blog</a></li>
-                                                                    <li><a href="{% url 'forum' asset.id %}">{{ asset.asset_display_name }} Forum</a></li>
-                                                            </ul>
-                                                        </div>
-                                                        </p>
+
+                                                                <p>
+
+                                                                <div class="dropdown">
+
+                                                                    <button class="btn btn-primary btn-lg btn-block dropdown-toggle" type="button" data-toggle="dropdown">
+                                                                        {%  if asset.is_owner %}
+                                                                        {{ asset.asset_ID.asset_display_name }} (Owner)
+                                                                            {% else %}
+                                                                            {{ asset.asset_ID.asset_display_name }}
+                                                                        {%  endif %}
+                                                                        <span class="caret"></span></button>
+
+                                                                        <ul class="dropdown-menu">
+                                                                            <li><a href="{% url 'asset_detail' asset.asset_ID_id %}">View Details</a></li>
+                                                                            <li><a href="{% url 'all_future_asset_bookings_for_user' asset.asset_ID_id user.id %}">View My Bookings</a></li>
+                                                                            <li><a href="{% url 'make_a_booking' asset.asset_ID_id %}">Make a Booking</a></li>
+                                                                            <li><a href="{% url 'all_future_asset_bookings' asset.asset_ID_id %}">View All Bookings</a></li>
+                                                                            <li><a href="{% url 'post_list' asset.asset_ID_id %}">{{ asset.asset_ID.asset_display_name }} Blog</a></li>
+                                                                            <li><a href="{% url 'forum' asset.asset_ID_id %}">{{ asset.asset_ID.asset_display_name }} Forum</a></li>
+
+                                                                            {%  if asset.is_owner %}
+                                                                                <li><a href="">{{ asset.asset_ID.asset_display_name }} Pending Requests <span class="badge">{{ pending_requests|get_total_pending:asset.asset_ID }}</span></a></li>
+                                                                            {%  endif %}
+
+
+
+                                                                        </ul>
+
+                                                                </div>
+                                                                </p>
 
 
 
@@ -54,7 +86,8 @@
 
                                         </p>
                                         {% else %}
-                                            You are not linked to any assets
+                                           <p>You are not linked to any assets</p>
+
                                         {% endif %}
 
                                         {% if bookings %}
@@ -95,10 +128,10 @@
 
                                         </p>
                                         {% else %}
-                                            You have no upcoming bookings <br>
-                                            {% if assets.count == 1 %}
+                                            {% if assets.count > 0 %}
+                                                You have no upcoming bookings <br>
                                                 {% for asset in assets %}
-                                                    <a href="{% url 'make_a_booking' asset.id %}" role="button" class = "btn btn-primary">Make a Booking</a>
+                                                    <a href="{% url 'make_a_booking' asset.id %}" role="button" class = "btn btn-primary">Make a Booking | {{ asset.asset_ID.asset_display_name }}</a>
                                                 {% endfor %}
                                             {% endif %}
                                         {% endif %}

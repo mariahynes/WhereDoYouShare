@@ -27,7 +27,7 @@ class Asset_User_Mapping(models.Model):
         app_label = "assets"
 
     user_ID = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name="asset_users")
-    asset_ID = models.ForeignKey('Asset', on_delete=models.CASCADE)
+    asset_ID = models.ForeignKey('Asset', on_delete=models.CASCADE, related_name="the_asset")
     is_owner = models.BooleanField(blank=False)
     position_in_rotation = models.IntegerField(default=0)
     date_created = models.DateTimeField(default=timezone.now)

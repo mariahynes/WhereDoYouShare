@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from assets.models import Asset
 from home.myAuth import check_user_linked_to_asset
+from django.core.urlresolvers import reverse
 
 @login_required(login_url='/login/')
 def assets(request):
@@ -25,3 +26,4 @@ def asset_detail(request, asset_id):
         errors.append("You are not authorised to view this page")
 
     return render(request, "asset_detail.html",{"asset": the_asset, "errors": errors})
+

@@ -2,7 +2,20 @@ from assets.models import Asset, Asset_User_Mapping
 from blog.models import Post as BlogPost
 from forum.models import Post as ForumPost
 from forum.models import Subject, Thread
+from accounts.models import User
 import json
+
+def can_user_register(user_email):
+
+    try:
+        the_user = User.objects.get(username=user_email)
+    except User.DoesNotExist:
+        can_register = True
+
+    else:
+        can_register = False
+
+    return can_register
 
 def check_user_linked_to_asset(user_id, asset_id):
 

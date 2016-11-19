@@ -4,27 +4,36 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import render, redirect
 from django.template.context_processors import csrf
 from django.contrib.auth.decorators import login_required
-from assets.models import Asset
+from assets.models import Asset, Asset_User_Mapping
 from bookings.models import Booking
+from assets.forms import InviteCodeForm
 import datetime
+from django.utils import timezone
 from django.core import serializers
+from home.myAuth import check_user_linked_to_asset, can_user_register
 
 def register(request):
+
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
-            form.save()
 
-            user = auth.authenticate(email=request.POST.get('email'),
-                                     password=request.POST.get('password1'))
-
-            if user:
-                # messages.success(request, "You have successfully registered")
-                auth.login(request, user)
-                return redirect(reverse('profile'))
+            # check if the user has already registered
+            if can_user_register(request.POST.get('email')) == False:
+                messages.error(request, "Sorry, this email is already registered")
 
             else:
-                messages.error(request, "unable to log you in at this time!")
+                form.save()
+                user = auth.authenticate(email=request.POST.get('email'),
+                                         password=request.POST.get('password1'))
+
+                if user:
+                    # messages.success(request, "You have successfully registered")
+                    auth.login(request, user)
+                    return redirect(reverse('profile'))
+
+                else:
+                    messages.error(request, "unable to log you in at this time!")
 
     else:
         form = UserRegistrationForm()
@@ -36,6 +45,36 @@ def register(request):
 
 @login_required(login_url='/login/')
 def profile(request):
+
+    invitecodeform = InviteCodeForm()
+    code_message = ""
+
+    if request.method == "POST":
+        form = InviteCodeForm(request.POST)
+        if form.is_valid():
+            # hard-coding the actions here for purposes of testing the concept of using an invitation code
+            cd = form.cleaned_data
+            the_date = timezone.now().strftime("%Y-%m-%d %H:%M:%S")
+            if cd['invitecode'] == "12345":
+                # check if the code has been used
+                if check_user_linked_to_asset(request.user,1) == False:
+                    new_mapping = Asset_User_Mapping(user_ID=request.user,asset_ID_id=1,date_activated=the_date, is_owner=0,is_activated=True,inviter_id=13)
+                    new_mapping.save()
+                else:
+                    code_message = "You have already used that code"
+
+            elif cd['invitecode'] == "54321":
+                if check_user_linked_to_asset(request.user,2) == False:
+                    new_mapping = Asset_User_Mapping(user_ID=request.user, asset_ID_id=2, date_activated=the_date, is_owner=0, is_activated=True, inviter_id=13)
+                    new_mapping.save()
+                else:
+                    code_message = "You have already used that code"
+
+    else:
+
+        invitecodeform = InviteCodeForm()
+
+
     # set session values to be used until user logs out
     # store the asset ids they are linked to
 
@@ -45,7 +84,6 @@ def profile(request):
 
     # want to store a list in the session
     # http://stackoverflow.com/questions/6720121/serializing-result-of-a-queryset-with-json-raises-error
-
     class LinkedAssets(object):
         def __init__(self,asset_id):
             self.asset_id = asset_id
@@ -54,20 +92,17 @@ def profile(request):
             return self.__dict__
 
     if linked_asset_count > 0:
-        # fill the linked_assets list
-       # linked_assets = []
-
+        # fill the linked_assets session list
         linked_assets = serializers.serialize('json',Asset.objects.all().filter(asset_users = request.user), fields=('id,'))
-      #  linked_assets = serializers.serialize('json', Asset.objects.values('id').filter(asset_users=request.user))
-       # linked_assets.append(LinkedAssets(Asset.objects.values_list('id', flat=True)).serialize())
         request.session['linked_assets'] = linked_assets
 
+    future_bookings = Booking.objects.all().filter(requested_by_user_ID=request.user).filter(start_date__gt=datetime.date.today())
+    assets = Asset_User_Mapping.objects.all().filter(user_ID=request.user)
+    pending_requests = Booking.objects.all().filter(slot_owner_id_id=request.user, start_date__gt=datetime.date.today(),is_confirmed=False)
 
-    # request.session['linked_assets']= Asset.objects.values('id').filter(asset_users=request.user)
 
-    return render(request, 'profile.html', {'assets': Asset.objects.all().filter(asset_users=request.user),
-                                            'bookings': Booking.objects.all().filter(requested_by_user_ID=request.user).filter(start_date__gt=datetime.date.today())
-                                            })
+
+    return render(request, 'profile.html', {'assets': assets, 'bookings': future_bookings, 'pending_requests':pending_requests, 'invitecodeform':invitecodeform, 'code_message': code_message})
 
 
 def login(request):

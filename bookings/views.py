@@ -18,7 +18,7 @@ def my_bookings(request):
     return render(request, "bookings.html", {"bookings": my_bookings})
 
 @login_required(login_url='/login/')
-def all_future_asset_bookings(request, asset_id, for_user=0):
+def all_future_asset_bookings(request, asset_id, user_id=0):
     the_asset = get_object_or_404(Asset, pk=asset_id)
 
     errors = []
@@ -27,12 +27,18 @@ def all_future_asset_bookings(request, asset_id, for_user=0):
     if check_user_linked_to_asset(my_id, asset_id):
 
         # optional userID
-        if for_user == 0:
+        if user_id == 0:
             all_bookings = Booking.objects.all().filter(asset_ID=the_asset).filter(start_date__gt=datetime.date.today())
         else:
-            my_id = request.user
-            all_bookings = Booking.objects.all().filter(asset_ID=the_asset).filter(requested_by_user_ID=my_id,
+            # user_id provided in URL
+            # check that given id is the same as the current user
+            if int(user_id) == request.user.id:
+                all_bookings = Booking.objects.all().filter(asset_ID=the_asset).filter(requested_by_user_ID=my_id,
                                                                                    start_date__gt=datetime.date.today())
+            else:
+                the_asset = []
+                all_bookings = []
+                errors.append("You are not authorised to view this Booking page")
 
     else:
         the_asset = []
@@ -78,17 +84,6 @@ def make_a_booking(request, asset_id):
             #now save to database
 
             new_booking.save()
-
-            # booking_id = models.AutoField(primary_key=True)
-            # asset_ID = models.ForeignKey(Asset, on_delete=models.CASCADE, related_name="asset_booked")
-            # requested_by_user_ID = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
-            #                                          related_name="requested_by")
-            # slot_owner_id = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-            # start_date = models.DateField(blank=False)
-            # end_date = models.DateField(blank=False)
-            # is_confirmed = models.BooleanField(default=False)
-            # deposit_paid = models.BooleanField(default=False)
-            # date_created = models.DateTimeField(default=timezone.now)
 
             messages.success(request, "New Booking created, thanks")
             return redirect(reverse('booking_detail', args={new_booking.pk}))
