@@ -1,12 +1,8 @@
 from assets.models import Asset, Asset_User_Mapping
 from accounts.models import User
-from django.conf import settings
+from bookings.models import Booking, BookingDetail
 import datetime
 import monthdelta
-
-
-def hello_world():
-    return "Hi!"
 
 def get_owners_and_dates_WEEK_CALC_ONLY(asset_ID, request_start, request_end):
 
@@ -223,13 +219,16 @@ def get_owners_and_dates(asset_ID, request_start, request_end):
 
         slots = 0
 
-        def __init__(self, owner_id, first_name, last_name, start_for_owner, end_for_owner, days_requested):
+        def __init__(self, owner_id, first_name, last_name, start_for_owner, end_for_owner, start_requested, end_requested, days_requested, days_available):
             self.owner_id = owner_id
             self.start_for_owner = start_for_owner
             self.end_for_owner = end_for_owner
+            self.start_requested = start_requested
+            self.end_requested = end_requested
             self.first_name = first_name
             self.last_name = last_name
             self.days_requested = days_requested
+            self.days_available = days_available
             Owners_And_Dates.slots += 1
 
         def owner_display_name(self):
@@ -340,36 +339,30 @@ def get_owners_and_dates(asset_ID, request_start, request_end):
     # or more than one owner
     # store Owner ID and slot start and slot end dates in object to return
 
+    # first slot details
+    delta = slot_end_for_start_date - start_date
+    num_days_slot_1 = delta.days
+
+    # check Booking table to find out the number of days available for the range
+    num_days_available = check_availability(asset_ID, start_date, slot_end_for_start_date)
+    o = User.objects.get(id=slot_owner_on_requested_start_date)
+    o_and_d = Owners_And_Dates(slot_owner_on_requested_start_date, o.first_name, o.last_name,
+                               slot_start_for_start_date, slot_end_for_start_date, start_date, slot_end_for_start_date,
+                               num_days_slot_1, num_days_available)
+    owners_and_dates_list.append(o_and_d)
+
     # if the number of days from requested end date to end of the slot is >=0
     # then there is no need to move into the next slot i.e. only one owner should be returned
-
     delta = slot_end_for_start_date - end_date
 
     if delta.days >= 0:
-
+        print delta.days
         print "Only one owner to return"
         slots_affected = 1
-        delta = slot_end_for_start_date - start_date
-        num_days_slot_1 = delta.days
-
-        o = User.objects.get(id=slot_owner_on_requested_start_date)
-        o_and_d = Owners_And_Dates(slot_owner_on_requested_start_date, o.first_name, o.last_name,
-                                   slot_start_for_start_date, slot_end_for_start_date, num_days_slot_1)
-        owners_and_dates_list.append(o_and_d)
 
     else:
 
         print "More than one owner to return"
-        # first slot details
-        delta = slot_end_for_start_date - start_date
-        num_days_slot_1 = delta.days
-
-        o = User.objects.get(id=slot_owner_on_requested_start_date)
-        o_and_d = Owners_And_Dates(slot_owner_on_requested_start_date, o.first_name, o.last_name, slot_start_for_start_date,
-                                   slot_end_for_start_date,num_days_slot_1)
-
-        owners_and_dates_list.append(o_and_d)
-
 
         print "%s days required from owner slot 1: " % num_days_slot_1, slot_owner_on_requested_start_date
 
@@ -429,9 +422,10 @@ def get_owners_and_dates(asset_ID, request_start, request_end):
                 print "%s is end of next slot" % next_slot_end
                 print "%s days still to cover" % days_to_cover
 
+                num_days_available = check_availability(asset_ID, next_slot_start_date, next_slot_end)
                 o = User.objects.get(id=next_slot_owner)
                 o_and_d = Owners_And_Dates(next_slot_owner, o.first_name, o.last_name, next_slot_start_date,
-                                           next_slot_end,num_days_per_period)
+                                           next_slot_end,next_slot_start_date,next_slot_end,num_days_per_period,num_days_available)
 
                 owners_and_dates_list.append(o_and_d)
 
@@ -446,9 +440,10 @@ def get_owners_and_dates(asset_ID, request_start, request_end):
                 print "%s is start of next (final) slot" % next_slot_start_date
                 print "%s is end of next (final) slot" % next_slot_end
 
+                num_days_available = check_availability(asset_ID, next_slot_start_date, end_date)
                 o = User.objects.get(id=next_slot_owner)
                 o_and_d = Owners_And_Dates(next_slot_owner, o.first_name, o.last_name, next_slot_start_date,
-                                           next_slot_end,days_of_current_slot)
+                                           next_slot_end,next_slot_start_date, end_date, days_of_current_slot,num_days_available)
 
                 owners_and_dates_list.append(o_and_d)
 
@@ -485,12 +480,25 @@ def get_end_slot_date(start_date, days_step):
     return end_slot_date
 
 
-def get_owner_display_name(owner_id):
+def check_availability(asset_id,start_date, end_date):
+
+    # check if ach date in the span between start_date and end_date is in the bookingdetail table for this asset_id
+    # could be pending or confirmed
+    # this function (at the moment) just returns number of nights available (i.e. NOT pending or confirmed)
+
+    count_available = 0
+
+    return count_available
 
 
-    settings.AUTH_USER_MODEL
-    my_bookings = Booking.objects.all().filter(requested_by_user_ID=my_id)
-    return
+
+
+# def get_owner_display_name(owner_id):
+#
+#
+#     settings.AUTH_USER_MODEL
+#     my_bookings = Booking.objects.all().filter(requested_by_user_ID=my_id)
+#     return
 
 
 

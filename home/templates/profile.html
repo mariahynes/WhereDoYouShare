@@ -7,6 +7,11 @@
         {% block head_style %}
 
         {% endblock %}
+
+        {% block head_js %}
+
+
+        {% endblock %}
         <!-- Slider ============================================= -->
 		<section id="slider" class="full-screen  slider-parallax">
 
@@ -33,10 +38,8 @@
                                                     </div>
                                                 </form>
 
+                                        </p>
 
-
-                                            <small>Something new to share? <button class="btn btn-primary">Yes! </button></small>
-                                            </p>
                                         {% if assets %}
                                         <p> <span style="font-family: 'Playfair Display'">Your are sharing the following
                                             {%  with total=assets.count %}
@@ -103,24 +106,34 @@
                                                             <th>From</th>
                                                             <th>Until</th>
                                                             <th>Confirmed?</th>
-                                                            <th>Owner</th>
+                                                            <th>Slot Owner</th>
                                                             <th></th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
+                                                    {%  for booking_id in bookings %}
 
-                                                        {% for booking in bookings %}
-                                                            <tr>
-                                                                <td>{{ booking.asset_ID.asset_display_name }}</td>
-                                                                <td>{{ booking.start_date }}</td>
-                                                                <td>{{ booking.end_date }}</td>
-                                                                <td>{{ booking.is_confirmed }}</td>
-                                                                <td>{{ booking.slot_owner_id.first_name }} {{ booking.slot_owner_id.last_name }}</td>
-                                                                <td><a href="{% url 'booking_detail' booking.booking_id %}">View</a></td>
+                                                        <td>{% get_booking_asset_name booking_id %}</td>
+                                                        <td>{% get_booking_start_date  booking_id %} </td>
+                                                        <td>{% get_booking_end_date  booking_id %} </td>
+                                                        <td>{% is_booking_confirmed booking_id %}</td>
+                                                        <td>{% get_booking_slot_owner booking_id %}</td>
+                                                        <td></td>
 
-                                                            </tr>
+                                                    {% endfor %}
 
-                                                        {% endfor %}
+{#                                                        {% for booking in bookings %}#}
+{#                                                            <tr>#}
+{#                                                                <td>{{ booking.booking_id.asset_ID.asset_display_name }}</td>#}
+{#                                                                <td>{% get_booking_start_date  booking.booking_id %} </td>#}
+{#                                                                <td>{% get_booking_end_date  booking.booking_id %} </td>#}
+{#                                                                <td>{{ booking.is_confirmed }}</td>#}
+{#                                                                <td>{{ booking.slot_owner_id.first_name }} {{ booking.slot_owner_id.last_name }}</td>#}
+{#                                                                <td><a href="{% url 'booking_detail' booking.booking_id_id %}">View</a></td>#}
+{##}
+{#                                                            </tr>#}
+{##}
+{#                                                        {% endfor %}#}
                                                      </tbody>
                                                 </table>
                                             </div>
@@ -131,7 +144,7 @@
                                             {% if assets.count > 0 %}
                                                 You have no upcoming bookings <br>
                                                 {% for asset in assets %}
-                                                    <a href="{% url 'make_a_booking' asset.id %}" role="button" class = "btn btn-primary">Make a Booking | {{ asset.asset_ID.asset_display_name }}</a>
+                                                    <a href="{% url 'make_a_booking' asset.asset_ID_id %}" role="button" class = "btn btn-primary">Make a Booking | {{ asset.asset_ID.asset_display_name }}</a>
                                                 {% endfor %}
                                             {% endif %}
                                         {% endif %}

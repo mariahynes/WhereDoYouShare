@@ -60,9 +60,12 @@
                                                                 <thead>
                                                                     <tr>
                                                                         <th>Owner</th>
-                                                                        <th>From</th>
-                                                                        <th>Until</th>
+                                                                        <th>Owner From</th>
+                                                                        <th>Owner Until</th>
+                                                                        <th>Requested From</th>
+                                                                        <th>Requested Until</th>
                                                                         <th align="center">Nights Requested</th>
+                                                                        <th align="center">Nights Available</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -72,7 +75,10 @@
                                                                             <td>{{ owner.first_name }} {{ owner.last_name }}</td>
                                                                             <td>{{ owner.start_for_owner}}</td>
                                                                             <td>{{ owner.end_for_owner }}</td>
+                                                                            <td>{{ owner.start_requested}}</td>
+                                                                            <td>{{ owner.end_requested}}</td>
                                                                             <td align="center">{{ owner.days_requested }}</td>
+                                                                            <td align="center">{{ owner.available }}</td>
 
                                                                         </tr>
 
@@ -81,17 +87,20 @@
                                                             </table>
                                                         </div>
                                                     </p>
+
+                                                    <form role="form" method="post" action="{% url 'make_a_booking' the_asset.id %}">
+                                                        {% csrf_token %}
+
+                                                         {{ booking_form | as_bootstrap }}
+
+                                                        <div class="form-group">
+                                                            <button type="submit" class="btn btn-primary">Send Booking Request</button>
+                                                        </div>
+                                                    </form>
+
                                                 {% endif %}
 
-                                                <form role="form" method="post" action="{% url 'make_a_booking' the_asset.id %}">
-                                                    {% csrf_token %}
-                                                  <!-- <div class="input-daterange">
-                                                     {{ booking_form | as_bootstrap }}
-                                                     </div> -->
-                                                    <div class="form-group">
-                                                        <button type="submit" class="btn btn-primary">Send Booking Request</button>
-                                                    </div>
-                                                </form>
+
 
                                         </p>
 

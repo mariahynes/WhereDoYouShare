@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from django.template.context_processors import csrf
 from django.contrib.auth.decorators import login_required
 from assets.models import Asset, Asset_User_Mapping
-from bookings.models import Booking
+from bookings.models import Booking, BookingDetail
 from assets.forms import InviteCodeForm
 import datetime
 from django.utils import timezone
@@ -96,13 +96,19 @@ def profile(request):
         linked_assets = serializers.serialize('json',Asset.objects.all().filter(asset_users = request.user), fields=('id,'))
         request.session['linked_assets'] = linked_assets
 
-    future_bookings = Booking.objects.all().filter(requested_by_user_ID=request.user).filter(start_date__gt=datetime.date.today())
+    future_bookings = BookingDetail.objects.all().filter(booking_id__requested_by_user_ID=request.user, booking_date__gt=datetime.date.today())
+    # need a unique set of future booking ids
+    booking_ids = set()
+    if future_bookings:
+        for item in future_bookings:
+            booking_ids.add(item.booking_id_id)
+
     assets = Asset_User_Mapping.objects.all().filter(user_ID=request.user)
-    pending_requests = Booking.objects.all().filter(slot_owner_id_id=request.user, start_date__gt=datetime.date.today(),is_confirmed=False)
+    pending_requests = BookingDetail.objects.all().filter(slot_owner_id_id=request.user, booking_date__gt=datetime.date.today(),is_confirmed=0)
 
 
 
-    return render(request, 'profile.html', {'assets': assets, 'bookings': future_bookings, 'pending_requests':pending_requests, 'invitecodeform':invitecodeform, 'code_message': code_message})
+    return render(request, 'profile.html', {'assets': assets, 'bookings': booking_ids, 'pending_requests':pending_requests, 'invitecodeform':invitecodeform, 'code_message': code_message})
 
 
 def login(request):
