@@ -1,5 +1,6 @@
 from django import forms
 from bookings.models import Booking
+import datetime
 
 # created this custom widget because date form fields were
 # defaulting to 'text'
@@ -12,8 +13,9 @@ class BookingForm(forms.ModelForm):
 
     # start_date = forms.DateField(label="Start Date", widget=DateInput, input_formats=['%d-%m-%Y'])
     # end_date = forms.DateField(label="End Date", widget=DateInput,input_formats=['%d-%m-%Y'])
-    start_date = forms.DateField(label="Arriving on", widget=DateInput, initial="DD/MM/YYYY")
-    end_date = forms.DateField(label="Leaving on", widget=DateInput,initial="DD/MM/YYYY")
+    start_date = forms.DateField(label="I need it from", widget=DateInput )
+    end_date = forms.DateField(label="I will give it back on", widget=DateInput)
+
 
     class Meta:
         model = Booking

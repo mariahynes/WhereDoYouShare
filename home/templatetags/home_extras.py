@@ -26,7 +26,11 @@ def get_booking_start_date(booking_id):
 @register.simple_tag
 def get_booking_end_date(booking_id):
     a_date = BookingDetail.objects.all().filter(booking_id=booking_id).order_by("-booking_date")[0]
-    max_date = a_date.booking_date.strftime("%d %b %Y")
+    max_date = a_date.booking_date
+
+    # add one day on (because departure will be the NEXT day)
+    max_date = max_date + datetime.timedelta(days=1)
+    max_date = max_date.strftime("%d %b %Y")
 
     return max_date
 

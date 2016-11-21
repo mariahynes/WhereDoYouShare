@@ -219,7 +219,8 @@ def get_owners_and_dates(asset_ID, request_start, request_end):
 
         slots = 0
 
-        def __init__(self, owner_id, first_name, last_name, start_for_owner, end_for_owner, start_requested, end_requested, days_requested, days_available):
+        def __init__(self, asset_id, owner_id, first_name, last_name, start_for_owner, end_for_owner, start_requested, end_requested, days_requested, days_available, unavailable_date_detail):
+            self.asset_id = asset_id
             self.owner_id = owner_id
             self.start_for_owner = start_for_owner
             self.end_for_owner = end_for_owner
@@ -229,7 +230,21 @@ def get_owners_and_dates(asset_ID, request_start, request_end):
             self.last_name = last_name
             self.days_requested = days_requested
             self.days_available = days_available
+            self.slot_id = start_requested.toordinal()
+            self.date_span_unavailable_detail = unavailable_date_detail
             Owners_And_Dates.slots += 1
+
+        def get_date_span_detail(self):
+
+            # if days_available < days_requested, then the user can click to view details
+            # this function will get the details (records from BookingDetails table)
+            # and store them in an object
+
+            if self.days_available < self.days_requested:
+
+                details = BookingDetail.objects.all().filter(booking_id_id = self.asset_id, )
+
+            return {(1,2,3), (2,3,4)}
 
         def owner_display_name(self):
             return "%s %s" % (self.first_name, self.last_name)
@@ -343,12 +358,13 @@ def get_owners_and_dates(asset_ID, request_start, request_end):
     delta = slot_end_for_start_date - start_date
     num_days_slot_1 = delta.days
 
-    # check Booking table to find out the number of days available for the range
-    num_days_available = check_availability(asset_ID, start_date, slot_end_for_start_date)
+    # check Booking table to find out the number of days un-available for the range
+    unavailable_details = check_availability(asset_ID, start_date, slot_end_for_start_date)
+    num_days_available = num_days_slot_1 - len(unavailable_details)
     o = User.objects.get(id=slot_owner_on_requested_start_date)
-    o_and_d = Owners_And_Dates(slot_owner_on_requested_start_date, o.first_name, o.last_name,
+    o_and_d = Owners_And_Dates(asset_ID,slot_owner_on_requested_start_date, o.first_name, o.last_name,
                                slot_start_for_start_date, slot_end_for_start_date, start_date, slot_end_for_start_date,
-                               num_days_slot_1, num_days_available)
+                               num_days_slot_1, num_days_available,unavailable_details)
     owners_and_dates_list.append(o_and_d)
 
     # if the number of days from requested end date to end of the slot is >=0
@@ -422,10 +438,11 @@ def get_owners_and_dates(asset_ID, request_start, request_end):
                 print "%s is end of next slot" % next_slot_end
                 print "%s days still to cover" % days_to_cover
 
-                num_days_available = check_availability(asset_ID, next_slot_start_date, next_slot_end)
+                unavailable_details = check_availability(asset_ID, next_slot_start_date, next_slot_end)
+                num_days_available = num_days_per_period - len(unavailable_details)
                 o = User.objects.get(id=next_slot_owner)
-                o_and_d = Owners_And_Dates(next_slot_owner, o.first_name, o.last_name, next_slot_start_date,
-                                           next_slot_end,next_slot_start_date,next_slot_end,num_days_per_period,num_days_available)
+                o_and_d = Owners_And_Dates(asset_ID, next_slot_owner, o.first_name, o.last_name, next_slot_start_date,
+                                           next_slot_end,next_slot_start_date,next_slot_end,num_days_per_period,num_days_available,unavailable_details)
 
                 owners_and_dates_list.append(o_and_d)
 
@@ -440,10 +457,11 @@ def get_owners_and_dates(asset_ID, request_start, request_end):
                 print "%s is start of next (final) slot" % next_slot_start_date
                 print "%s is end of next (final) slot" % next_slot_end
 
-                num_days_available = check_availability(asset_ID, next_slot_start_date, end_date)
+                unavailable_details = check_availability(asset_ID, next_slot_start_date, end_date)
+                num_days_available = days_of_current_slot - len(unavailable_details)
                 o = User.objects.get(id=next_slot_owner)
-                o_and_d = Owners_And_Dates(next_slot_owner, o.first_name, o.last_name, next_slot_start_date,
-                                           next_slot_end,next_slot_start_date, end_date, days_of_current_slot,num_days_available)
+                o_and_d = Owners_And_Dates(asset_ID, next_slot_owner, o.first_name, o.last_name, next_slot_start_date,
+                                           next_slot_end,next_slot_start_date, end_date, days_of_current_slot,num_days_available,unavailable_details)
 
                 owners_and_dates_list.append(o_and_d)
 
@@ -482,13 +500,67 @@ def get_end_slot_date(start_date, days_step):
 
 def check_availability(asset_id,start_date, end_date):
 
-    # check if ach date in the span between start_date and end_date is in the bookingdetail table for this asset_id
+    # check each date in the span between start_date and end_date to see if it is in the bookingdetail table for this asset_id
     # could be pending or confirmed
-    # this function (at the moment) just returns number of nights available (i.e. NOT pending or confirmed)
+    # this function (at the moment) returns booking_id, requested_by_user_id for storing in the date_span_detail field
+    # of the owners_and_date_list object
 
-    count_available = 0
+    unavailable_dates = 0
+    unavailable_details1 = {}
+    unavailable_details = []
 
-    return count_available
+    from_date = start_date.toordinal()
+    to_date = end_date.toordinal()
+
+    booking_ref = Booking.objects.all().filter(asset_ID=asset_id)
+
+    for item in booking_ref:
+
+        booking_id=item.booking_id
+
+        for the_date in range(from_date, to_date):
+
+            #convert date back to string
+            str_date = datetime.date.fromordinal(the_date)
+
+            try:
+                the_record = BookingDetail.objects.get(booking_id=booking_id, booking_date=str_date)
+
+                # # add details to a list
+                # unavailable_details['booking_id'] = the_record.booking_id
+                #
+                # unavailable_details['requested_by_user'] = "%s %s" % (the_record.booking_id.requested_by_user_ID.first_name,
+                # the_record.booking_id.requested_by_user_ID.last_name)
+                #
+                # if the_record.is_confirmed == 0:
+                #     unavailable_details['status'] = "Pending"
+                # else:
+                #     unavailable_details['status'] = "Confirmed"
+                # add details to a list
+                # unavailable_details.append({'booking_id': the_record.booking_id})
+                # unavailable_details.append({'date_booked': the_record.booking_date})
+                # the_user = "%s %s" % (the_record.booking_id.requested_by_user_ID.first_name,
+                #                                                       the_record.booking_id.requested_by_user_ID.last_name)
+                # unavailable_details.append({'requested_by_user': the_user})
+                #
+                # if the_record.is_confirmed == 0:
+                #     unavailable_details.append({'status': "Pending"})
+                # else:
+                #     unavailable_details.append({'status': "Confirmed"})
+
+                the_user = "%s %s" % (the_record.booking_id.requested_by_user_ID.first_name, the_record.booking_id.requested_by_user_ID.last_name)
+                if the_record.is_confirmed == 0:
+                    the_status = "Pending"
+                else:
+                    the_status = "Confirmed"
+
+                unavailable_details.append({'booking_id': the_record.booking_id,'date_booked': the_record.booking_date,'requested_by_user': the_user,'status': the_status})
+
+            except BookingDetail.DoesNotExist:
+
+                unavailable_dates += 1
+
+    return unavailable_details
 
 
 

@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load booking_extras %}
     {% load bootstrap_tags %}
     {% block content %}
     {% load staticfiles %}
@@ -23,34 +24,105 @@
 
                                 <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">Your Bookings</h2>
 
-                                    <div class="col_half">
 
-                                            <table class = "table table-striped">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Name</th>
-                                                        <th>From</th>
-                                                        <th>Until</th>
-                                                        <th>Confirmed?</th>
-                                                        <th>Owner</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {% for my_booking in bookings %}
-                                                    <tr>
-                                                        <td>{{ my_booking.asset_ID.asset_display_name }}</td>
-                                                        <td>{{ my_booking.start_date }}</td>
-                                                        <td>{{ my_booking.end_date }}</td>
-                                                        <td>{{ my_booking.is_confirmed }}</td>
-                                                        <td>{{ my_booking.slot_owner_id.first_name }} {{ my_booking.slot_owner_id.last_name }}</td>
-                                                    </tr>
 
-                                                    {% endfor %}
-                                                </tbody>
+                                        {% if num_bookings_future > 0 %}
+
+                                                <p> <span style="font-family: 'Playfair Display'">Your future
+                                                    {%  with total=num_bookings_future %}
+                                                         booking{{ total|pluralize }}: </span>
+                                                    {%  endwith %}
+                                                    <div class="col_half">
+                                                        <table class = "table table-striped">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Name</th>
+                                                                    <th>From</th>
+                                                                    <th>Until</th>
+                                                                    <th>Confirmed?</th>
+                                                                    <th>Slot Owner</th>
+                                                                    <th></th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            {%  for booking_id in future_bookings %}
+                                                                <tr>
+                                                                    <td>{% get_booking_asset_name booking_id.1 %}</td>
+                                                                    <td>{% get_booking_start_date  booking_id.1 %} </td>
+                                                                    <td>{% get_booking_end_date  booking_id.1 %} </td>
+                                                                    <td>{% is_booking_confirmed booking_id.1 %}</td>
+                                                                    <td>{% get_booking_slot_owner booking_id.1 %}</td>
+                                                                    <td></td>
+                                                                </tr>
+                                                            {% endfor %}
+
+                                                             </tbody>
+                                                        </table>
+                                                    </div>
+
+
+                                                </p>
+
+                                        {% else %}
+
+                                                You have no future bookings <br>
+
+                                        {% endif %}
+                                        {% if assets %}
+                                            <table class = "table">
+
+                                            {% for asset in assets %}
+                                                <tr><td>
+                                                <a href="{% url 'make_a_booking' asset.asset_ID_id %}" role="button" class = "btn btn-primary">Make a Booking | {{ asset.asset_ID.asset_display_name }}</a>
+                                                </td></tr>
+                                            {% endfor %}
                                             </table>
+                                        {% endif %}
+
+                                    {% if num_bookings_past > 0 %}
+
+                                                <p> <span style="font-family: 'Playfair Display'">Your past
+                                                    {%  with total=num_bookings_past %}
+                                                         booking{{ total|pluralize }}: </span>
+                                                    {%  endwith %}
+                                                    <div class="col_half">
+                                                        <table class = "table table-striped">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Name</th>
+                                                                    <th>From</th>
+                                                                    <th>Until</th>
+                                                                    <th>Confirmed?</th>
+                                                                    <th>Slot Owner</th>
+                                                                    <th></th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            {%  for booking_id in past_bookings %}
+                                                                <tr>
+                                                                    <td>{% get_booking_asset_name booking_id.1 %}</td>
+                                                                    <td>{% get_booking_start_date  booking_id.1 %} </td>
+                                                                    <td>{% get_booking_end_date  booking_id.1 %} </td>
+                                                                    <td>{% is_booking_confirmed booking_id.1 %}</td>
+                                                                    <td>{% get_booking_slot_owner booking_id.1 %}</td>
+                                                                    <td></td>
+                                                                </tr>
+                                                            {% endfor %}
+
+                                                             </tbody>
+                                                        </table>
+                                                    </div>
 
 
-                                     </div>
+                                                </p>
+
+                                        {% else %}
+
+                                                You have no previous bookings <br>
+
+                                        {% endif %}
+
+
 
                                     <div class="clear"></div>
 

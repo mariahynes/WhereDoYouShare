@@ -4,7 +4,8 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.template.context_processors import csrf
 from assets.models import Asset, Asset_User_Mapping
-from .models import Booking
+from bookings.templatetags.booking_extras import get_booking_start_date
+from .models import Booking, BookingDetail
 from .forms import BookingForm
 from myfunctions import get_owners_and_dates
 from home.myAuth import check_user_linked_to_asset
@@ -13,9 +14,63 @@ import datetime
 
 @login_required(login_url='/login/')
 def my_bookings(request):
+
     my_id = request.user
-    my_bookings = Booking.objects.all().filter(requested_by_user_ID=my_id)
-    return render(request, "bookings.html", {"bookings": my_bookings})
+
+    # this is all FUTURE bookings for every asset (>=today)
+    my_future_bookings = BookingDetail.objects.all().filter(booking_id__requested_by_user_ID=my_id,
+                                                            booking_date__gte=datetime.date.today()).order_by(
+        "-booking_date")
+
+    # this is all PAST bookings for every asset (<today)
+    my_past_bookings = BookingDetail.objects.all().filter(booking_id__requested_by_user_ID=my_id,
+                                                            booking_date__lt =datetime.date.today()).order_by(
+        "-booking_date")
+
+    # need a unique sets of booking ids, so populate sets
+    booking_ids_future = set()
+    booking_ids_past = set()
+
+    if my_future_bookings:
+        for item in my_future_bookings:
+            booking_ids_future.add(item.booking_id_id)
+
+    if my_past_bookings:
+        for item in my_past_bookings:
+            booking_ids_past.add(item.booking_id_id)
+
+    # in future Set want to sort by earliest to latest
+    future_date_and_booking_id = []
+    for booking_id in booking_ids_future:
+        the_date = get_booking_start_date(booking_id)
+        # have to convert to date so that it can be sorted as a date and not as a string
+        the_date = datetime.datetime.strptime(the_date, "%d %b %Y")
+        the_date = the_date.strftime("%Y%m%d")
+        future_date_and_booking_id.append((the_date, booking_id))
+
+    # and sort by the date before sending to the template
+    future_date_and_booking_id = sorted(future_date_and_booking_id, key=lambda tup: tup[0])
+
+    num_bookings_future = booking_ids_future.__len__()
+
+    # in past Set want to sort by latest to earliest
+    past_date_and_booking_id = []
+    for booking_id in booking_ids_past:
+        the_date = get_booking_start_date(booking_id)
+        # have to convert to date so that it can be sorted as a date and not as a string
+        the_date = datetime.datetime.strptime(the_date, "%d %b %Y")
+        the_date = the_date.strftime("%Y%m%d")
+        past_date_and_booking_id.append((the_date, booking_id))
+
+    # and sort by the date before sending to the template
+    past_date_and_booking_id = sorted(past_date_and_booking_id, key=lambda tup: tup[0])
+
+    num_bookings_past = booking_ids_past.__len__()
+
+    # send list of assets for this user
+    assets = Asset_User_Mapping.objects.all().filter(user_ID=request.user)
+
+    return render(request, "bookings.html", {"assets":assets,"future_bookings": future_date_and_booking_id, "num_bookings_future": num_bookings_future,"past_bookings": past_date_and_booking_id, "num_bookings_past": num_bookings_past})
 
 @login_required(login_url='/login/')
 def all_future_asset_bookings(request, asset_id, user_id=0):

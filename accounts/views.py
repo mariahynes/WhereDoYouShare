@@ -6,6 +6,7 @@ from django.template.context_processors import csrf
 from django.contrib.auth.decorators import login_required
 from assets.models import Asset, Asset_User_Mapping
 from bookings.models import Booking, BookingDetail
+from bookings.templatetags.booking_extras import get_booking_start_date
 from assets.forms import InviteCodeForm
 import datetime
 from django.utils import timezone
@@ -96,19 +97,34 @@ def profile(request):
         linked_assets = serializers.serialize('json',Asset.objects.all().filter(asset_users = request.user), fields=('id,'))
         request.session['linked_assets'] = linked_assets
 
-    future_bookings = BookingDetail.objects.all().filter(booking_id__requested_by_user_ID=request.user, booking_date__gt=datetime.date.today())
+    future_bookings = BookingDetail.objects.all().filter(booking_id__requested_by_user_ID=request.user, booking_date__gt=datetime.date.today()).order_by("booking_date")
+
     # need a unique set of future booking ids
     booking_ids = set()
     if future_bookings:
         for item in future_bookings:
             booking_ids.add(item.booking_id_id)
 
+    num_bookings = booking_ids.__len__()
+
+    # would like to order by booking date but once booking_ids go into the set, the set is ordered by booking_id
+    # so here, populate new tuple with booking_id and earliest start_date per booking
+    date_and_booking_id = []
+    for booking_id in booking_ids:
+        the_date = get_booking_start_date(booking_id)
+        # have to convert to date so that it can be sorted as a date and not as a string
+        the_date = datetime.datetime.strptime(the_date,"%d %b %Y")
+        the_date = the_date.strftime("%Y%m%d")
+        date_and_booking_id.append((the_date,booking_id))
+
+    # and sort by the date before sending to the template
+    date_and_booking_id = sorted(date_and_booking_id, key=lambda tup: tup[0])
+
+
     assets = Asset_User_Mapping.objects.all().filter(user_ID=request.user)
     pending_requests = BookingDetail.objects.all().filter(slot_owner_id_id=request.user, booking_date__gt=datetime.date.today(),is_confirmed=0)
 
-
-
-    return render(request, 'profile.html', {'assets': assets, 'bookings': booking_ids, 'pending_requests':pending_requests, 'invitecodeform':invitecodeform, 'code_message': code_message})
+    return render(request, 'profile.html', {'assets': assets, 'bookings': date_and_booking_id, 'num_bookings':num_bookings, 'pending_requests':pending_requests, 'invitecodeform':invitecodeform, 'code_message': code_message})
 
 
 def login(request):
@@ -134,5 +150,5 @@ def login(request):
 
 def logout(request):
     auth.logout(request)
-    messages.success(request, 'Come back soon!')
+    # messages.success(request, 'Come back soon!')
     return redirect(reverse('index'))
