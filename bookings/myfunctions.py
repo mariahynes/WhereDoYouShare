@@ -549,16 +549,21 @@ def check_availability(asset_id,start_date, end_date):
                 #     unavailable_details.append({'status': "Confirmed"})
 
                 the_user = "%s %s" % (the_record.booking_id.requested_by_user_ID.first_name, the_record.booking_id.requested_by_user_ID.last_name)
+
                 if the_record.is_confirmed == 0:
                     the_status = "Pending"
                 else:
                     the_status = "Confirmed"
 
-                unavailable_details.append({'booking_id': the_record.booking_id,'date_booked': the_record.booking_date,'requested_by_user': the_user,'status': the_status})
+                unavailable_details.append({'booking_id': the_record.booking_id, 'date_booked': the_record.booking_date,
+                                            'requested_by_user': the_user,
+                                            'requested_by_user_id': the_record.booking_id.requested_by_user_ID,
+                                            'status': the_status})
 
             except BookingDetail.DoesNotExist:
 
                 unavailable_dates += 1
+    print unavailable_details
 
     return unavailable_details
 

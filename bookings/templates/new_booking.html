@@ -73,8 +73,8 @@
 {#                                                                    <td>{{ owner.end_for_owner }}</td>#}
                                                                     <td>{{ owner.start_requested}}</td>
                                                                     <td>{{ owner.end_requested}}</td>
-                                                                    <td  align="center">{{ owner.days_requested }}</td>
-                                                                    <td  align="center">
+                                                                    <td>{{ owner.days_requested }}</td>
+                                                                    <td>
 
                                                                         {% if owner.days_requested > owner.days_available %}
                                                                             <button type="button" class="btn btn-danger" data-toggle="collapse" data-target="#{{ owner.slot_id }}">
@@ -103,7 +103,12 @@
                                                     {% for owner in owner_date_object %}
                                                         <div id = "{{ owner.slot_id }}" class="collapse">
                                                             {% for item in owner.date_span_unavailable_detail %}
-                                                                {{ item.requested_by_user }} has a {{ item.status }} booking on {{ item.date_booked}}   <br>
+                                                                {% if item.requested_by_user_id.id == user.id %}
+                                                                    You have
+                                                                {% else %}
+                                                                    {{ item.requested_by_user }} has
+                                                                {% endif %}
+                                                                a {{ item.status }} Booking on {{ item.date_booked}}   <br>
                                                             {% endfor %}
 
                                                         </div>
