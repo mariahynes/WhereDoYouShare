@@ -15,6 +15,42 @@ def get_total_pending(pending_requests,asset_id):
 
     return total
 
+
+@register.filter
+def get_total_days_requested(owner_and_dates):
+
+    total_days_requested = 0
+
+    for item in owner_and_dates:
+        total_days_requested += item.days_requested
+
+    return total_days_requested
+
+@register.filter
+def get_total_days_available(owner_and_dates):
+
+    total_days_available = 0
+
+    for item in owner_and_dates:
+
+        for available_date in item.date_span_available_detail:
+            total_days_available += 1
+
+    return total_days_available
+
+@register.filter
+def get_total_days_unavailable(owner_and_dates):
+
+    total_days_unavailable = 0
+
+    for item in owner_and_dates:
+
+        for unavailable_date in item.date_span_unavailable_detail:
+            total_days_unavailable += 1
+
+    return total_days_unavailable
+
+
 @register.simple_tag
 def get_booking_start_date(booking_id):
 
@@ -78,3 +114,11 @@ def get_booking_slot_owner(booking_id):
     owner_string = owner_string[:-2]
 
     return owner_string
+
+@register.simple_tag
+def get_total_days_in_booking(booking_id):
+
+    a = BookingDetail.objects.all().filter(booking_id=booking_id)
+    total_days = a.count()
+
+    return total_days

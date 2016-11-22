@@ -9,6 +9,8 @@ from .models import Booking, BookingDetail
 from .forms import BookingForm
 from myfunctions import get_owners_and_dates
 from home.myAuth import check_user_linked_to_asset
+import datetime
+
 
 import datetime
 
@@ -70,7 +72,11 @@ def my_bookings(request):
     # send list of assets for this user
     assets = Asset_User_Mapping.objects.all().filter(user_ID=request.user)
 
-    return render(request, "bookings.html", {"assets":assets,"future_bookings": future_date_and_booking_id, "num_bookings_future": num_bookings_future,"past_bookings": past_date_and_booking_id, "num_bookings_past": num_bookings_past})
+    return render(request, "bookings.html", {"assets": assets, "future_bookings": future_date_and_booking_id,
+                                             "num_bookings_future": num_bookings_future,
+                                             "past_bookings": past_date_and_booking_id,
+                                             "num_bookings_past": num_bookings_past})
+
 
 @login_required(login_url='/login/')
 def all_future_asset_bookings(request, asset_id, user_id=0):
@@ -104,8 +110,26 @@ def all_future_asset_bookings(request, asset_id, user_id=0):
 
 @login_required(login_url='/login/')
 def booking_detail(request, booking_id):
+
     the_booking = get_object_or_404(Booking, pk=booking_id)
-    return render(request, "booking_detail.html",{"booking": the_booking})
+    errors = []
+    asset = []
+    booking_detail = []
+
+    # get the asset id (from the booking)
+    asset_id = the_booking.asset_ID_id
+
+    # anyone linked to the Asset can view the booking
+    # but only owners and the requestor can edit the booking
+    my_id = request.user
+    if check_user_linked_to_asset(my_id,asset_id):
+
+        asset = Asset.objects.get(pk=asset_id)
+        booking_detail = BookingDetail.objects.select_related().filter(booking_id_id=booking_id).order_by("booking_date")
+    else:
+        errors.append("You are not authorised to view this booking")
+
+    return render(request, "booking_detail.html",{"booking":the_booking,"booking_detail": booking_detail, "asset":asset,"errors":errors})
 
 
 @login_required(login_url='/login/')
@@ -128,48 +152,72 @@ def make_a_booking(request, asset_id):
         new_booking_form = BookingForm(request.POST)
         if new_booking_form.is_valid():
 
-            #save it in memory while getting the addition info need to save it to the database
+            # save it in memory while getting the addition info need to save it to the database
             new_booking = new_booking_form.save(False)
-            new_booking.asset_ID_id = the_asset.id
+            # get additional info
+            new_booking.asset_ID_id = asset_id
             new_booking.requested_by_user_ID = request.user
-
-            owner_id = get_owner_id(new_booking.asset_ID_id,new_booking.start_date, new_booking.end_date)
-
-            new_booking.slot_owner_id = owner_id
-            #now save to database
-
+            # then save
             new_booking.save()
 
-            messages.success(request, "New Booking created, thanks")
+            # now, using the new_booking.pk, save each of the dates in BookingDetail
+            new_id = new_booking.pk
+
+            start_date = request.POST['start_date']
+            start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d').date()
+            end_date = request.POST['end_date']
+            end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d').date()
+            owner_date_object = get_owners_and_dates(asset_id, start_date, end_date)
+
+            print "object count is %s" % len(owner_date_object)
+
+            for item in owner_date_object:
+
+                owner_id = item.owner_id
+
+                print "the Detail: %s" % item.date_span_available_detail
+                for available_date in item.date_span_available_detail:
+                    booking_date = available_date
+                    new_record = BookingDetail(booking_date=booking_date, slot_owner_id_id=owner_id,booking_id_id=new_id)
+                    new_record.save()
+
+            # messages.success(request, "New Booking created, thanks")
             return redirect(reverse('booking_detail', args={new_booking.pk}))
 
     else:
 
-
         #request.method is GET,
         #check which stage of get
         if 'start_date' in request.GET:
-            start_date = request.GET['start_date']
-            start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d').date()
+            new_booking_form = BookingForm(request.GET)
+            if new_booking_form.is_valid():
+                start_date = request.GET['start_date']
+                start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d').date()
 
-            if 'end_date' in request.GET:
-                end_date = request.GET['end_date']
-                end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d').date()
+                if 'end_date' in request.GET:
+                    end_date = request.GET['end_date']
+                    end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d').date()
 
-            if end_date.toordinal() - start_date.toordinal() < 0:
-                errors.append('Your end date is earlier than your start date - please correct!')
+                if end_date.toordinal() - start_date.toordinal() < 0:
+                    errors.append('Your end date is earlier than your start date - please correct!')
 
-                new_booking_form = BookingForm(request.GET)
+                    new_booking_form = BookingForm(request.GET)
 
+                elif end_date.toordinal() == start_date.toordinal():
+                    errors.append('Your start and end dates are the same - please correct!')
+
+                    new_booking_form = BookingForm(request.GET)
+
+                else:
+                    # dates are fine (unless I programme more validation) so now continue with
+                    # displaying the ownership for the date range!
+                    print "Data to function: %s %s %s" % (asset_id, start_date, end_date)
+                    owner_date_object = get_owners_and_dates(asset_id, start_date, end_date)
+
+                    new_booking_form = BookingForm(request.GET)
             else:
-                # dates are fine (unless I programme more validation) so now continue with
-                # displaying the ownership for the date range!
-                owner_date_object = get_owners_and_dates(asset_id, start_date, end_date)
-                for item in owner_date_object:
-                    total_days_requested += item.days_requested
 
                 new_booking_form = BookingForm(request.GET)
-
         else:
             # this is first time so just display the form
             new_booking_form = BookingForm()
@@ -179,7 +227,6 @@ def make_a_booking(request, asset_id):
         'the_asset': the_asset,
         'errors': errors,
         'owner_date_object': owner_date_object,
-        'total_days_requested': total_days_requested,
         'user_ok': user_ok,
     }
 

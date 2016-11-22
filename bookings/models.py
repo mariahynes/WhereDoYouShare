@@ -48,6 +48,7 @@ class BookingDetail(models.Model):
     booking_id = models.ForeignKey(Booking, on_delete=models.CASCADE,related_name='bookingdetails')
     slot_owner_id = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     booking_date = models.DateField(blank=False)
+    date_created = models.DateTimeField(default=timezone.now)
     is_confirmed = models.BooleanField(default=False)
     date_confirmed = models.DateTimeField(blank=True, null=True)
 

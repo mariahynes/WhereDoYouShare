@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load booking_extras %}
     {% load bootstrap_tags %}
     {% block content %}
     {% load staticfiles %}
@@ -41,22 +42,60 @@
                                     <div class="col_four_fifth">
 
                                         {% if owner_date_object %}
-                                             <p><span style="font-family: 'Playfair Display'">Your range (of {{ total_days_requested }}
-                                                 {%  with day_total=total_days_requested|length %}
-                                                 date{{ day_total|pluralize }})
-                                                {% endwith %}
-                                                 belongs to the following
-                                                {%  with total=owner_date_object|length %}
-                                                     Owner{{ total|pluralize }}: </span>
+                                             <p><span style="font-family: 'Playfair Display'">
+                                                 <i class="fa fa-calendar" aria-hidden="true"></i>
+                                                 You are checking {{ owner_date_object | get_total_days_requested }}
+                                                 date{{ owner_date_object | get_total_days_requested | pluralize }}<br>
+
+                                             {% with totes_unavail=owner_date_object|get_total_days_unavailable %}
+                                                 {% if totes_unavail > 0 %}
+                                                      <i class="fa fa-times" aria-hidden="true"></i>
+
+                                                     {% with totes_requested=owner_date_object|get_total_days_requested %}
+                                                        {% if totes_unavail == totes_requested %}
+
+                                                            {{ totes_unavail|pluralize:"It is,They are"}} unavailable
+
+                                                        {% else %}
+                                                             {{ owner_date_object | get_total_days_unavailable }}
+                                                             of {{ owner_date_object | get_total_days_unavailable |pluralize:"them,these dates"}}
+                                                             {{ owner_date_object | get_total_days_unavailable | pluralize:"is,are"}}
+                                                            unavailable<br>
+
+                                                         {% endif %}
+                                                     {% endwith %}
+
+                                                {% else %}
+                                                     <i class="fa fa-check" aria-hidden="true"></i>
+                                                     The {{ owner_date_object | get_total_days_available | pluralize:"date is, dates are" }}
+                                                     available <br>
+                                                 {% endif %}
+                                             {% endwith %}
+
+                                             {% with totes_avail=owner_date_object|get_total_days_available %}
+                                                {% if totes_avail > 0 %}
+                                                    {%  with total=owner_date_object|length %}
+                                                     {% if total > 1 %}
+                                                        <i class="fa fa-user-plus" aria-hidden="true"></i>
+                                                    {% else %}
+                                                         <i class="fa fa-user" aria-hidden="true"></i>
+                                                    {% endif %}
                                                 {%  endwith %}
-
-
+                                                     The available
+                                                    date{{ owner_date_object | get_total_days_available | pluralize}}
+                                                        can be requested from the following
+                                                    {%  with total=owner_date_object|length %}
+                                                         Owner{{ total|pluralize }}:
+                                                    {%  endwith %}
+                                                 {% endif %}
+                                             {% endwith %}
+                                             </span>
                                                     <table class = "table table-striped">
                                                         <thead>
                                                             <tr>
                                                                 <th>Owner</th>
-{#                                                                <th>Owner From</th>#}
-{#                                                                <th>Owner Until</th>#}
+                                                                <th>Owner From</th>
+                                                                <th>Owner Until</th>
                                                                 <th>Requested From</th>
                                                                 <th>Requested Until</th>
                                                                 <th>Requested</th>
@@ -69,8 +108,8 @@
                                                             {% for owner in owner_date_object %}
                                                                 <tr>
                                                                     <td>{{ owner.first_name }} {{ owner.last_name }}</td>
-{#                                                                    <td>{{ owner.start_for_owner}}</td>#}
-{#                                                                    <td>{{ owner.end_for_owner }}</td>#}
+                                                                    <td>{{ owner.start_for_owner}}</td>
+                                                                    <td>{{ owner.end_for_owner }}</td>
                                                                     <td>{{ owner.start_requested}}</td>
                                                                     <td>{{ owner.end_requested}}</td>
                                                                     <td>{{ owner.days_requested }}</td>
@@ -104,7 +143,7 @@
                                                         <div id = "{{ owner.slot_id }}" class="collapse">
                                                             {% for item in owner.date_span_unavailable_detail %}
                                                                 {% if item.requested_by_user_id.id == user.id %}
-                                                                    You have
+                                                                    You already have
                                                                 {% else %}
                                                                     {{ item.requested_by_user }} has
                                                                 {% endif %}
@@ -114,17 +153,22 @@
                                                         </div>
                                                     {% endfor %}
                                             </p>
-                                            <div class="col_half">
-                                                <form role="form" method="post" action="{% url 'make_a_booking' the_asset.id %}">
-                                                    {% csrf_token %}
-                                                    <div class="hidden">
-                                                             {{ booking_form | as_bootstrap }}
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <button type="submit" class="btn btn-primary">Book the Available Dates</button>
-                                                    </div>
-                                                </form>
-                                            </div>
+
+                                            {% with totes_avail=owner_date_object|get_total_days_available %}
+                                                {% if totes_avail > 0 %}
+                                                <div class="col_half">
+                                                    <form role="form" method="post" action="{% url 'make_a_booking' the_asset.id %}">
+                                                        {% csrf_token %}
+                                                        <div class="hidden">
+                                                                 {{ booking_form | as_bootstrap }}
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <button type="submit" class="btn btn-primary">Request the available date{{ owner_date_object | get_total_days_available | pluralize}}</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                {% endif %}
+                                            {% endwith %}
                                         {% endif %}
                                     </div>
 

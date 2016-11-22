@@ -16,6 +16,23 @@ class BookingForm(forms.ModelForm):
     start_date = forms.DateField(label="I need it from", widget=DateInput )
     end_date = forms.DateField(label="I will give it back on", widget=DateInput)
 
+    def clean_start_date(self):
+
+        #start date must be in the future
+        user_start = self.cleaned_data['start_date']
+        if user_start < datetime.date.today():
+            raise forms.ValidationError("Please enter a future date")
+
+        return user_start
+
+    def clean_end_date(self):
+
+        # end date must be in the future
+        user_end = self.cleaned_data['end_date']
+        if user_end <= datetime.date.today():
+            raise forms.ValidationError("Please enter a future date")
+
+        return user_end
 
     class Meta:
         model = Booking

@@ -1,11 +1,102 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Booking Detail</title>
-</head>
-<body>
-My Booking Details for {{ booking.asset_ID.asset_display_name }}<br>
-{#Start Date {{ booking.start_date}}#}
-</body>
-</html>
+{% extends 'base.html' %}
+{% load booking_extras %}
+    {% load bootstrap_tags %}
+    {% block content %}
+    {% load staticfiles %}
+        {% block head_style %}
+            <style>
+                .opacity9{
+                    opacity:2;
+                }
+            </style>
+        {% endblock %}
+        <!-- Slider ============================================= -->
+		<section id="slider" class="full-screen  slider-parallax">
+
+			<div class="full-screen section nopadding nomargin noborder ohidden" style="background: url({% static 'myimages/login1.jpg' %}) bottom center no-repeat; background-size: cover;">
+
+				<div class="container " >
+				    <div class="vertical-middle">
+
+				        <div id="section-about" class="page-section">
+
+					        <div class="container clearfix"> <!--clearfix removed-->
+
+                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">Booking | {{ asset.asset_display_name }}</h2>
+
+                                {%  if errors %}
+                                     {% for error in errors %}
+                                           <p style="color:red">{{ error }}</p>
+                                     {% endfor %}
+                                {% else %}
+
+                                        {% if booking %}
+
+                                                <p> <span style="font-family: 'Playfair Display'">Booking Reference: {{ booking.booking_id }}
+
+                                                <br>
+                                                Total days: {% get_total_days_in_booking booking.booking_id %}
+                                                <br>
+                                                Requested By: {{ booking.requested_by_user_ID.first_name }} {{ booking.requested_by_user_ID.last_name }}
+                                                    <div class="col_half">
+                                                        <table class = "table table-striped">
+                                                            <thead>
+                                                                <tr>
+
+                                                                    <th>Date</th>
+                                                                    <th>Confirmed?</th>
+                                                                    <th>Slot Owner</th>
+                                                                    <th></th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            {%  for item in booking_detail %}
+                                                                <tr>
+
+                                                                    <td>{{ item.booking_date | date:"D d M Y"}} </td>
+                                                                    <td>{{ item.is_confirmed }} </td>
+                                                                    <td>{{ item.slot_owner_id.first_name }} {{ item.slot_owner_id.last_name }}</td>
+                                                                    <td></td>
+                                                                    <td></td>
+                                                                </tr>
+                                                            {% endfor %}
+
+                                                             </tbody>
+                                                        </table>
+                                                    </div>
+
+
+                                                </p>
+
+                                        {% else %}
+
+                                                You have no future bookings <br>
+
+                                        {% endif %}
+                            {% endif %}
+
+
+
+
+
+
+                                    <div class="clear"></div>
+
+                                    <div class="row topmargin-lg divcenter" style="max-width: 1000px;"></div>
+
+
+
+				            </div>
+
+                       </div>
+
+					</div>
+				</div>
+
+			</div>
+
+		</section> <!--#slider end -->
+
+
+
+    {% endblock %}
