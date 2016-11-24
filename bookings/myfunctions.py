@@ -219,7 +219,7 @@ def get_owners_and_dates(asset_ID, request_start, request_end):
 
         slots = 0
 
-        def __init__(self, asset_id, owner_id, first_name, last_name, start_for_owner, end_for_owner, start_requested, end_requested, days_requested, days_available, unavailable_date_detail, available_date_detail):
+        def __init__(self, asset_id, owner_id, first_name, last_name, start_for_owner, end_for_owner, start_requested, end_requested, days_requested, days_available, days_unavailable, unavailable_date_detail, available_date_detail):
             self.asset_id = asset_id
             self.owner_id = owner_id
             self.start_for_owner = start_for_owner
@@ -230,6 +230,7 @@ def get_owners_and_dates(asset_ID, request_start, request_end):
             self.last_name = last_name
             self.days_requested = days_requested
             self.days_available = days_available
+            self.days_unavailable = days_unavailable
             self.slot_id = start_requested.toordinal()
             self.date_span_unavailable_detail = unavailable_date_detail
             self.date_span_available_detail = available_date_detail
@@ -372,11 +373,12 @@ def get_owners_and_dates(asset_ID, request_start, request_end):
     date_ranges = check_availability(asset_ID, start_date, first_slot_end_date)
     unavailable_details = date_ranges['unavailable']
     num_days_available = days_requested - len(unavailable_details)
+    num_days_unavailable = days_requested - num_days_available
     o = User.objects.get(id=slot_owner_on_requested_start_date)
     available_details = date_ranges['available']
     o_and_d = Owners_And_Dates(asset_ID,slot_owner_on_requested_start_date, o.first_name, o.last_name,
                                slot_start_for_start_date, slot_end_for_start_date, start_date, first_slot_end_date,
-                               days_requested, num_days_available,unavailable_details,available_details)
+                               days_requested, num_days_available, num_days_unavailable, unavailable_details,available_details)
     owners_and_dates_list.append(o_and_d)
 
     # if the number from subtracting requested end date from the slot end date is >=0
@@ -453,10 +455,11 @@ def get_owners_and_dates(asset_ID, request_start, request_end):
                 date_ranges = check_availability(asset_ID, next_slot_start_date, next_slot_end)
                 unavailable_details = date_ranges['unavailable']
                 num_days_available = num_days_per_period - len(unavailable_details)
+                num_days_unavailable = num_days_per_period - num_days_available
                 o = User.objects.get(id=next_slot_owner)
                 available_details = date_ranges['available']
                 o_and_d = Owners_And_Dates(asset_ID, next_slot_owner, o.first_name, o.last_name, next_slot_start_date,
-                                           next_slot_end,next_slot_start_date,next_slot_end,num_days_per_period,num_days_available,unavailable_details,available_details)
+                                           next_slot_end,next_slot_start_date,next_slot_end,num_days_per_period,num_days_available,num_days_unavailable,unavailable_details,available_details)
 
                 owners_and_dates_list.append(o_and_d)
 
@@ -474,10 +477,11 @@ def get_owners_and_dates(asset_ID, request_start, request_end):
                 date_ranges = check_availability(asset_ID, next_slot_start_date, end_date)
                 unavailable_details = date_ranges['unavailable']
                 num_days_available = days_of_current_slot - len(unavailable_details)
+                num_days_unavailable = days_of_current_slot - num_days_available
                 o = User.objects.get(id=next_slot_owner)
                 available_details = date_ranges['available']
                 o_and_d = Owners_And_Dates(asset_ID, next_slot_owner, o.first_name, o.last_name, next_slot_start_date,
-                                           next_slot_end,next_slot_start_date, end_date, days_of_current_slot,num_days_available,unavailable_details,available_details)
+                                           next_slot_end,next_slot_start_date, end_date, days_of_current_slot,num_days_available,num_days_unavailable, unavailable_details,available_details)
 
                 owners_and_dates_list.append(o_and_d)
 
@@ -577,6 +581,10 @@ def check_availability(asset_id,start_date, end_date):
             # so it can get added to the available list
             print "in 2nd else part and date is %s" % str_date
             available_details.add(str_date)
+
+
+    # need to sort the available_details date list before returning
+    available_details = sorted(available_details)
 
     date_status = {'available': available_details, 'unavailable': unavailable_details}
 

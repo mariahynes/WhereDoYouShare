@@ -67,13 +67,16 @@
 
                                                                             <ul class="dropdown-menu">
                                                                                 <li><a href="{% url 'asset_detail' asset.asset_ID_id %}">View Details</a></li>
+                                                                            <li class="divider"></li>
                                                                                 <li><a href="{% url 'all_future_asset_bookings_for_user' asset.asset_ID_id user.id %}">View My Bookings</a></li>
                                                                                 <li><a href="{% url 'make_a_booking' asset.asset_ID_id %}">Make a Booking</a></li>
                                                                                 <li><a href="{% url 'all_future_asset_bookings' asset.asset_ID_id %}">View All Bookings</a></li>
+                                                                            <li class="divider"></li>
                                                                                 <li><a href="{% url 'post_list' asset.asset_ID_id %}">{{ asset.asset_ID.asset_display_name }} Blog</a></li>
                                                                                 <li><a href="{% url 'forum' asset.asset_ID_id %}">{{ asset.asset_ID.asset_display_name }} Forum</a></li>
 
                                                                                 {%  if asset.is_owner %}
+                                                                                    <li class="divider"></li>
                                                                                     <li><a href="">{{ asset.asset_ID.asset_display_name }} Pending Requests <span class="badge">{{ pending_requests|get_total_pending:asset.asset_ID }}</span></a></li>
                                                                                 {%  endif %}
 

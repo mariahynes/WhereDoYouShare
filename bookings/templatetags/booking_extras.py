@@ -39,6 +39,17 @@ def get_total_days_available(owner_and_dates):
     return total_days_available
 
 @register.filter
+def get_total_owner_slots(owner_and_dates):
+
+    total_owner_slots = 0
+
+    for item in owner_and_dates:
+
+            total_owner_slots += 1
+
+    return total_owner_slots
+
+@register.filter
 def get_total_days_unavailable(owner_and_dates):
 
     total_days_unavailable = 0
