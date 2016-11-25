@@ -79,27 +79,32 @@ def my_bookings(request):
 
 
 @login_required(login_url='/login/')
-def all_future_asset_bookings(request, asset_id, user_id=0):
+def all_future_asset_bookings(request, asset_id, **kwargs):
+
+    # this function returns all the future bookings for an asset
+    # can provide optional kwarg with the user id if to return bookings for a particular user
+
     the_asset = get_object_or_404(Asset, pk=asset_id)
 
     errors = []
+
+    if kwargs.has_key("for_this_user"):
+        this_user_only = kwargs['for_this_user']
+    else:
+        this_user_only = False
 
     my_id = request.user
     if check_user_linked_to_asset(my_id, asset_id):
 
         # optional userID
-        if user_id == 0:
+        if not this_user_only:
+            all_bookings = get_future_bookings(asset_id)
             all_bookings = Booking.objects.all().filter(asset_ID=the_asset).filter(start_date__gt=datetime.date.today())
+
         else:
-            # user_id provided in URL
-            # check that given id is the same as the current user
-            if int(user_id) == request.user.id:
-                all_bookings = Booking.objects.all().filter(asset_ID=the_asset).filter(requested_by_user_ID=my_id,
+            all_bookings = get_future_bookings(asset_id, user_id=my_id)
+            all_bookings = Booking.objects.all().filter(asset_ID=the_asset, requested_by_user_ID=my_id,
                                                                                    start_date__gt=datetime.date.today())
-            else:
-                the_asset = []
-                all_bookings = []
-                errors.append("You are not authorised to view this Booking page")
 
     else:
         the_asset = []
@@ -255,3 +260,39 @@ def make_a_booking(request, asset_id):
 
 
 
+def get_future_bookings(asset_id, **kwargs):
+
+    for_user = False
+
+    if kwargs.has_key("user_id"):
+        requested_by = kwargs['user_id']
+        for_user = True
+
+    if for_user:
+        future_bookings = BookingDetail.objects.all().filter(booking_id__requested_by_user_ID=requested_by,
+                                                             booking_id__asset_ID=asset_id,
+                                                         booking_date__gt=datetime.date.today()).order_by(
+                                                                "booking_date")
+
+    # need a unique set of future booking ids
+    booking_ids = set()
+    if future_bookings:
+        for item in future_bookings:
+            booking_ids.add(item.booking_id_id)
+
+    num_bookings = booking_ids.__len__()
+
+    # would like to order by booking date but once booking_ids go into the set, the set is ordered by booking_id
+    # so here, populate new tuple with booking_id and earliest start_date per booking
+    date_and_booking_id = []
+    for booking_id in booking_ids:
+        the_date = get_booking_start_date(booking_id)
+        # have to convert to date so that it can be sorted as a date and not as a string
+        the_date = datetime.datetime.strptime(the_date, "%d %b %Y")
+        the_date = the_date.strftime("%Y%m%d")
+        date_and_booking_id.append((the_date, booking_id))
+
+    # and sort by the date before sending to the template
+    date_and_booking_id = sorted(date_and_booking_id, key=lambda tup: tup[0])
+
+    assets = Asset_User_Mapping.objects.all().filter(user_ID=request.user)

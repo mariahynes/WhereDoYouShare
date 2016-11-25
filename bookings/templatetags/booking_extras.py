@@ -5,44 +5,95 @@ from bookings.models import BookingDetail
 register = template.Library()
 
 @register.simple_tag
-def get_total_for_approval(asset_id, user_id):
+def get_total_for_approval(asset_id, user_id, **kwargs):
+    # this function returns either the number of dates OR the number of booking refs
+    # awaiting this owner approval for the given asset_id
+    # if kwarg 'num_bookings' == True, then it's the total bookings returned,
+    # otherwise it's the number of individual dates returned
 
-    #the number of requests awaiting this owner approval for the given asset_id
-    total = 0
+    return_bookings = False
 
-    all = BookingDetail.objects.all().filter(slot_owner_id_id=user_id, booking_id__asset_ID=asset_id,
-                                       booking_date__gt=datetime.date.today(), is_pending=True)
+    if kwargs.has_key("num_bookings"):
+        return_bookings = kwargs['num_bookings']
 
-    total = all.count()
+    # only OWNERS can approve, so the user_id here is checked against the slot owner field
+    all_dates = BookingDetail.objects.all().filter(slot_owner_id_id=user_id, booking_id__asset_ID=asset_id,
+                                                   booking_date__gt=datetime.date.today(), is_pending=True)
+
+    if return_bookings:
+        ref_set = set()
+        # get the unique booking refs
+        for the_date in all_dates:
+            ref_set.add(the_date.booking_id_id)
+
+        total = len(ref_set)
+
+    else:
+
+        total = all_dates.count()
 
     return total
 
 @register.simple_tag
-def get_total_for_confirmation(asset_id, user_id):
-
-    # the number of requests approved/denied by an Owner
+def get_total_for_confirmation(asset_id, user_id, **kwargs):
+    # this function returns either the number of dates OR the number of booking refs
     # that are waiting for original Requestor to approve
-    total = 0
+    # if kwarg 'num_bookings' == True, then it's the total bookings returned,
+    # otherwise it's the number of individual dates returned
 
-    requests_to_confirm = BookingDetail.objects.all().filter(booking_id__requested_by_user_ID=user_id,
+    return_bookings = False
+
+    if kwargs.has_key("num_bookings"):
+        return_bookings = kwargs['num_bookings']
+
+    # the user_id here is checked against the requested by user field from Booking table
+    all_dates = BookingDetail.objects.all().filter(booking_id__requested_by_user_ID=user_id,
                                                              booking_date__gt=datetime.date.today(), is_pending=False,
                                                              booking_id__asset_ID=asset_id, is_confirmed=False)
 
-    total = requests_to_confirm.count()
+    if return_bookings:
+        ref_set = set()
+        # get the unique booking refs
+        for the_date in all_dates:
+            ref_set.add(the_date.booking_id_id)
+
+        total = len(ref_set)
+
+    else:
+
+        total = all_dates.count()
 
     return total
 
 @register.simple_tag
-def get_num_total_pending(asset_id, user_id):
+def get_total_pending(asset_id, user_id, **kwargs):
+    # this function returns either the number of dates OR the number of booking refs
+    # that are pending for this user
+    # if kwarg 'num_bookings' == True, then it's the total bookings returned,
+    # otherwise it's the number of individual dates returned
 
-    # the number of requests that are pending for this user
-    total = 0
+    return_bookings = False
 
-    requests_pending = BookingDetail.objects.all().filter(booking_id__requested_by_user_ID=user_id,
+    if kwargs.has_key("num_bookings"):
+        return_bookings = kwargs['num_bookings']
+
+    all_dates = BookingDetail.objects.all().filter(booking_id__requested_by_user_ID=user_id,
                                                           booking_date__gt=datetime.date.today(),
                                                           booking_id__asset_ID=asset_id, is_pending=True)
 
-    total = requests_pending.count()
+    if return_bookings:
+        ref_set = set()
+        # get the unique booking refs
+        for the_date in all_dates:
+            ref_set.add(the_date.booking_id_id)
+
+        total = len(ref_set)
+
+    else:
+
+        total = all_dates.count()
+
+    return total
 
     return total
 
