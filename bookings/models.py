@@ -51,6 +51,11 @@ class BookingDetail(models.Model):
     date_created = models.DateTimeField(default=timezone.now)
     is_confirmed = models.BooleanField(default=False)
     date_confirmed = models.DateTimeField(blank=True, null=True)
+    is_pending = models.BooleanField(default=False)
+    is_approved = models.BooleanField(default=False)
+    date_approved = models.DateTimeField(blank=True, null=True)
+    is_denied = models.BooleanField(default=False)
+    date_denied = models.DateTimeField(blank=True, null=True)
 
     def __unicode__(self):
         return "%s | for %s | owned by userId: %s" % (self.booking_id, self.booking_date, self.slot_owner_id.id)

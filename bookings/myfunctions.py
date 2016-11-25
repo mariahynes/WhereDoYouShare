@@ -531,15 +531,13 @@ def check_availability(asset_id,start_date, end_date):
     from_date = start_date.toordinal()
     to_date = end_date.toordinal()
 
-    # this gets all booking references for the asset
-    booking_ref = Booking.objects.all().filter(asset_ID=asset_id)
-
-    # try this
+    # loop through each date in the range
     for the_date in range(from_date, to_date):
 
-        # convert date back to string
+        # convert date back to datetime
         str_date = datetime.date.fromordinal(the_date)
 
+        # check if this date is in the BookingDetail table
         the_record = BookingDetail.objects.select_related().filter(booking_date=str_date)
 
         if the_record:
@@ -556,14 +554,22 @@ def check_availability(asset_id,start_date, end_date):
                    asset_is_there = True
 
             if asset_is_there == True:
-                # this date is booked for this asset, so it gets added to the unavailable list
+
+                # this date is in the table for this asset, so it gets added to the unavailable list
+                # because if it's in the table it is either confirmed, pending, denied or approved
+                # regardless of which status the record has, it is NOT AVAILABLE FOR ANYONE ELSE TO BOOK AT THIS TIME
                 the_user = "%s %s" % (item.booking_id.requested_by_user_ID.first_name,
                                       item.booking_id.requested_by_user_ID.last_name)
 
-                if item.is_confirmed == 0:
-                    the_status = "Pending"
-                else:
+                # check the status (only one of the confirmed, pending, denied, or approved should be TRUE)
+                if item.is_confirmed:
                     the_status = "Confirmed"
+                elif item.is_pending:
+                    the_status = "Pending"
+                elif item.is_approved:
+                    the_status = "Approved"
+                elif item.is_denied:
+                    the_status = "Denied"
 
                 unavailable_details.append(
                     {'booking_id': item.booking_id, 'date_booked': item.booking_date,

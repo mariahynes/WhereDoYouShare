@@ -122,9 +122,10 @@ def profile(request):
 
 
     assets = Asset_User_Mapping.objects.all().filter(user_ID=request.user)
-    pending_requests = BookingDetail.objects.all().filter(slot_owner_id_id=request.user, booking_date__gt=datetime.date.today(),is_confirmed=0)
 
-    return render(request, 'profile.html', {'assets': assets, 'bookings': date_and_booking_id, 'num_bookings':num_bookings, 'pending_requests':pending_requests, 'invitecodeform':invitecodeform, 'code_message': code_message})
+    return render(request, 'profile.html',
+                  {'assets': assets, 'bookings': date_and_booking_id, 'num_bookings': num_bookings,
+                   'invitecodeform': invitecodeform, 'code_message': code_message})
 
 
 def login(request):

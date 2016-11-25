@@ -30,17 +30,7 @@
                                             <span style="font-family: 'Playfair Display'">You are logged in as: </span>{{ user.first_name }} {{ user.last_name }} | {{ user.username }} </div>
 
                                         <div data-animate="fadeInUp" class="col_half">
-{#                                            <div>#}
-{##}
-{#                                                    <form role="form" method="post" action="">#}
-{#                                                        {% csrf_token %}#}
-{#                                                         {{ invitecodeform | as_bootstrap}}#}
-{#                                                        <div class="form-group">#}
-{#                                                            <button type="submit" class="btn btn-primary">Submit the Code</button>{% if code_message %}{{ code_message }}{% endif %}#}
-{#                                                        </div>#}
-{#                                                    </form>#}
-{##}
-{#                                            </div>#}
+
 
                                             {% if assets %}
                                             <p> <span style="font-family: 'Playfair Display'">Your are sharing the following
@@ -69,6 +59,9 @@
                                                                                 <li><a href="{% url 'asset_detail' asset.asset_ID_id %}">View Details</a></li>
                                                                             <li class="divider"></li>
                                                                                 <li><a href="{% url 'all_future_asset_bookings_for_user' asset.asset_ID_id user.id %}">View My Bookings</a></li>
+                                                                            <li><a href="">Pending  <span class="badge">{% get_num_total_pending asset.asset_ID user.id %}</span></a></li>
+                                                                            <li><a href="">Waiting Confirmation <span class="badge">{% get_total_for_confirmation asset.asset_ID user.id %}</span></a></li>
+                                                                            <li><a href="">View My Bookings</a></li>
                                                                                 <li><a href="{% url 'make_a_booking' asset.asset_ID_id %}">Make a Booking</a></li>
                                                                                 <li><a href="{% url 'all_future_asset_bookings' asset.asset_ID_id %}">View All Bookings</a></li>
                                                                             <li class="divider"></li>
@@ -77,7 +70,7 @@
 
                                                                                 {%  if asset.is_owner %}
                                                                                     <li class="divider"></li>
-                                                                                    <li><a href="">{{ asset.asset_ID.asset_display_name }} Pending Requests <span class="badge">{{ pending_requests|get_total_pending:asset.asset_ID }}</span></a></li>
+                                                                                    <li><a href="">{{ asset.asset_ID.asset_display_name }} Pending Requests <span class="badge">{% get_total_for_approval asset.asset_ID user.id %}</span></a></li>
                                                                                 {%  endif %}
 
 
@@ -120,7 +113,7 @@
                                                             <th>Name</th>
                                                             <th>Arriving</th>
                                                             <th>Departing</th>
-                                                            <th>Confirmed?</th>
+                                                            <th>Status</th>
                                                             <th>Slot Owner</th>
                                                             <th></th>
                                                         </tr>
@@ -131,7 +124,7 @@
                                                             <td>{% get_booking_asset_name booking_id.1 %}</td>
                                                             <td>{% get_booking_start_date  booking_id.1 %} </td>
                                                             <td>{% get_booking_end_date  booking_id.1 %} </td>
-                                                            <td>{% is_booking_confirmed booking_id.1 %}</td>
+                                                            <td>{% get_booking_status booking_id.1 %}</td>
                                                             <td>{% get_booking_slot_owner booking_id.1 %}</td>
                                                             <td></td>
                                                         </tr>

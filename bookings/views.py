@@ -120,12 +120,13 @@ def booking_detail(request, booking_id):
     asset_id = the_booking.asset_ID_id
 
     # anyone linked to the Asset can view the booking
-    # but only owners and the requestor can edit the booking
+    # but only the requestor can edit the booking
     my_id = request.user
     if check_user_linked_to_asset(my_id,asset_id):
 
         asset = Asset.objects.get(pk=asset_id)
         booking_detail = BookingDetail.objects.select_related().filter(booking_id_id=booking_id).order_by("booking_date")
+
     else:
         errors.append("You are not authorised to view this booking")
 
@@ -178,7 +179,25 @@ def make_a_booking(request, asset_id):
                 print "the Detail: %s" % item.date_span_available_detail
                 for available_date in item.date_span_available_detail:
                     booking_date = available_date
-                    new_record = BookingDetail(booking_date=booking_date, slot_owner_id_id=owner_id,booking_id_id=new_id)
+
+                    # check if the owner is booking one of their own dates
+                    # if so, then set immediately to is_confirmed == True
+                    if owner_id == my_id:
+
+                        new_record = BookingDetail(booking_date=booking_date,
+                                                   slot_owner_id_id=owner_id,
+                                                   booking_id_id=new_id,
+                                                   is_confirmed=True,
+                                                   date_confirmed=datetime.datetime.now())
+                    else:
+
+                        new_record = BookingDetail(booking_date=booking_date,
+                                                   slot_owner_id_id=owner_id,
+                                                   booking_id_id=new_id,
+                                                   is_pending=True,
+                                                   date_pending=datetime.datetime.now())
+
+
                     new_record.save()
 
             # messages.success(request, "New Booking created, thanks")

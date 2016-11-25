@@ -32,19 +32,33 @@
 
                                         {% if booking %}
 
-                                                <p> <span style="font-family: 'Playfair Display'">Booking Reference: {{ booking.booking_id }}
+                                                <p> <span style="font-family: 'Playfair Display'">Booking Reference:</span><span style="font-family: 'Calibri'; font-weight:bold"> {{ booking.booking_id }}</span>
 
                                                 <br>
-                                                Total days: {% get_total_days_in_booking booking.booking_id %}
+                                                <span style="font-family: 'Playfair Display'">Total days:</span><span style="font-family: 'Calibri'; font-weight:bold"> {% get_total_days_in_booking booking.booking_id %}</span>
                                                 <br>
-                                                Requested By: {{ booking.requested_by_user_ID.first_name }} {{ booking.requested_by_user_ID.last_name }}
+                                                <span style="font-family: 'Playfair Display'">Requested By:</span> <span style="font-family: 'Calibri'; font-weight:bold">{{ booking.requested_by_user_ID.first_name }} {{ booking.requested_by_user_ID.last_name }} on {{ booking.date_created | date:"d M Y" }}</span>
+                                                <br>
+                                                <span style="font-family: 'Playfair Display'">Confirmed:</span> <span style="font-family: 'Calibri'; font-weight:bold">
+
+                                                        {% is_booking_confirmed booking.booking_id as the_answer %}
+                                                        {% get_confirmed_date booking.booking_id as confo_date %}
+                                                        {% if the_answer == False %}
+                                                            Not Yet
+                                                        {% else %}
+                                                            Yes on {{ confo_date | date:"d M Y" }}
+                                                        {%  endif %}
+
+                                                    </span>
+                                                <br>
+
                                                     <div class="col_half">
                                                         <table class = "table table-striped">
                                                             <thead>
                                                                 <tr>
 
                                                                     <th>Date</th>
-                                                                    <th>Confirmed?</th>
+                                                                    <th>Booking Status</th>
                                                                     <th>Slot Owner</th>
                                                                     <th></th>
                                                                 </tr>
@@ -53,8 +67,8 @@
                                                             {%  for item in booking_detail %}
                                                                 <tr>
 
-                                                                    <td>{{ item.booking_date | date:"D d M Y"}} </td>
-                                                                    <td>{{ item.is_confirmed }} </td>
+                                                                    <td>{{ item.booking_date | date:"l"}}, {{ item.booking_date | date:"d M Y"}}</td>
+                                                                    <td>{% get_booking_date_status item.pk %} </td>
                                                                     <td>{{ item.slot_owner_id.first_name }} {{ item.slot_owner_id.last_name }}</td>
                                                                     <td></td>
                                                                     <td></td>
