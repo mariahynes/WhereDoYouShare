@@ -121,11 +121,10 @@ def profile(request):
     # date_and_booking_id = sorted(date_and_booking_id, key=lambda tup: tup[0])
     #
     #
-    # assets = Asset_User_Mapping.objects.all().filter(user_ID=request.user)
+    assets = Asset_User_Mapping.objects.all().filter(user_ID=request.user)
 
     return render(request, 'profile.html',
-                  {'assets': assets, 'bookings': date_and_booking_id, 'num_bookings': num_bookings,
-                   'invitecodeform': invitecodeform, 'code_message': code_message})
+                  {'assets': assets, 'invitecodeform': invitecodeform, 'code_message': code_message})
 
 
 def login(request):

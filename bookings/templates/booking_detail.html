@@ -78,8 +78,13 @@
                                                              </tbody>
                                                         </table>
                                                     </div>
+                                                <p>
+                                                {%  if new == "new" %}
 
-
+                                                    <a href="{% url 'all_future_asset_bookings' asset.id user.id %}">View My Bookings</a>
+                                                    {% else %}
+                                                    <a href="{{ request.META.HTTP_REFERER }} " class="btn btn-primary">Back </a>
+                                                {% endif %}
                                                 </p>
 
                                         {% else %}

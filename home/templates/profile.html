@@ -24,82 +24,75 @@
 
 					        <div class="container clearfix">
 
-                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">Profile Settings</h2>
+                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 20px; font-family: 'Playfair Display';">Profile Settings | {{ user.first_name }} {{ user.last_name }}</h2>
 
                                         <div data-animate="fadeInUp" class="lead divleft bottommargin" style="max-width: 700px; ">
-                                            <span style="font-family: 'Playfair Display'">You are logged in as: </span>{{ user.first_name }} {{ user.last_name }} | {{ user.username }} </div>
+                                            <span style="font-family: 'Playfair Display'">  </span> </div>
 
                                         <div data-animate="fadeInUp" class="col_half">
 
 
                                             {% if assets %}
-                                            <p> <span style="font-family: 'Playfair Display'">Your are sharing the following
-                                                {%  with total=assets.count %}
-                                                    Asset{{ total|pluralize }}: </span>
-                                                {%  endwith %}
+                                            <p>
+                                                {% for asset in assets %}
 
-                                                        {% for asset in assets %}
+                                                    <p>
 
+                                                    <div class="dropdown">
 
+                                                        <button class="btn btn-primary btn-lg btn-block dropdown-toggle" type="button" data-toggle="dropdown">
+                                                            {%  if asset.is_owner %}
+                                                            {{ asset.asset_ID.asset_display_name }} (Owner)
+                                                                {% else %}
+                                                                {{ asset.asset_ID.asset_display_name }}
+                                                            {%  endif %}
+                                                            <span class="caret"></span></button>
 
+                                                            <ul class="dropdown-menu">
+                                                                <li><a href="{% url 'asset_detail' asset.asset_ID_id %}">View Details</a></li>
+                                                            <li class="divider"></li>
 
-                                                                    <p>
+                                                            {% get_total_pending asset.asset_ID user.id num_bookings=True as totes_pending %}
+                                                                {%  if totes_pending > 0 %}
+                                                                    <li><a href="">Pending Requests <span class="badge">{% get_total_pending asset.asset_ID user.id num_bookings=True %}</span></a></li>
+                                                                {% endif %}
+                                                            {% get_total_for_confirmation asset.asset_ID user.id num_bookings=True as totes_confirm %}
+                                                                {% if totes_confirm > 0 %}
+                                                                <li><a href="">Requests to Confirm <span class="badge">{% get_total_for_confirmation asset.asset_ID user.id num_bookings=True %}</span></a></li>
+                                                                {% endif %}
 
-                                                                    <div class="dropdown">
-
-                                                                        <button class="btn btn-primary btn-lg btn-block dropdown-toggle" type="button" data-toggle="dropdown">
-                                                                            {%  if asset.is_owner %}
-                                                                            {{ asset.asset_ID.asset_display_name }} (Owner)
-                                                                                {% else %}
-                                                                                {{ asset.asset_ID.asset_display_name }}
-                                                                            {%  endif %}
-                                                                            <span class="caret"></span></button>
-
-                                                                            <ul class="dropdown-menu">
-                                                                                <li><a href="{% url 'asset_detail' asset.asset_ID_id %}">View Details</a></li>
-                                                                            <li class="divider"></li>
-
-                                                                            {% get_total_pending asset.asset_ID user.id num_bookings=True as totes_pending %}
-                                                                                {%  if totes_pending > 0 %}
-                                                                                    <li><a href="">Pending Requests <span class="badge">{% get_total_pending asset.asset_ID user.id num_bookings=True %}</span></a></li>
-                                                                                {% endif %}
-                                                                            {% get_total_for_confirmation asset.asset_ID user.id num_bookings=True as totes_confirm %}
-                                                                                {% if totes_confirm > 0 %}
-                                                                                <li><a href="">Requests to Confirm <span class="badge">{% get_total_for_confirmation asset.asset_ID user.id num_bookings=True %}</span></a></li>
-                                                                                {% endif %}
-
-                                                                                <li><a href="{% url 'all_future_asset_bookings_for_user' asset.asset_ID_id user.id %}">View My Bookings</a></li>
+                                                                <li><a href="{% url 'all_future_asset_bookings' asset.asset_ID_id user.id %}">View My Bookings</a></li>
 
 
-                                                                                <li><a href="{% url 'make_a_booking' asset.asset_ID_id %}">Make a Booking</a></li>
-                                                                                <li><a href="{% url 'all_future_asset_bookings' asset.asset_ID_id %}">View All Bookings</a></li>
-                                                                            <li class="divider"></li>
-                                                                                <li><a href="{% url 'post_list' asset.asset_ID_id %}">{{ asset.asset_ID.asset_display_name }} Blog</a></li>
-                                                                                <li><a href="{% url 'forum' asset.asset_ID_id %}">{{ asset.asset_ID.asset_display_name }} Forum</a></li>
+                                                                <li><a href="{% url 'make_a_booking' asset.asset_ID_id %}">Make a Booking</a></li>
+                                                                <li><a href="{% url 'all_future_asset_bookings' asset.asset_ID_id %}">View All Bookings</a></li>
+                                                            <li class="divider"></li>
+                                                                <li><a href="{% url 'post_list' asset.asset_ID_id %}">{{ asset.asset_ID.asset_display_name }} Blog</a></li>
+                                                                <li><a href="{% url 'forum' asset.asset_ID_id %}">{{ asset.asset_ID.asset_display_name }} Forum</a></li>
 
-                                                                                {%  if asset.is_owner %}
-                                                                                    {% get_total_for_approval asset.asset_ID user.id num_bookings=True as totes_approve %}
-                                                                                    {% if totes_approve > 0 %}
-                                                                                    <li class="divider"></li>
-                                                                                    <li><a href="">{{ asset.asset_ID.asset_display_name }} Pending Requests <span class="badge">{% get_total_for_approval asset.asset_ID user.id num_bookings=True %}</span></a></li>
-                                                                                    {% endif %}
-                                                                                {%  endif %}
+                                                                {%  if asset.is_owner %}
+                                                                    {% get_total_for_approval asset.asset_ID user.id num_bookings=True as totes_approve %}
+                                                                    {% if totes_approve > 0 %}
+                                                                    <li class="divider"></li>
+                                                                    <li><a href="">{{ asset.asset_ID.asset_display_name }} Pending Requests <span class="badge">{% get_total_for_approval asset.asset_ID user.id num_bookings=True %}</span></a></li>
+                                                                    {% endif %}
+                                                                {%  endif %}
 
 
 
-                                                                            </ul>
+                                                            </ul>
 
-                                                                    </div>
-                                                                    </p>
+                                                    </div>
+                                                    </p>
 
 
 
-                                                        {% endfor %}
+                                                {% endfor %}
 
 
                                             </p>
                                             {% else %}
-                                               <p>You are not linked to any assets</p>
+                                               <p>You are not sharing anything...yet!</p>
 
                                             {% endif %}
                                             <div>
@@ -113,49 +106,7 @@
                                                     </form>
 
                                             </div>
-                                            {% if bookings %}
-                                            <p> <span style="font-family: 'Playfair Display'">Your future
-                                                {%  with total=num_bookings %}
-                                                     booking{{ total|pluralize }}: </span>
-                                                {%  endwith %}
 
-                                                <table class = "table table-striped">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Name</th>
-                                                            <th>Arriving</th>
-                                                            <th>Departing</th>
-                                                            <th>Status</th>
-                                                            <th>Slot Owner</th>
-                                                            <th></th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    {%  for booking_id in bookings %}
-                                                        <tr>
-                                                            <td>{% get_booking_asset_name booking_id.1 %}</td>
-                                                            <td>{% get_booking_start_date  booking_id.1 %} </td>
-                                                            <td>{% get_booking_end_date  booking_id.1 %} </td>
-                                                            <td>{% get_booking_status booking_id.1 %}</td>
-                                                            <td>{% get_booking_slot_owner booking_id.1 %}</td>
-                                                            <td></td>
-                                                        </tr>
-                                                    {% endfor %}
-
-                                                     </tbody>
-                                                </table>
-
-
-
-                                            </p>
-                                            {% else %}
-                                                {% if assets.count > 0 %}
-                                                    You have no upcoming bookings <br>
-                                                    {% for asset in assets %}
-                                                        <a href="{% url 'make_a_booking' asset.asset_ID_id %}" role="button" class = "btn btn-primary">Make a Booking | {{ asset.asset_ID.asset_display_name }}</a>
-                                                    {% endfor %}
-                                                {% endif %}
-                                            {% endif %}
                                         </div>
                                         <div class="clear"></div>
 

@@ -1,29 +1,104 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>All Bookings</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% load booking_extras %}
+    {% load bootstrap_tags %}
+    {% block content %}
+    {% load staticfiles %}
+        {% block head_style %}
+            <style>
+                .opacity9{
+                    opacity:2;
+                }
+            </style>
+        {% endblock %}
+        <!-- Slider ============================================= -->
+		<section id="slider" class="full-screen  slider-parallax">
 
-{% if errors %}
-    {% for error in errors %}
-        <p style="color:red">{{ error }}</p>
-    {% endfor %}
-{% else %}
+			<div class="full-screen section nopadding nomargin noborder ohidden" style="background: url({% static 'myimages/login1.jpg' %}) bottom center no-repeat; background-size: cover;">
 
-    <h1>All future bookings for {{ asset.asset_display_name }} </h1>
-    {% if all_bookings %}
-        {% for booking in all_bookings %}
+				<div class="container " >
+				    <div class="vertical-middle">
 
-{#            {{ booking.start_date }}#}
+				        <div id="section-about" class="page-section">
 
-        {% endfor %}
-    {% else %}
-    There are no future bookings listed
-    {% endif %}
+					        <div class="container clearfix"> <!--clearfix removed-->
 
-{% endif %}
+                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">Future Bookings | {{ asset.asset_display_name }}</h2>
 
-</body>
-</html>
+                                {%  if errors %}
+                                     {% for error in errors %}
+                                           <p style="color:red">{{ error }}</p>
+                                     {% endfor %}
+                                {% else %}
+
+                                    {% if bookings %}
+                                            <p>
+                                        <table class = "table table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>ID</th>
+                                                            <th>From</th>
+                                                            <th>Until</th>
+                                                            <th>Days</th>
+                                                            <th>Requested By</th>
+                                                            <th>Slot Owner</th>
+                                                            <th>Status</th>
+
+
+                                                            <th></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {%  for booking_id in bookings %}
+                                                        <tr>
+                                                            <td><a href="{% url 'booking_detail' booking_id.1 %}" class="btn btn-primary">Detail </a> </td>
+                                                            <td>{% get_booking_start_date booking_id.1 as the_start %}{{ the_start | date:"l" }}, {{ the_start | date:"d M Y" }}</td>
+                                                            <td>{% get_booking_end_date booking_id.1 as the_end %} {{ the_end | date:"l" }}, {{ the_end | date:"d M Y" }}</td>
+
+                                                            <td>{% get_total_days_in_booking booking_id.1 %}</td>
+                                                            <td>{% get_booking_requestor booking_id.1 %}</td>
+                                                            <td>{% get_booking_slot_owner booking_id.1 %}</td>
+                                                            <td>{% get_booking_status booking_id.1 %}</td>
+
+
+                                                            <td></td>
+                                                        </tr>
+                                                    {% endfor %}
+
+                                                     </tbody>
+                                                </table>
+                                        <p>
+                                        <a href="{% url 'profile' %}" class="btn btn-primary">Back to My Profile</a>
+                                        </p>
+
+                                            </p>
+                                            {% else %}
+                                                {% if assets.count > 0 %}
+                                                    You have no upcoming bookings <br>
+                                                    {% for asset in assets %}
+                                                        <a href="{% url 'make_a_booking' asset.asset_ID_id %}" role="button" class = "btn btn-primary">Make a Booking | {{ asset.asset_ID.asset_display_name }}</a>
+                                                    {% endfor %}
+                                                {% endif %}
+                                            {% endif %}
+
+                                {% endif %}
+
+                                    <div class="clear"></div>
+
+                                    <div class="row topmargin-lg divcenter" style="max-width: 1000px;"></div>
+
+
+
+				            </div>
+
+                       </div>
+
+					</div>
+				</div>
+
+			</div>
+
+		</section> <!--#slider end -->
+
+
+
+    {% endblock %}

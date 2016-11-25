@@ -142,12 +142,12 @@ def get_total_days_unavailable(owner_and_dates):
 
     return total_days_unavailable
 
-
 @register.simple_tag
 def get_booking_start_date(booking_id):
 
+    print "BookingID: %s" % booking_id
     a_date = BookingDetail.objects.all().filter(booking_id=booking_id).order_by("booking_date")[0]
-    min_date = a_date.booking_date.strftime("%d %b %Y")
+    min_date = a_date.booking_date
 
     return min_date
 
@@ -158,7 +158,6 @@ def get_booking_end_date(booking_id):
 
     # add one day on (because departure will be the NEXT day)
     max_date = max_date + datetime.timedelta(days=1)
-    max_date = max_date.strftime("%d %b %Y")
 
     return max_date
 
@@ -215,7 +214,6 @@ def get_booking_status(booking_id):
             return "No"
         else:
             return "%s of %s days" % (num_approved, total_requested)
-
 
 @register.simple_tag
 def get_approved_count(booking_id):
@@ -280,11 +278,11 @@ def get_confirmed_date(booking_id):
 
         return ""
 
-
-
-
 @register.simple_tag
 def get_booking_slot_owner(booking_id):
+
+    # for a booking ref, there could be more than one Owner
+    # this function places the Owners in a set so that they only appear once in the output
     bd = BookingDetail.objects.all().filter(booking_id=booking_id).order_by("slot_owner_id")
 
     owner = set()
@@ -301,6 +299,18 @@ def get_booking_slot_owner(booking_id):
     owner_string = owner_string[:-2]
 
     return owner_string
+
+@register.simple_tag
+def get_booking_requestor(booking_id):
+
+    # there will only be one Requestor per booking
+    # but could be many booking dates in that Booking,
+    # so only return the first item in the object
+    bd = BookingDetail.objects.select_related().filter(booking_id=booking_id)[0]
+
+    the_name = "%s %s" % (bd.booking_id.requested_by_user_ID.first_name, bd.booking_id.requested_by_user_ID.last_name)
+
+    return the_name
 
 @register.simple_tag
 def get_total_days_in_booking(booking_id):
