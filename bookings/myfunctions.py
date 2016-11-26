@@ -309,7 +309,7 @@ def get_owners_and_dates(asset_ID, request_start, request_end):
 
     # calculate number of days in the owner-duration period
     num_days_per_period = slot_duration_days * num_slots
-
+    print "Number of days per Owner: %s" % num_days_per_period
     if str(slot_duration) == "Week":
 
         # get the number of slots from static start date to requested start date
@@ -357,8 +357,10 @@ def get_owners_and_dates(asset_ID, request_start, request_end):
     # store Owner ID and slot start and slot end dates in object to return
 
     # first slot details
+
     delta = slot_end_for_start_date - start_date
     num_days_slot_1 = delta.days
+    print "first slot delta days: %s" % num_days_slot_1
 
     # depending on whether the last/end requested date falls before or after the slot_end,
     # the 'end_date' variable and days_requested variable for next functions will differ
@@ -368,6 +370,12 @@ def get_owners_and_dates(asset_ID, request_start, request_end):
     else:
         first_slot_end_date = slot_end_for_start_date
         days_requested = num_days_slot_1
+
+    print "first slot end date: %s" % first_slot_end_date
+    print "days requested: %s" % days_requested
+
+    # start date could be the very first day of a slot,
+    # if so, move on to the next slot (don't add a record of '0' days)
 
     # check Booking table to find out the number of days un-available for the range
     date_ranges = check_availability(asset_ID, start_date, first_slot_end_date)
@@ -384,15 +392,15 @@ def get_owners_and_dates(asset_ID, request_start, request_end):
     # if the number from subtracting requested end date from the slot end date is >=0
     # then there is no need to move into the next slot i.e. only one owner should be returned
     delta = slot_end_for_start_date - end_date
-
+    print "delta: %s" % delta
     if delta.days >= 0:
-        print delta.days
-        print "Only one owner to return"
+        print "delta days: %s" % delta.days
+        print "Stays in first slot"
         slots_affected = 1
 
     else:
-
-        print "More than one owner to return"
+        print "delta days: %s" % delta.days
+        print "Goes to second slot"
 
         print "%s days required from owner slot 1: " % num_days_slot_1, slot_owner_on_requested_start_date
 
@@ -494,19 +502,26 @@ def get_owners_and_dates(asset_ID, request_start, request_end):
 
 def get_start_slot_date(slot_static_start_date, requested_start_date, days_step, dateformat):
 
+    # this function is used by Assets with Weekly time-slots
+    # this function is sent a date and finds what would be start date of the slot on that date
+    # it uses the static start date (stored in Asset table) as a starting point
+    # and increments by the correct number of days in the slot
+    # because the requested start date could be an actually starting slot date
+    # this function adds one extra day to the given requested_start_date to include it in the loop
+
     from_date = slot_static_start_date.toordinal()
     to_date = requested_start_date.toordinal()
 
     owner_slot_start_date = from_date
 
-    for j in range(from_date, to_date, days_step):
+    for j in range(from_date, to_date+1, days_step):
 
-        if owner_slot_start_date < to_date:
-
+        if owner_slot_start_date <= to_date:
             owner_slot_start_date = j
 
-    start_slot_date = datetime.date.fromordinal(owner_slot_start_date)
 
+    start_slot_date = datetime.date.fromordinal(owner_slot_start_date)
+    print "Start slot Date: %s" % start_slot_date
     return start_slot_date
 
 

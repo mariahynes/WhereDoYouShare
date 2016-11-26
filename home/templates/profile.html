@@ -54,18 +54,22 @@
 
                                                             {% get_total_pending asset.asset_ID user.id num_bookings=True as totes_pending %}
                                                                 {%  if totes_pending > 0 %}
-                                                                    <li><a href="">Pending Requests <span class="badge">{% get_total_pending asset.asset_ID user.id num_bookings=True %}</span></a></li>
+                                                                    <li><a href="">My Pending Requests <span class="badge">{{totes_pending}}</span></a></li>
                                                                 {% endif %}
                                                             {% get_total_for_confirmation asset.asset_ID user.id num_bookings=True as totes_confirm %}
                                                                 {% if totes_confirm > 0 %}
-                                                                <li><a href="">Requests to Confirm <span class="badge">{% get_total_for_confirmation asset.asset_ID user.id num_bookings=True %}</span></a></li>
+                                                                <li><a href="">My Requests to Confirm <span class="badge">{{ totes_confirm }}</span></a></li>
+                                                                {% endif %}
+                                                            {% get_total_confirmed_bookings asset.asset_ID user.id as totes_fully_confirmed %}
+                                                                {% if totes_fully_confirmed > 0 %}
+                                                                <li><a href="{% url 'all_future_asset_bookings' asset.asset_ID_id user.id %}">My Bookings <span class="badge">{{ totes_fully_confirmed }}</span></a></li>
                                                                 {% endif %}
 
-                                                                <li><a href="{% url 'all_future_asset_bookings' asset.asset_ID_id user.id %}">View My Bookings</a></li>
-
-
                                                                 <li><a href="{% url 'make_a_booking' asset.asset_ID_id %}">Make a Booking</a></li>
-                                                                <li><a href="{% url 'all_future_asset_bookings' asset.asset_ID_id %}">View All Bookings</a></li>
+                                                                {% get_total_bookings asset.asset_ID as totes_bookings %}
+                                                                {% if totes_bookings > 0 %}
+                                                                    <li><a href="{% url 'all_future_asset_bookings' asset.asset_ID_id %}">View {{ asset.asset_ID.asset_display_name }} Bookings <span class="badge">{{ totes_bookings }}</span></a></li>
+                                                                {% endif %}
                                                             <li class="divider"></li>
                                                                 <li><a href="{% url 'post_list' asset.asset_ID_id %}">{{ asset.asset_ID.asset_display_name }} Blog</a></li>
                                                                 <li><a href="{% url 'forum' asset.asset_ID_id %}">{{ asset.asset_ID.asset_display_name }} Forum</a></li>
@@ -74,7 +78,7 @@
                                                                     {% get_total_for_approval asset.asset_ID user.id num_bookings=True as totes_approve %}
                                                                     {% if totes_approve > 0 %}
                                                                     <li class="divider"></li>
-                                                                    <li><a href="">{{ asset.asset_ID.asset_display_name }} Pending Requests <span class="badge">{% get_total_for_approval asset.asset_ID user.id num_bookings=True %}</span></a></li>
+                                                                    <li><a href="">My Pending Approvals <span class="badge">{{ totes_approve }}</span></a></li>
                                                                     {% endif %}
                                                                 {%  endif %}
 

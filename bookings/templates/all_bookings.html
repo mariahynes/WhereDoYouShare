@@ -22,7 +22,12 @@
 
 					        <div class="container clearfix"> <!--clearfix removed-->
 
-                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">Future Bookings | {{ asset.asset_display_name }}</h2>
+                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">
+                                    {% if return_page_user %}
+                                        My
+                                        {% else %}
+                                        Future
+                                    {% endif %} Bookings | {{ asset.asset_display_name }}</h2>
 
                                 {%  if errors %}
                                      {% for error in errors %}
@@ -36,8 +41,8 @@
                                                     <thead>
                                                         <tr>
                                                             <th>ID</th>
-                                                            <th>From</th>
-                                                            <th>Until</th>
+                                                            <th>Using it from</th>
+                                                            <th>Returning it on</th>
                                                             <th>Days</th>
                                                             <th>Requested By</th>
                                                             <th>Slot Owner</th>

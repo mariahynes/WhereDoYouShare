@@ -10,9 +10,8 @@ from .forms import BookingForm
 from myfunctions import get_owners_and_dates
 from home.myAuth import check_user_linked_to_asset
 import datetime
-
-
-import datetime
+from django.utils import timezone
+from django.db.models import Q
 
 @login_required(login_url='/login/')
 def my_bookings(request):
@@ -20,61 +19,21 @@ def my_bookings(request):
     my_id = request.user
 
     # this is all FUTURE bookings for every asset (>=today)
-    my_future_bookings = BookingDetail.objects.all().filter(booking_id__requested_by_user_ID=my_id,
-                                                            booking_date__gte=datetime.date.today()).order_by(
-        "-booking_date")
+    # returned in a set of booking_date and booking ref
+    my_future_bookings = get_bookings(user_id=my_id,time_period="future")
+    num_bookings_future = len(my_future_bookings)
 
     # this is all PAST bookings for every asset (<today)
-    my_past_bookings = BookingDetail.objects.all().filter(booking_id__requested_by_user_ID=my_id,
-                                                            booking_date__lt =datetime.date.today()).order_by(
-        "-booking_date")
-
-    # need a unique sets of booking ids, so populate sets
-    booking_ids_future = set()
-    booking_ids_past = set()
-
-    if my_future_bookings:
-        for item in my_future_bookings:
-            booking_ids_future.add(item.booking_id_id)
-
-    if my_past_bookings:
-        for item in my_past_bookings:
-            booking_ids_past.add(item.booking_id_id)
-
-    # in future Set want to sort by earliest to latest
-    future_date_and_booking_id = []
-    for booking_id in booking_ids_future:
-        the_date = get_booking_start_date(booking_id)
-        # have to convert to date so that it can be sorted as a date and not as a string
-        the_date = datetime.datetime.strptime(the_date, "%d %b %Y")
-        the_date = the_date.strftime("%Y%m%d")
-        future_date_and_booking_id.append((the_date, booking_id))
-
-    # and sort by the date before sending to the template
-    future_date_and_booking_id = sorted(future_date_and_booking_id, key=lambda tup: tup[0])
-
-    num_bookings_future = booking_ids_future.__len__()
-
-    # in past Set want to sort by latest to earliest
-    past_date_and_booking_id = []
-    for booking_id in booking_ids_past:
-        the_date = get_booking_start_date(booking_id)
-        # have to convert to date so that it can be sorted as a date and not as a string
-        the_date = datetime.datetime.strptime(the_date, "%d %b %Y")
-        the_date = the_date.strftime("%Y%m%d")
-        past_date_and_booking_id.append((the_date, booking_id))
-
-    # and sort by the date before sending to the template
-    past_date_and_booking_id = sorted(past_date_and_booking_id, key=lambda tup: tup[0])
-
-    num_bookings_past = booking_ids_past.__len__()
+    # returned in a set of booking_date and booking ref
+    my_past_bookings = get_bookings(user_id=my_id, time_period="past")
+    num_bookings_past = len(my_past_bookings)
 
     # send list of assets for this user
     assets = Asset_User_Mapping.objects.all().filter(user_ID=request.user)
 
-    return render(request, "bookings.html", {"assets": assets, "future_bookings": future_date_and_booking_id,
+    return render(request, "bookings.html", {"assets": assets, "future_bookings": my_future_bookings,
                                              "num_bookings_future": num_bookings_future,
-                                             "past_bookings": past_date_and_booking_id,
+                                             "past_bookings": my_past_bookings,
                                              "num_bookings_past": num_bookings_past})
 
 
@@ -97,11 +56,11 @@ def all_future_asset_bookings(request, asset_id, user_id=0):
         # optional userID
         if this_user_only:
 
-            all_bookings = get_future_bookings(asset_id, user_id=my_id)
+            all_bookings = get_bookings(asset_id=asset_id, user_id=request.user.id, time_period="future")
 
         else:
 
-            all_bookings = get_future_bookings(asset_id)
+            all_bookings = get_bookings(asset_id=asset_id, time_period="future")
 
     else:
         the_asset = []
@@ -111,6 +70,83 @@ def all_future_asset_bookings(request, asset_id, user_id=0):
     return render(request, "all_bookings.html",
                   {"asset": the_asset, "bookings": all_bookings, "errors": errors, "return_page_user": user_id})
 
+@login_required(login_url='/login/')
+def all_bookings(request, asset_id="", status = "", time_period = "", user_id=""):
+
+    # this function returns all the bookings refs in the Booking Table
+    # for an asset (optional)
+    # for a given status (optional) e.g.pending, approved, confirmed, denied, or all
+    # for a given user (optional)
+
+    errors = []
+    the_asset = []
+    all_bookings = []
+    my_id = request.user
+    user_is_linked = False
+    time_range = "all"
+
+    if asset_id != "":
+        the_asset = get_object_or_404(Asset, pk=asset_id)
+
+        if check_user_linked_to_asset(my_id, asset_id):
+            user_is_linked = True
+
+    this_user_only = False
+    if request.user.id == int(user_id):
+        this_user_only = True
+
+
+    if len(time_period) > 0:
+        if time_period == "future":
+            time_range = time_period
+        elif time_period == "past":
+            time_range == time_period
+
+    if asset_id != 0:
+
+        if user_is_linked == True:
+            # then the query is for bookings for a particular asset
+            # check optional userID
+            if this_user_only:
+                # only bookings for this user (for this asset)
+                all_bookings = get_bookings(asset_id=asset_id, user_id=my_id, time_period=time_range)
+
+            else:
+                # bookings belonging to any user (for this asset)
+                all_bookings = get_bookings(asset_id=asset_id,time_period=time_range)
+
+        else:
+            errors.append("You are not authorised to view this asset")
+
+    else:
+        # this is not bookings for one particular asset, but bookings for all assets
+        # but only return bookings from assets that the user is allowed to view
+
+        if this_user_only:
+            # only bookings for this user (for all assets)
+            all_bookings = get_bookings(user_id=my_id,time_period=time_range)
+
+        else:
+            # bookings belonging to any user (for all assets)
+            all_bookings = get_bookings(time_period=time_range)
+            # filter this result to return only the bookings from assets the user is allowed to view
+            for ref in all_bookings:
+                print "ref in all bookings: %s" % ref
+
+    # now check if the status is required
+    if status == "pending":
+        pass
+    elif status == "approved":
+        pass
+    elif status == "confirmed":
+        pass
+    elif status == "denied":
+        pass
+    else:
+        pass
+
+    return render(request, "all_bookings.html",
+                  {"asset": the_asset, "bookings": all_bookings, "errors": errors, "return_page_user": user_id})
 
 @login_required(login_url='/login/')
 def booking_detail(request, booking_id, new=""):
@@ -119,6 +155,8 @@ def booking_detail(request, booking_id, new=""):
     errors = []
     asset = []
     booking_detail = []
+    if new != "new":
+        new = ""
 
     # get the asset id (from the booking)
     asset_id = the_booking.asset_ID_id
@@ -179,6 +217,8 @@ def make_a_booking(request, asset_id):
             for item in owner_date_object:
 
                 owner_id = item.owner_id
+                print "ownerId: %s" % owner_id
+                print "current user: %s" % request.user.id
 
                 print "the Detail: %s" % item.date_span_available_detail
                 for available_date in item.date_span_available_detail:
@@ -186,26 +226,25 @@ def make_a_booking(request, asset_id):
 
                     # check if the owner is booking one of their own dates
                     # if so, then set immediately to is_confirmed == True
-                    if owner_id == my_id:
+                    if owner_id == request.user.id:
 
                         new_record = BookingDetail(booking_date=booking_date,
                                                    slot_owner_id_id=owner_id,
                                                    booking_id_id=new_id,
-                                                   is_confirmed=True,
-                                                   date_confirmed=datetime.datetime.now())
+                                                   is_approved=True,
+                                                   date_approved=timezone.now())
                     else:
 
                         new_record = BookingDetail(booking_date=booking_date,
                                                    slot_owner_id_id=owner_id,
                                                    booking_id_id=new_id,
-                                                   is_pending=True,
-                                                   date_pending=datetime.datetime.now())
+                                                   is_pending=True)
 
 
                     new_record.save()
-
+                    new = "new"
             # messages.success(request, "New Booking created, thanks")
-            return redirect(reverse('booking_detail', args={new_booking.pk, "new"}))
+            return redirect(reverse('booking_detail', kwargs={"booking_id":new_booking.pk, "new":new}))
 
     else:
 
@@ -259,24 +298,43 @@ def make_a_booking(request, asset_id):
 
 
 
-def get_future_bookings(asset_id, **kwargs):
+def get_bookings(**kwargs):
 
-    for_user = False
+    # by default, this query if sent NO kwargs will return a set of dates and ids for
+    # all future dates for all assets for all users
+    # using the optional parameters can return a set of dates and ids for
+    # all dates OR all past OR all futures dates, one or all users, one or all assets
+
+    requested_by = ""
+    this_asset = ""
+    time_period = ""
 
     if kwargs.has_key("user_id"):
         requested_by = kwargs['user_id']
-        for_user = True
 
-    if for_user:
-        future_bookings = BookingDetail.objects.all().filter(booking_id__requested_by_user_ID=requested_by,
-                                                             booking_id__asset_ID=asset_id,
-                                                             booking_date__gt=datetime.date.today()).order_by(
-                                                             "booking_date")
+    if kwargs.has_key("asset_id"):
+        this_asset = kwargs['asset_id']
 
-    else:
-        future_bookings = BookingDetail.objects.all().filter(booking_id__asset_ID=asset_id,
-                                                             booking_date__gt=datetime.date.today()).order_by(
-                                                            "booking_date")
+    # time period expected: 'all', 'past', or 'future'
+    if kwargs.has_key("time_period"):
+        time_period = kwargs['time_period']
+
+    # from http://stackoverflow.com/questions/852414/how-to-dynamically-compose-an-or-query-filter-in-django
+    query_params = Q()
+
+    if requested_by != "":
+        query_params.add(Q(booking_id__requested_by_user_ID=requested_by), Q.AND)
+
+    if this_asset != "":
+        query_params.add(Q(booking_id__asset_ID=this_asset), Q.AND)
+
+    if time_period == "future":
+        query_params.add(Q(booking_date__gt=datetime.date.today()),Q.AND)
+
+    if time_period == "past":
+        query_params.add(Q(booking_date__lte=datetime.date.today()), Q.AND)
+
+    future_bookings = BookingDetail.objects.all().filter(query_params).order_by("booking_date")
 
     # need a unique set of future booking ids
     booking_ids = set()

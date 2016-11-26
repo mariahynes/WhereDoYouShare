@@ -66,6 +66,54 @@ def get_total_for_confirmation(asset_id, user_id, **kwargs):
     return total
 
 @register.simple_tag
+def get_total_confirmed_bookings(asset_id, user_id):
+    # this function returns the number of booking refs
+    # that are fully confirmed for this user
+
+    total_count = 0
+
+    # the user_id here is checked against the requested by user field from Booking table
+    all_bookings = BookingDetail.objects.all().filter(booking_id__requested_by_user_ID=user_id,
+                                                             booking_date__gt=datetime.date.today(),
+                                                             booking_id__asset_ID=asset_id)
+
+
+    # make a set in order to get individual booking refs
+    ref_set = set()
+    # get the unique booking refs
+    for item in all_bookings:
+        ref_set.add(item.booking_id_id)
+
+    for ref in ref_set:
+        if is_booking_confirmed(ref):
+            total_count += 1
+
+    return total_count
+
+@register.simple_tag
+def get_total_bookings(asset_id):
+    # this function returns the number of booking refs
+    # that for the Asset
+
+    total_count = 0
+
+    # the user_id here is checked against the requested by user field from Booking table
+    all_bookings = BookingDetail.objects.all().filter( booking_date__gt=datetime.date.today(),
+                                                             booking_id__asset_ID=asset_id)
+
+
+    # make a set in order to get individual booking refs
+    ref_set = set()
+
+    # get the unique booking refs
+    for item in all_bookings:
+        ref_set.add(item.booking_id_id)
+
+    total_count = len(ref_set)
+
+    return total_count
+
+@register.simple_tag
 def get_total_pending(asset_id, user_id, **kwargs):
     # this function returns either the number of dates OR the number of booking refs
     # that are pending for this user
@@ -95,7 +143,6 @@ def get_total_pending(asset_id, user_id, **kwargs):
 
     return total
 
-    return total
 
 @register.filter
 def get_total_days_requested(owner_and_dates):
@@ -156,7 +203,6 @@ def get_booking_end_date(booking_id):
     a_date = BookingDetail.objects.all().filter(booking_id=booking_id).order_by("-booking_date")[0]
     max_date = a_date.booking_date
 
-    # add one day on (because departure will be the NEXT day)
     max_date = max_date + datetime.timedelta(days=1)
 
     return max_date
@@ -201,8 +247,8 @@ def get_booking_status(booking_id):
 
     else:
 
-        # the record is no longer in a pending state and is not yet confirmed
-        # so that means it must be approved/denied
+        # the record is no longer in a fully pending state and is not yet fully confirmed
+        # so that means it must be approved/denied OR some are confirmed/pending
 
         num_approved = get_approved_count(booking_id)
         num_denied = get_denied_count(booking_id)
@@ -213,7 +259,7 @@ def get_booking_status(booking_id):
         elif num_denied == total_requested:
             return "No"
         else:
-            return "%s of %s days" % (num_approved, total_requested)
+            return "%s of %s days approved" % (num_approved, total_requested)
 
 @register.simple_tag
 def get_approved_count(booking_id):

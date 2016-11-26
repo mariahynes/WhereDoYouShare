@@ -24,7 +24,16 @@
 
                                 <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">Your Bookings</h2>
 
+                                    {% if assets %}
+                                            <table class = "table">
 
+                                            {% for asset in assets %}
+
+                                                <a href="{% url 'make_a_booking' asset.asset_ID_id %}" role="button" class = "btn btn-primary">Make a Booking | {{ asset.asset_ID.asset_display_name }}</a>
+                                                &nbsp
+                                            {% endfor %}
+                                            </table>
+                                    {% endif %}
 
                                         {% if num_bookings_future > 0 %}
 
@@ -32,7 +41,7 @@
                                                     {%  with total=num_bookings_future %}
                                                          booking{{ total|pluralize }}: </span>
                                                     {%  endwith %}
-                                                    <div class="col_half">
+                                                    <div class="col_full">
                                                         <table class = "table table-striped">
                                                             <thead>
                                                                 <tr>
@@ -68,24 +77,15 @@
                                                 You have no future bookings <br>
 
                                         {% endif %}
-                                        {% if assets %}
-                                            <table class = "table">
 
-                                            {% for asset in assets %}
-                                                <tr><td>
-                                                <a href="{% url 'make_a_booking' asset.asset_ID_id %}" role="button" class = "btn btn-primary">Make a Booking | {{ asset.asset_ID.asset_display_name }}</a>
-                                                </td></tr>
-                                            {% endfor %}
-                                            </table>
-                                        {% endif %}
 
                                     {% if num_bookings_past > 0 %}
-
+                                                <hr>
                                                 <p> <span style="font-family: 'Playfair Display'">Your past
                                                     {%  with total=num_bookings_past %}
                                                          booking{{ total|pluralize }}: </span>
                                                     {%  endwith %}
-                                                    <div class="col_half">
+                                                    <div class="col_full">
                                                         <table class = "table table-striped">
                                                             <thead>
                                                                 <tr>
