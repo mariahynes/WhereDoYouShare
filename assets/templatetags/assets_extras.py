@@ -11,3 +11,4 @@ def my_asset_count(asset_user_mapping):
 
     return total_assets
 
+

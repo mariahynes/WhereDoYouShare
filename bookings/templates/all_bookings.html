@@ -23,11 +23,18 @@
 					        <div class="container clearfix"> <!--clearfix removed-->
 
                                 <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">
-                                    {% if return_page_user %}
-                                        My
-                                        {% else %}
-                                        Future
-                                    {% endif %} Bookings | {{ asset.asset_display_name }}</h2>
+                                Bookings | {{ asset.asset_display_name }}</h2>
+
+                                 <p>
+                                       {{ page_name }}
+                                        {% if return_page_user %}
+                                        (for me)
+                                            {% else %}
+                                            (for all Members)
+                                        {% endif %}
+                                 </p>
+
+
 
                                 {%  if errors %}
                                      {% for error in errors %}

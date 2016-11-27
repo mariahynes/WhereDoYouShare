@@ -33,7 +33,6 @@ class Asset_User_Mapping(models.Model):
     date_created = models.DateTimeField(default=timezone.now)
     is_activated = models.BooleanField(blank=False)
     date_activated = models.DateTimeField(blank=True, null=True)
-    invited_by = models.IntegerField(default=0,blank=True, null=True)
     inviter = models.ForeignKey(settings.AUTH_USER_MODEL, default=0, on_delete=models.CASCADE,related_name="linked_to_owner")
 
     def activate_user_mapping(self):

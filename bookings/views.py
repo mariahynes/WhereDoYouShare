@@ -8,10 +8,11 @@ from bookings.templatetags.booking_extras import get_booking_start_date
 from .models import Booking, BookingDetail
 from .forms import BookingForm
 from myfunctions import get_owners_and_dates
-from home.myAuth import check_user_linked_to_asset
+from home.myAuth import check_user_linked_to_asset, check_user_linked_to_owner
 import datetime
 from django.utils import timezone
 from django.db.models import Q
+from bookings.templatetags.booking_extras import get_owner_name_for_user_id_and_asset
 
 @login_required(login_url='/login/')
 def my_bookings(request):
@@ -38,17 +39,50 @@ def my_bookings(request):
 
 
 @login_required(login_url='/login/')
-def all_future_asset_bookings(request, asset_id, user_id=0):
+def all_asset_bookings(request, asset_id, user_id=0, time_period="all", status="all", owner_id=0):
 
-    # this function returns all the future bookings for an asset
+    # this function returns all the bookings for an asset
     # can provide optional arg with the user id which will return bookings for a particular user only
+    # can provide optional arg to return bookings of a particular time period only (future or past)
 
+    # based on the inputs, the page_desc is decided
+    page_desc = ""
     the_asset = get_object_or_404(Asset, pk=asset_id)
     this_user_only = False
+    time_range = ""
     errors = []
+    the_owner = 0
+    my_page_display = False
 
     if request.user.id == int(user_id):
         this_user_only = True
+        my_page_display = True
+
+    time_range = time_period
+
+    if time_range != "future" and time_range != "past":
+        time_range = ""
+
+    if len(time_range)>0:
+        page_desc = "%s %s" % (page_desc, time_range.capitalize())
+
+    if status == "pending":
+        is_pending = True
+        page_desc = "%s %s %s" % (page_desc, status.capitalize(), "Requests")
+    else:
+        is_pending = False
+        page_desc = "%s %s" % (page_desc, "bookings")
+
+    if owner_id > 0:
+        # an owner_id has been supplied
+        # check if this user is linked to this owner
+        if check_user_linked_to_owner(request.user, owner_id, asset_id):
+            the_owner = owner_id
+            the_owner_display_name = get_owner_name_for_user_id_and_asset(asset_id,user_id,first_name_only=True)
+            page_desc = "%s %s %s" % (page_desc, "to be approved by ", the_owner_display_name)
+            my_page_display = False
+        else:
+            the_owner = 0
 
     my_id = request.user
     if check_user_linked_to_asset(my_id, asset_id):
@@ -56,22 +90,25 @@ def all_future_asset_bookings(request, asset_id, user_id=0):
         # optional userID
         if this_user_only:
 
-            all_bookings = get_bookings(asset_id=asset_id, user_id=request.user.id, time_period="future")
+            all_bookings = get_bookings(asset_id=asset_id, user_id=request.user.id, time_period=time_range, pending=is_pending, owner_id=the_owner)
 
         else:
 
-            all_bookings = get_bookings(asset_id=asset_id, time_period="future")
+            all_bookings = get_bookings(asset_id=asset_id, time_period=time_range,pending=is_pending,owner_id=the_owner)
 
     else:
         the_asset = []
         all_bookings = []
-        errors.append("You are not authorised to view this Booking page")
+        errors.append("You are not authorised to view this Bookings page")
+
+
+
 
     return render(request, "all_bookings.html",
-                  {"asset": the_asset, "bookings": all_bookings, "errors": errors, "return_page_user": user_id})
+                  {"asset": the_asset, "bookings": all_bookings, "errors": errors, "return_page_user": my_page_display, "page_name": page_desc})
 
 @login_required(login_url='/login/')
-def all_bookings(request, asset_id="", status = "", time_period = "", user_id=""):
+def all_bookings(request, asset_id=0, status = "", time_period = "", user_id=0):
 
     # this function returns all the bookings refs in the Booking Table
     # for an asset (optional)
@@ -85,7 +122,7 @@ def all_bookings(request, asset_id="", status = "", time_period = "", user_id=""
     user_is_linked = False
     time_range = "all"
 
-    if asset_id != "":
+    if asset_id != 0:
         the_asset = get_object_or_404(Asset, pk=asset_id)
 
         if check_user_linked_to_asset(my_id, asset_id):
@@ -96,11 +133,13 @@ def all_bookings(request, asset_id="", status = "", time_period = "", user_id=""
         this_user_only = True
 
 
-    if len(time_period) > 0:
+    if time_period != "":
         if time_period == "future":
             time_range = time_period
         elif time_period == "past":
             time_range == time_period
+        else:
+            time_range == "all" # this will do nothing but putting it here for completeness
 
     if asset_id != 0:
 
@@ -130,6 +169,11 @@ def all_bookings(request, asset_id="", status = "", time_period = "", user_id=""
             # bookings belonging to any user (for all assets)
             all_bookings = get_bookings(time_period=time_range)
             # filter this result to return only the bookings from assets the user is allowed to view
+
+            linked_assets = request.session['linked_assets']
+            for asset in linked_assets:
+                print "my linked asset: %s" % asset
+
             for ref in all_bookings:
                 print "ref in all bookings: %s" % ref
 
@@ -308,6 +352,7 @@ def get_bookings(**kwargs):
     requested_by = ""
     this_asset = ""
     time_period = ""
+    is_pending = False
 
     if kwargs.has_key("user_id"):
         requested_by = kwargs['user_id']
@@ -319,22 +364,38 @@ def get_bookings(**kwargs):
     if kwargs.has_key("time_period"):
         time_period = kwargs['time_period']
 
+    if kwargs.has_key("pending"):
+        is_pending = kwargs['pending']
+
+    if kwargs.has_key("owner_id"):
+        owned_by = kwargs['owner_id']
+
     # from http://stackoverflow.com/questions/852414/how-to-dynamically-compose-an-or-query-filter-in-django
     query_params = Q()
 
-    if requested_by != "":
+    if owned_by > 0:
+        query_params.add(Q(slot_owner_id_id=owned_by), Q.AND)
+
+    # can only check one of slot owner or requested by not both
+    if requested_by != "" and owned_by == 0:
         query_params.add(Q(booking_id__requested_by_user_ID=requested_by), Q.AND)
 
     if this_asset != "":
         query_params.add(Q(booking_id__asset_ID=this_asset), Q.AND)
 
-    if time_period == "future":
-        query_params.add(Q(booking_date__gt=datetime.date.today()),Q.AND)
-
     if time_period == "past":
         query_params.add(Q(booking_date__lte=datetime.date.today()), Q.AND)
 
+    if time_period == "future":
+        query_params.add(Q(booking_date__gt=datetime.date.today()), Q.AND)
+
+    if is_pending == True:
+        query_params.add(Q(is_pending=is_pending), Q.AND)
+
+
+
     future_bookings = BookingDetail.objects.all().filter(query_params).order_by("booking_date")
+    print future_bookings.query
 
     # need a unique set of future booking ids
     booking_ids = set()

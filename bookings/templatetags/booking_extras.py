@@ -1,11 +1,14 @@
 from django import template
 import datetime
+from assets.models import Asset_User_Mapping
 from bookings.models import BookingDetail
+from home.myAuth import check_user_linked_to_owner
 
 register = template.Library()
 
 @register.simple_tag
 def get_total_for_approval(asset_id, user_id, **kwargs):
+    # FUTURE approval for an OWNER
     # this function returns either the number of dates OR the number of booking refs
     # awaiting this owner approval for the given asset_id
     # if kwarg 'num_bookings' == True, then it's the total bookings returned,
@@ -16,9 +19,12 @@ def get_total_for_approval(asset_id, user_id, **kwargs):
     if kwargs.has_key("num_bookings"):
         return_bookings = kwargs['num_bookings']
 
+
+    # check if the given user_id is an owner
     # only OWNERS can approve, so the user_id here is checked against the slot owner field
     all_dates = BookingDetail.objects.all().filter(slot_owner_id_id=user_id, booking_id__asset_ID=asset_id,
                                                    booking_date__gt=datetime.date.today(), is_pending=True)
+
 
     if return_bookings:
         ref_set = set()
@@ -35,7 +41,79 @@ def get_total_for_approval(asset_id, user_id, **kwargs):
     return total
 
 @register.simple_tag
+def get_total_for_approval_linked(asset_id, user_id, **kwargs):
+    # FUTURE approval for a MEMBER (members don't approve,
+    # but they should know about approvals to which they are linked)
+    # this function returns either the number of dates OR the number of booking refs
+    # that are awaiting approval BUT only returns a value if this user_id is linked to the owner
+    # if kwarg 'num_bookings' == True, then it's the total bookings returned,
+    # otherwise it's the number of individual dates returned
+
+    return_bookings = False
+    total = 0
+
+    if kwargs.has_key("num_bookings"):
+        return_bookings = kwargs['num_bookings']
+
+    # first just get all the future pending bookings for the assest
+    all_pending_dates = BookingDetail.objects.all().filter(booking_id__asset_ID=asset_id,
+                                                   booking_date__gt=datetime.date.today(), is_pending=True)
+
+    if return_bookings:
+        # need the booking ids only
+        ref_set = set()
+
+        # check the owner/member link for each of the records returned
+        for item in all_pending_dates:
+            the_owner_id = item.slot_owner_id_id
+            is_linked = check_user_linked_to_owner(user_id, the_owner_id, asset_id)
+            if is_linked:
+                ref_set.add(item.booking_id_id)
+
+        total = len(ref_set)
+
+    else:
+        # need the count of dates
+        # check the owner/member link for each of the records returned
+        for item in all_pending_dates:
+            the_owner_id = item.slot_owner_id_id
+            print "owner %s" % the_owner_id
+            is_linked = check_user_linked_to_owner(user_id, the_owner_id, asset_id)
+            print "is linked %s" % is_linked
+            if is_linked:
+                total += 1
+                print "total: %s" % total
+
+    return total
+
+@register.simple_tag
+def get_owner_name_for_user_id_and_asset(asset_id, user_id, **kwargs):
+
+    # this returns the name of the owner who invited this user
+    # remember this COULD return the logged-in user's own name
+    # if they are an owner
+
+    get_first_name = False
+
+    if kwargs.has_key("first_name_only"):
+        get_first_name = kwargs['first_name_only']
+
+    the_owner = Asset_User_Mapping.objects.get(user_ID_id=user_id,asset_ID_id=asset_id)
+
+    owner_first_name = the_owner.inviter.first_name
+    owner_last_name = the_owner.inviter.last_name
+
+    if get_first_name:
+
+        return owner_first_name
+
+    else:
+
+        return "%s %s" % (owner_first_name, owner_last_name)
+
+@register.simple_tag
 def get_total_for_confirmation(asset_id, user_id, **kwargs):
+    # FUTURE confirmation
     # this function returns either the number of dates OR the number of booking refs
     # that are waiting for original Requestor to approve
     # if kwarg 'num_bookings' == True, then it's the total bookings returned,
@@ -67,6 +145,7 @@ def get_total_for_confirmation(asset_id, user_id, **kwargs):
 
 @register.simple_tag
 def get_total_confirmed_bookings(asset_id, user_id):
+    # # FUTURE confirmed
     # this function returns the number of booking refs
     # that are fully confirmed for this user
 
@@ -92,6 +171,7 @@ def get_total_confirmed_bookings(asset_id, user_id):
 
 @register.simple_tag
 def get_total_bookings(asset_id):
+    # FUTURE bookings
     # this function returns the number of booking refs
     # that for the Asset
 
@@ -114,7 +194,31 @@ def get_total_bookings(asset_id):
     return total_count
 
 @register.simple_tag
+def get_total_bookings_past(asset_id):
+    # PAST bookings
+    # this function returns the number of booking refs
+    # for the Asset
+
+    total_count = 0
+
+    all_bookings = BookingDetail.objects.all().filter( booking_date__lte=datetime.date.today(),
+                                                             booking_id__asset_ID=asset_id)
+
+
+    # make a set in order to get individual booking refs
+    ref_set = set()
+
+    # get the unique booking refs
+    for item in all_bookings:
+        ref_set.add(item.booking_id_id)
+
+    total_count = len(ref_set)
+
+    return total_count
+
+@register.simple_tag
 def get_total_pending(asset_id, user_id, **kwargs):
+    # FUTURE pending
     # this function returns either the number of dates OR the number of booking refs
     # that are pending for this user
     # if kwarg 'num_bookings' == True, then it's the total bookings returned,
@@ -142,7 +246,6 @@ def get_total_pending(asset_id, user_id, **kwargs):
         total = all_dates.count()
 
     return total
-
 
 @register.filter
 def get_total_days_requested(owner_and_dates):

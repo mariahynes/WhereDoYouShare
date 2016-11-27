@@ -34,6 +34,22 @@ def check_user_linked_to_asset(user_id, asset_id):
 
     return user_is_authorised
 
+def check_user_linked_to_owner(user_id, owner_id, asset_id):
+
+    # this function checks to see if the user_id has been invited by the owner_id
+    # to be a member sharing the asset_id
+    # if they have then this function returns TRUE
+    try:
+        user_linking = Asset_User_Mapping.objects.get(user_ID_id=user_id, inviter_id=owner_id, asset_ID_id=asset_id)
+
+    except Asset_User_Mapping.DoesNotExist:
+        user_is_linked_to_owner = False
+
+    else:
+        user_is_linked_to_owner = True
+
+    return user_is_linked_to_owner
+
 def check_user_linked_to_blog_post(user_id, asset_id, post_id):
 
     # this function can be used to check if the user is the author of a blog post

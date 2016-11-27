@@ -54,7 +54,7 @@
 
                                                             {% get_total_pending asset.asset_ID user.id num_bookings=True as totes_pending %}
                                                                 {%  if totes_pending > 0 %}
-                                                                    <li><a href="">My Pending Requests <span class="badge">{{totes_pending}}</span></a></li>
+                                                                    <li><a href="{% url 'all_asset_bookings' asset.asset_ID_id user.id "future" "pending" %}">My Pending Requests <span class="badge">{{totes_pending}}</span></a></li>
                                                                 {% endif %}
                                                             {% get_total_for_confirmation asset.asset_ID user.id num_bookings=True as totes_confirm %}
                                                                 {% if totes_confirm > 0 %}
@@ -62,13 +62,17 @@
                                                                 {% endif %}
                                                             {% get_total_confirmed_bookings asset.asset_ID user.id as totes_fully_confirmed %}
                                                                 {% if totes_fully_confirmed > 0 %}
-                                                                <li><a href="{% url 'all_future_asset_bookings' asset.asset_ID_id user.id %}">My Bookings <span class="badge">{{ totes_fully_confirmed }}</span></a></li>
+                                                                <li><a href="">My Bookings <span class="badge">{{ totes_fully_confirmed }}</span></a></li>
                                                                 {% endif %}
 
                                                                 <li><a href="{% url 'make_a_booking' asset.asset_ID_id %}">Make a Booking</a></li>
                                                                 {% get_total_bookings asset.asset_ID as totes_bookings %}
                                                                 {% if totes_bookings > 0 %}
-                                                                    <li><a href="{% url 'all_future_asset_bookings' asset.asset_ID_id %}">View {{ asset.asset_ID.asset_display_name }} Bookings <span class="badge">{{ totes_bookings }}</span></a></li>
+                                                                    <li><a href="{% url 'all_asset_bookings' asset.asset_ID_id "future" %}">View all Future Bookings <span class="badge">{{ totes_bookings }}</span></a></li>
+                                                                {% endif %}
+                                                            {% get_total_bookings_past asset.asset_ID as totes_bookings_past %}
+                                                                {% if totes_bookings_past > 0 %}
+                                                                    <li><a href="{% url 'all_asset_bookings' asset.asset_ID_id "past" %}">View all Past Bookings <span class="badge">{{ totes_bookings_past }}</span></a></li>
                                                                 {% endif %}
                                                             <li class="divider"></li>
                                                                 <li><a href="{% url 'post_list' asset.asset_ID_id %}">{{ asset.asset_ID.asset_display_name }} Blog</a></li>
@@ -80,8 +84,14 @@
                                                                     <li class="divider"></li>
                                                                     <li><a href="">My Pending Approvals <span class="badge">{{ totes_approve }}</span></a></li>
                                                                     {% endif %}
-                                                                {%  endif %}
+                                                                {% else %}
+                                                                    {% get_total_for_approval_linked asset.asset_ID user.id num_bookings=True as totes_approve_linked %}
+                                                                    {% if totes_approve_linked > 0 %}
+                                                                    <li class="divider"></li>
+                                                                    <li><a href="{% url 'all_asset_bookings' asset.asset_ID_id user.id "future" "pending" asset.inviter_id %}">Pending Approvals (for your shared time-slot) <span class="badge">{{ totes_approve_linked }}</span></a></li>
+                                                                    {% endif %}
 
+                                                                {%  endif %}
 
 
                                                             </ul>
