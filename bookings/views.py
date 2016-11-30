@@ -4,11 +4,12 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.template.context_processors import csrf
 from assets.models import Asset, Asset_User_Mapping
-from bookings.templatetags.booking_extras import get_booking_start_date
+from bookings.templatetags.booking_extras import get_booking_start_date, is_booking_pending,is_booking_confirmed,get_booking_requestor
 from .models import Booking, BookingDetail
-from .forms import BookingForm
+from .forms import BookingForm, BookingDetailForm_for_Owner
+from django.forms import modelformset_factory
 from myfunctions import get_owners_and_dates
-from home.myAuth import check_user_linked_to_asset, check_user_linked_to_owner
+from home.myAuth import check_user_linked_to_asset, check_user_linked_to_owner, check_if_user_is_an_owner
 import datetime
 from django.utils import timezone
 from django.db.models import Q
@@ -107,94 +108,84 @@ def all_asset_bookings(request, asset_id, user_id=0, time_period="all", status="
     return render(request, "all_bookings.html",
                   {"asset": the_asset, "bookings": all_bookings, "errors": errors, "return_page_user": my_page_display, "page_name": page_desc})
 
-@login_required(login_url='/login/')
-def all_bookings(request, asset_id=0, status = "", time_period = "", user_id=0):
-
-    # this function returns all the bookings refs in the Booking Table
-    # for an asset (optional)
-    # for a given status (optional) e.g.pending, approved, confirmed, denied, or all
-    # for a given user (optional)
-
-    errors = []
-    the_asset = []
-    all_bookings = []
-    my_id = request.user
-    user_is_linked = False
-    time_range = "all"
-
-    if asset_id != 0:
-        the_asset = get_object_or_404(Asset, pk=asset_id)
-
-        if check_user_linked_to_asset(my_id, asset_id):
-            user_is_linked = True
-
-    this_user_only = False
-    if request.user.id == int(user_id):
-        this_user_only = True
-
-
-    if time_period != "":
-        if time_period == "future":
-            time_range = time_period
-        elif time_period == "past":
-            time_range == time_period
-        else:
-            time_range == "all" # this will do nothing but putting it here for completeness
-
-    if asset_id != 0:
-
-        if user_is_linked == True:
-            # then the query is for bookings for a particular asset
-            # check optional userID
-            if this_user_only:
-                # only bookings for this user (for this asset)
-                all_bookings = get_bookings(asset_id=asset_id, user_id=my_id, time_period=time_range)
-
-            else:
-                # bookings belonging to any user (for this asset)
-                all_bookings = get_bookings(asset_id=asset_id,time_period=time_range)
-
-        else:
-            errors.append("You are not authorised to view this asset")
-
-    else:
-        # this is not bookings for one particular asset, but bookings for all assets
-        # but only return bookings from assets that the user is allowed to view
-
-        if this_user_only:
-            # only bookings for this user (for all assets)
-            all_bookings = get_bookings(user_id=my_id,time_period=time_range)
-
-        else:
-            # bookings belonging to any user (for all assets)
-            all_bookings = get_bookings(time_period=time_range)
-            # filter this result to return only the bookings from assets the user is allowed to view
-
-            linked_assets = request.session['linked_assets']
-            for asset in linked_assets:
-                print "my linked asset: %s" % asset
-
-            for ref in all_bookings:
-                print "ref in all bookings: %s" % ref
-
-    # now check if the status is required
-    if status == "pending":
-        pass
-    elif status == "approved":
-        pass
-    elif status == "confirmed":
-        pass
-    elif status == "denied":
-        pass
-    else:
-        pass
-
-    return render(request, "all_bookings.html",
-                  {"asset": the_asset, "bookings": all_bookings, "errors": errors, "return_page_user": user_id})
 
 @login_required(login_url='/login/')
 def booking_detail(request, booking_id, new=""):
 
+    # this view shows the booking in detail, a list of all the dates in the booking
+    # with a summary on top
+
+    # depending on the booking status and the user who is viewing, the view can returns
+    # a formset which allows the user to edit the booking
+
+    the_booking = get_object_or_404(Booking, pk=booking_id)
+    errors = []
+    asset = []
+    booking_detail = []
+    if new != "new":
+        new = ""
+
+    # set these to False to start with
+    booking_pending = False
+    booking_confirmed = False
+    user_is_requestor = False
+    user_is_owner = False
+
+    # get the asset id (from the booking)
+    asset_id = the_booking.asset_ID_id
+    asset = Asset.objects.get(pk=asset_id)
+    booking_detail = BookingDetail.objects.select_related().filter(booking_id_id=booking_id).order_by("booking_date")
+
+    # anyone linked to the Asset can view the booking
+    # but only the requestor can edit the booking (once it is a Confirmed Booking)
+    # only the Owner can edit the booking (while it is in Pending mode)
+    my_id = request.user
+
+    if check_user_linked_to_asset(my_id,asset_id):
+
+        # check the status of the overall booking
+        booking_pending = is_booking_pending(booking_id)
+        booking_confirmed = is_booking_confirmed(booking_id)
+
+        # check the status of the user_id
+        is_requestor = get_booking_requestor(booking_id, return_id=True)
+        if is_requestor == request.user.id:
+            user_is_requestor = True
+        user_is_owner = check_if_user_is_an_owner(my_id, asset_id)
+
+        # depending on the above checks, show the booking detail with different form buttons
+        if user_is_owner != True and user_is_requestor != True:
+
+            # messages.success(request,"You are viewing as a non-owner and non-requestor %s %s" % (user_is_requestor, user_is_owner))
+            # just display the details of the booking - this user is just viewing
+            formset = []
+
+        else:
+           # messages.success(request, "You are viewing as either an owner or a requestor")
+            # user is either owner or requestor
+
+            BookingDetailFormSet = modelformset_factory(BookingDetail, form=BookingDetailForm_for_Owner)
+            booking_detail_for_owner = BookingDetail.objects.select_related().filter(booking_id_id=booking_id,slot_owner_id_id=request.user.id).order_by(
+                "booking_date")
+            formset = BookingDetailFormSet(queryset=booking_detail_for_owner)
+            if request.method == 'POST':
+                formset = BookingDetailFormSet(request.POST,queryset=booking_detail_for_owner)
+                if formset.is_valid():
+
+                    pass
+                else:
+                    formset = BookingDetailFormSet(request.POST,queryset=booking_detail_for_owner)
+            else:
+                formset = BookingDetailFormSet(queryset=booking_detail_for_owner)
+
+    else:
+        errors.append("You are not authorised to view this booking")
+
+    return render(request, "booking_detail.html",{"booking":the_booking,"booking_detail": booking_detail, "asset":asset,"errors":errors, "new":new, "formset":formset})
+
+
+@login_required(login_url='/login/')
+def booking_detail_BEFORE_FORMS(request, booking_id, new=""):
     the_booking = get_object_or_404(Booking, pk=booking_id)
     errors = []
     asset = []
@@ -206,18 +197,25 @@ def booking_detail(request, booking_id, new=""):
     asset_id = the_booking.asset_ID_id
 
     # anyone linked to the Asset can view the booking
-    # but only the requestor can edit the booking
+    # but only the requestor can edit the booking (once it is a Confirmed Booking)
+    # only the Owner can edit the booking (while it is in Pending mode)
     my_id = request.user
-    if check_user_linked_to_asset(my_id,asset_id):
+    if check_user_linked_to_asset(my_id, asset_id):
+
+        # check the status of the overall booking
+        booking_pending = is_booking_pending(booking_id)
+        booking_confirmed = is_booking_confirmed(booking_id)
 
         asset = Asset.objects.get(pk=asset_id)
-        booking_detail = BookingDetail.objects.select_related().filter(booking_id_id=booking_id).order_by("booking_date")
+        booking_detail = BookingDetail.objects.select_related().filter(booking_id_id=booking_id).order_by(
+            "booking_date")
 
     else:
         errors.append("You are not authorised to view this booking")
 
-    return render(request, "booking_detail.html",{"booking":the_booking,"booking_detail": booking_detail, "asset":asset,"errors":errors, "new":new})
-
+    return render(request, "booking_detail.html",
+                  {"booking": the_booking, "booking_detail": booking_detail, "asset": asset, "errors": errors,
+                   "new": new})
 
 @login_required(login_url='/login/')
 def make_a_booking(request, asset_id):
@@ -349,10 +347,11 @@ def get_bookings(**kwargs):
     # using the optional parameters can return a set of dates and ids for
     # all dates OR all past OR all futures dates, one or all users, one or all assets
 
-    requested_by = ""
-    this_asset = ""
+    requested_by = 0
+    this_asset = 0
     time_period = ""
     is_pending = False
+    owned_by = 0
 
     if kwargs.has_key("user_id"):
         requested_by = kwargs['user_id']
@@ -377,10 +376,10 @@ def get_bookings(**kwargs):
         query_params.add(Q(slot_owner_id_id=owned_by), Q.AND)
 
     # can only check one of slot owner or requested by not both
-    if requested_by != "" and owned_by == 0:
+    if requested_by != 0 and owned_by == 0:
         query_params.add(Q(booking_id__requested_by_user_ID=requested_by), Q.AND)
 
-    if this_asset != "":
+    if this_asset != 0:
         query_params.add(Q(booking_id__asset_ID=this_asset), Q.AND)
 
     if time_period == "past":

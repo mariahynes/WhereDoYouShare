@@ -11,16 +11,17 @@
             </style>
         {% endblock %}
         <!-- Slider ============================================= -->
-		<section id="slider" class="full-screen  slider-parallax">
-
-			<div class="full-screen section nopadding nomargin noborder ohidden" style="background: url({% static 'myimages/login1.jpg' %}) bottom center no-repeat; background-size: cover;">
-
-				<div class="container " >
-				    <div class="vertical-middle">
-
-				        <div id="section-about" class="page-section">
-
-					        <div class="container clearfix"> <!--clearfix removed-->
+{#		<section id="slider" class="full-screen  slider-parallax">#}
+{##}
+{#			<div class="full-screen section nopadding nomargin noborder ohidden" style="background: url({% static 'myimages/login1.jpg' %}) bottom center no-repeat; background-size: cover;">#}
+{##}
+{#				<div class="container " >#}
+{#				    <div class="vertical-middle">#}
+{##}
+{#				        <div id="section-about" class="page-section">#}
+{##}
+			                <br><br>
+					       		        <div class="container "> <!--clearfix removed-->
 
                                 <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">Booking | {{ asset.asset_display_name }}</h2>
 
@@ -51,33 +52,56 @@
 
                                                     </span>
                                                 <br>
+                                                    {% if formset %}
+                                                        <div class="col_half">
+                                                            <table class = "table table-striped">
+                                                                <thead>
+                                                                    <tr>
 
-                                                    <div class="col_half">
-                                                        <table class = "table table-striped">
-                                                            <thead>
-                                                                <tr>
+                                                                        <th>Date</th>
+                                                                        <th>Current Status</th>
+                                                                        <th>Update To</th>
+                                                                        <th></th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
 
-                                                                    <th>Date</th>
-                                                                    <th>Booking Status</th>
-                                                                    <th>Slot Owner</th>
-                                                                    <th></th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            {%  for item in booking_detail %}
-                                                                <tr>
+                                                                    {% include "owner_approval_form.html" %}
 
-                                                                    <td>{{ item.booking_date | date:"l"}}, {{ item.booking_date | date:"d M Y"}}</td>
-                                                                    <td>{% get_booking_date_status item.pk %} </td>
-                                                                    <td>{{ item.slot_owner_id.first_name }} {{ item.slot_owner_id.last_name }}</td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                </tr>
-                                                            {% endfor %}
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
 
-                                                             </tbody>
-                                                        </table>
-                                                    </div>
+                                                    {% else %}
+                                                        <div class="col_half">
+                                                            <table class = "table table-striped">
+                                                                <thead>
+                                                                    <tr>
+
+                                                                        <th>Date</th>
+                                                                        <th>Booking Status</th>
+                                                                        <th>Slot Owner</th>
+                                                                        <th></th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+
+                                                                {%  for item in booking_detail %}
+
+                                                                    <tr>
+
+                                                                        <td>{{ item.booking_date | date:"D"}}, {{ item.booking_date | date:"d M Y"}}</td>
+                                                                        <td>{% get_booking_date_status item.pk %} </td>
+                                                                        <td>{{ item.slot_owner_id.first_name }} {{ item.slot_owner_id.last_name }}</td>
+                                                                        <td></td>
+                                                                        <td></td>
+                                                                    </tr>
+                                                                {% endfor %}
+
+                                                                 </tbody>
+                                                            </table>
+                                                        </div>
+                                                    {% endif %}
                                                 <p>
                                                 {%  if new == "new" %}
 
@@ -89,6 +113,22 @@
 
                                                 {% endif %}
                                                 </p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
                                         {% else %}
 
@@ -109,15 +149,15 @@
 
 
 				            </div>
+{##}
+{#                       </div>#}
+{##}
+{#					</div>#}
+{#				</div>#}
+{##}
+{#			</div>#}
 
-                       </div>
-
-					</div>
-				</div>
-
-			</div>
-
-		</section> <!--#slider end -->
+{#		</section> <!--#slider end -->#}
 
 
 

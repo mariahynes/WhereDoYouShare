@@ -14,10 +14,7 @@ urlpatterns = [
     url(r'^bookings/all/asset/(?P<asset_id>\d+)/(?P<user_id>\d+)/(?P<time_period>[a-z]{1,9})/(?P<status>[a-z]{1,9})/$', views.all_asset_bookings, name ="all_asset_bookings"),
     url(r'^bookings/all/asset/(?P<asset_id>\d+)/(?P<user_id>\d+)/(?P<time_period>[a-z]{1,9})/(?P<status>[a-z]{1,9})/(?P<owner_id>\d+)/$', views.all_asset_bookings, name ="all_asset_bookings"),
 
-    url(r'^bookings/all/(?P<asset_id>\d+)/$', views.all_bookings, name ="all_bookings"),
-    url(r'^bookings/all/(?P<asset_id>\d+)/(?P<status>[a-z]{1,9})/$', views.all_bookings, name ="all_bookings"),
-    url(r'^bookings/all/(?P<asset_id>\d+)/(?P<status>[a-z]{1,9})/(?P<time_period>[a-z]{1,6})/$', views.all_bookings, name ="all_bookings"),
-    url(r'^bookings/all/(?P<asset_id>\d+)/(?P<status>[a-z]{1,9})/(?P<time_period>[a-z]{1,6})/(?P<user_id>\d+)/$', views.all_bookings, name ="all_bookings"),
+
 ]
 
 

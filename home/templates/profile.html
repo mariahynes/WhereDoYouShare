@@ -82,7 +82,7 @@
                                                                     {% get_total_for_approval asset.asset_ID user.id num_bookings=True as totes_approve %}
                                                                     {% if totes_approve > 0 %}
                                                                     <li class="divider"></li>
-                                                                    <li><a href="">My Pending Approvals <span class="badge">{{ totes_approve }}</span></a></li>
+                                                                    <li><a href="{% url 'all_asset_bookings' asset.asset_ID_id user.id "future" "pending" user.id %}">My Pending Approvals <span class="badge">{{ totes_approve }}</span></a></li>
                                                                     {% endif %}
                                                                 {% else %}
                                                                     {% get_total_for_approval_linked asset.asset_ID user.id num_bookings=True as totes_approve_linked %}

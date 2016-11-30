@@ -331,6 +331,17 @@ def get_booking_date_status(booking_pk):
     return the_status
 
 @register.simple_tag
+def get_booking_date(booking_pk):
+
+    # this function takes the pk of the individual dated record
+    # and NOT the booking ref
+    item = BookingDetail.objects.get(pk=booking_pk)
+
+    the_date = item.booking_date
+
+    return the_date
+
+@register.simple_tag
 def get_booking_asset_name(booking_id):
     a_name = BookingDetail.objects.all().filter(booking_id=booking_id).order_by("-booking_date")[0]
     asset = a_name.booking_id.asset_ID.asset_display_name
@@ -450,14 +461,25 @@ def get_booking_slot_owner(booking_id):
     return owner_string
 
 @register.simple_tag
-def get_booking_requestor(booking_id):
+def get_booking_requestor(booking_id,**kwargs):
 
     # there will only be one Requestor per booking
     # but could be many booking dates in that Booking,
     # so only return the first item in the object
+    # return the first_name second_name by defauly
+    # return the id if "return_id" in kwargs
+    return_id = 0
+
+    if kwargs.has_key("return_id"):
+        return_id = kwargs['return_id']
+
     bd = BookingDetail.objects.select_related().filter(booking_id=booking_id)[0]
 
-    the_name = "%s %s" % (bd.booking_id.requested_by_user_ID.first_name, bd.booking_id.requested_by_user_ID.last_name)
+    if return_id == 0:
+        the_name = bd.booking_id.requested_by_user_ID_id
+    else:
+        the_name = "%s %s" % (bd.booking_id.requested_by_user_ID.first_name, bd.booking_id.requested_by_user_ID.last_name)
+
 
     return the_name
 

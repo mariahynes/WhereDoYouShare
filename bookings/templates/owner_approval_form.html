@@ -1,0 +1,25 @@
+{% load booking_extras %}
+<form method="post" action="">
+    {{ formset.management_form }}
+        {% for form in formset %}
+
+
+
+            <tr>
+                {% with form.booking_date.value as the_id %}
+                     <td>{{ the_id | date:"D, d M Y "}}</td>
+{#                <td>{% get_booking_date the_id %}</td>#}
+                {% endwith %}
+
+                <td>Pending </td>
+                <td>Approved {{ form.is_approved }} &nbsp&nbsp Denied {{ form.is_denied }}  &nbsp</td>
+                <td><button type="submit" class="btn btn-primary">Submit</button></td>
+            </tr>
+            <div class="form-group">
+
+</div>
+
+        {% endfor %}
+
+
+</form>

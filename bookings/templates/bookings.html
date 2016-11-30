@@ -48,7 +48,7 @@
                                                                     <th>Name</th>
                                                                     <th>From</th>
                                                                     <th>Until</th>
-                                                                    <th>Confirmed?</th>
+                                                                    <th>Status</th>
                                                                     <th>Slot Owner</th>
                                                                     <th></th>
                                                                 </tr>
@@ -57,9 +57,9 @@
                                                             {%  for booking_id in future_bookings %}
                                                                 <tr>
                                                                     <td>{% get_booking_asset_name booking_id.1 %}</td>
-                                                                    <td>{% get_booking_start_date  booking_id.1 %} </td>
-                                                                    <td>{% get_booking_end_date  booking_id.1 %} </td>
-                                                                    <td>{% is_booking_confirmed booking_id.1 %}</td>
+                                                                    <td>{% get_booking_start_date  booking_id.1 as the_start %}{{ the_start | date:"D" }}, {{ the_start | date:"d M Y" }} </td>
+                                                                    <td>{% get_booking_end_date  booking_id.1 as the_end %}{{ the_end | date:"D" }}, {{ the_end | date:"d M Y" }} </td>
+                                                                    <td>{% get_booking_status booking_id.1 %}</td>
                                                                     <td>{% get_booking_slot_owner booking_id.1 %}</td>
                                                                     <td></td>
                                                                 </tr>
@@ -80,8 +80,8 @@
 
 
                                     {% if num_bookings_past > 0 %}
-                                                <hr>
-                                                <p> <span style="font-family: 'Playfair Display'">Your past
+
+                                        <p> <span style="font-family: 'Playfair Display'">Your past
                                                     {%  with total=num_bookings_past %}
                                                          booking{{ total|pluralize }}: </span>
                                                     {%  endwith %}
@@ -92,7 +92,7 @@
                                                                     <th>Name</th>
                                                                     <th>From</th>
                                                                     <th>Until</th>
-                                                                    <th>Confirmed?</th>
+                                                                    <th>Status</th>
                                                                     <th>Slot Owner</th>
                                                                     <th></th>
                                                                 </tr>
@@ -101,9 +101,9 @@
                                                             {%  for booking_id in past_bookings %}
                                                                 <tr>
                                                                     <td>{% get_booking_asset_name booking_id.1 %}</td>
-                                                                    <td>{% get_booking_start_date  booking_id.1 %} </td>
-                                                                    <td>{% get_booking_end_date  booking_id.1 %} </td>
-                                                                    <td>{% is_booking_confirmed booking_id.1 %}</td>
+                                                                    <td>{% get_booking_start_date  booking_id.1 as the_start %}{{ the_start | date:"D" }}, {{ the_start | date:"d M Y" }} </td>
+                                                                    <td>{% get_booking_end_date  booking_id.1 as the_end %}{{ the_end | date:"D" }}, {{ the_end | date:"d M Y" }} </td>
+                                                                    <td>{% get_booking_status booking_id.1 %}</td>
                                                                     <td>{% get_booking_slot_owner booking_id.1 %}</td>
                                                                     <td></td>
                                                                 </tr>
@@ -115,6 +115,8 @@
 
 
                                                 </p>
+
+
 
                                         {% else %}
 

@@ -1,5 +1,5 @@
 from django import forms
-from bookings.models import Booking
+from bookings.models import Booking, BookingDetail
 import datetime
 
 # created this custom widget because date form fields were
@@ -40,3 +40,11 @@ class BookingForm(forms.ModelForm):
 
 
 
+class BookingDetailForm_for_Owner(forms.ModelForm):
+
+
+    booking_date = forms.DateField(widget=forms.widgets.DateInput(format="%d-%m-%Y"))
+
+    class Meta:
+        model = BookingDetail
+        fields = ['id','booking_date','is_approved', 'is_denied']
