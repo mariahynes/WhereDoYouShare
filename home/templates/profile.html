@@ -58,11 +58,11 @@
                                                                 {% endif %}
                                                             {% get_total_for_confirmation asset.asset_ID user.id num_bookings=True as totes_confirm %}
                                                                 {% if totes_confirm > 0 %}
-                                                                <li><a href="">My Requests to Confirm <span class="badge">{{ totes_confirm }}</span></a></li>
+                                                                <li><a href="{% url 'all_asset_bookings' asset.asset_ID_id user.id "future" "confirming" %}">My Requests to Confirm <span class="badge">{{ totes_confirm }}</span></a></li>
                                                                 {% endif %}
                                                             {% get_total_confirmed_bookings asset.asset_ID user.id as totes_fully_confirmed %}
                                                                 {% if totes_fully_confirmed > 0 %}
-                                                                <li><a href="">My Bookings <span class="badge">{{ totes_fully_confirmed }}</span></a></li>
+                                                                <li><a href="{% url 'all_asset_bookings' asset.asset_ID_id user.id "future" "confirmed" %}">My Bookings <span class="badge">{{ totes_fully_confirmed }}</span></a></li>
                                                                 {% endif %}
 
                                                                 <li><a href="{% url 'make_a_booking' asset.asset_ID_id %}">Make a Booking</a></li>

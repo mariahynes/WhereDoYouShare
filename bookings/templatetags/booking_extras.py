@@ -154,7 +154,7 @@ def get_total_confirmed_bookings(asset_id, user_id):
     # the user_id here is checked against the requested by user field from Booking table
     all_bookings = BookingDetail.objects.all().filter(booking_id__requested_by_user_ID=user_id,
                                                              booking_date__gt=datetime.date.today(),
-                                                             booking_id__asset_ID=asset_id)
+                                                             booking_id__asset_ID=asset_id, is_confirmed=True)
 
 
     # make a set in order to get individual booking refs
@@ -342,6 +342,17 @@ def get_booking_date(booking_pk):
     return the_date
 
 @register.simple_tag
+def get_booking_date_owner(booking_pk):
+
+    # this function takes the pk of the individual dated record
+    # and NOT the booking ref
+    item = BookingDetail.objects.get(pk=booking_pk)
+
+    the_name = "%s %s" % (item.slot_owner_id.first_name, item.slot_owner_id.last_name)
+
+    return the_name
+
+@register.simple_tag
 def get_booking_asset_name(booking_id):
     a_name = BookingDetail.objects.all().filter(booking_id=booking_id).order_by("-booking_date")[0]
     asset = a_name.booking_id.asset_ID.asset_display_name
@@ -357,23 +368,28 @@ def get_booking_status(booking_id):
 
     elif is_booking_pending(booking_id):
 
-        return "Still Pending"
+        return "Pending"
 
     else:
 
-        # the record is no longer in a fully pending state and is not yet fully confirmed
-        # so that means it must be approved/denied OR some are confirmed/pending
+        # the booking is no longer pending state and is not yet confirmed
+        # so that means it must be approved/denied
+        # either way, this is considered to be "awaiting confirmation"
+        # because next step can only be carried out by the Requestor
 
-        num_approved = get_approved_count(booking_id)
-        num_denied = get_denied_count(booking_id)
-        total_requested = get_total_days_in_booking(booking_id)
+        # I had all this fancy stuff but not needed, just the status is all I want here
+        # num_approved = get_approved_count(booking_id)
+        # num_denied = get_denied_count(booking_id)
+        # total_requested = get_total_days_in_booking(booking_id)
+        #
+        # if num_approved == total_requested:
+        #     return "Awaiting Confirmation"
+        # elif num_denied == total_requested:
+        #     return "Awaiting Confirmation"
+        # else:
+        #     return "Awaiting Confirmation %s of %s days approved" % (num_approved, total_requested)
 
-        if num_approved == total_requested:
-            return "Yes"
-        elif num_denied == total_requested:
-            return "No"
-        else:
-            return "%s of %s days approved" % (num_approved, total_requested)
+        return "Awaiting Confirmation"
 
 @register.simple_tag
 def get_approved_count(booking_id):
@@ -392,13 +408,13 @@ def get_denied_count(booking_id):
 @register.simple_tag
 def is_booking_pending(booking_id):
 
-    # count the number of confirmed records for the booking id
-    num_pending_records = BookingDetail.objects.all().filter(booking_id=booking_id, is_pending=True).count()
-    # count the number of days in the booking
-    days_in_booking = get_total_days_in_booking(booking_id)
+    # count the number of pending records for the booking id
+    # if there are ANY pending dates, then the booking is considered pending
+    # could be some approved, some denied and some pending (depending on whether a few owners have to approve)
 
-    # if they match, then the booking is confirmed
-    if num_pending_records==days_in_booking:
+    num_pending_records = BookingDetail.objects.all().filter(booking_id=booking_id, is_pending=True).count()
+
+    if num_pending_records > 0:
 
         return True
 
@@ -468,14 +484,14 @@ def get_booking_requestor(booking_id,**kwargs):
     # so only return the first item in the object
     # return the first_name second_name by defauly
     # return the id if "return_id" in kwargs
-    return_id = 0
+    return_id = False
 
     if kwargs.has_key("return_id"):
         return_id = kwargs['return_id']
 
     bd = BookingDetail.objects.select_related().filter(booking_id=booking_id)[0]
 
-    if return_id == 0:
+    if return_id:
         the_name = bd.booking_id.requested_by_user_ID_id
     else:
         the_name = "%s %s" % (bd.booking_id.requested_by_user_ID.first_name, bd.booking_id.requested_by_user_ID.last_name)

@@ -7,22 +7,25 @@
 
                 <th>Date</th>
                 <th>Current Status</th>
-                <th>Update To</th>
+                <th>Owner</th>
+                <th>Delete</th>
             </tr>
         </thead>
         <tbody>
         {% csrf_token %}
-            {{ formset_owner.management_form }}
-                {% for form in formset_owner %}
+            {{ formset_requestor_pending_or_confirmed.management_form }}
+                {% for form in formset_requestor_pending_or_confirmed %}
                     {{ form.id }}
                     <tr>
                         {% with form.booking_date.value as the_id %}
-                            <td>{{ the_id | date:"D, d M Y "}} {{ form.booking_date }}</td>
+                             <td>{{ the_id | date:"D, d M Y "}} {{ form.booking_date }}</td>
                         {% endwith %}
                         {% with form.id.value as the_f_id %}
-                            <td>{%  get_booking_date_status the_f_id %}</td>
+                        <td>{%  get_booking_date_status the_f_id %}</td>
+
+                        <td>{%  get_booking_date_owner the_f_id %}</td>
                         {% endwith %}
-                        <td>Approved {{ form.is_approved }} &nbsp&nbsp Denied {{ form.is_denied }}  &nbsp</td>
+                        <td>{{ form.DELETE }}</td>
 
                     </tr>
 

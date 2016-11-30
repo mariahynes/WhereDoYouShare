@@ -2,6 +2,7 @@ from django import forms
 from bookings.models import Booking, BookingDetail
 import datetime
 
+
 # created this custom widget because date form fields were
 # defaulting to 'text'
 # found the solution here: http://stackoverflow.com/questions/22846048/django-form-as-p-datefield-not-showing-input-type-as-date
@@ -42,9 +43,43 @@ class BookingForm(forms.ModelForm):
 
 class BookingDetailForm_for_Owner(forms.ModelForm):
 
+    booking_date = forms.CharField(widget=forms.HiddenInput(), required=False)
 
-    booking_date = forms.DateField(widget=forms.widgets.DateInput(format="%d-%m-%Y"))
+    # although I won't be using all of the below fields as input fields on the form, I need to have
+    # booking_date included so that I can display it
+    # I need to have date_approved and date_denied so that I can update them in the view just before saving
+    # and I will include is_pending so that when the data gets saved, this will automatically revert back to
+    # false (because this is the default setting in the BookingDetail table for this field) and this is handy
+    # because the purpose of this form is to ONLY save it if the owner is approving/denying dates
+    # once this happens, then NONE OF THIS OWNERS DATES IN THIS BOOKING should be pending
 
     class Meta:
         model = BookingDetail
-        fields = ['id','booking_date','is_approved', 'is_denied']
+        fields = ['booking_date','is_approved', 'is_denied', 'is_pending', 'date_approved','date_denied']
+
+class BookingDetailForm_for_Requestor_to_Confirm(forms.ModelForm):
+
+    booking_date = forms.CharField(widget=forms.HiddenInput(), required=False)
+
+    # although I won't be using all of these below fields as input fields on the form, I need to have
+    # booking_date included so that I can display it
+    # I need to have date_confirmed so that I can update this in the view just before saving
+    # and I will include is_approved and is_denied so that when the data gets saved, they will automatically change back to
+    # false (because this is their default field settings in the BookingDetail table) and this is handy
+    # because the purpose of this form is to ONLY save it if the requestor is confirming dates
+    # once this happens, then NONE OF THE REQUESTOR DATES IN THIS BOOKING should be anything other than confirmed
+
+    class Meta:
+        model = BookingDetail
+        fields = ['booking_date','is_approved', 'is_denied', 'is_confirmed', 'date_confirmed']
+
+class BookingDetailForm_for_Requestor_Confirmed_or_Pending(forms.ModelForm):
+
+    booking_date = forms.CharField(widget=forms.HiddenInput(), required=False)
+
+    # I need to have booking_date included so that I can display it
+    # other than that, the user will only be allowed to delete
+
+    class Meta:
+        model = BookingDetail
+        fields = ['booking_date']

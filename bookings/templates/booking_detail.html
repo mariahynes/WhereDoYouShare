@@ -52,26 +52,18 @@
 
                                                     </span>
                                                 <br>
-                                                    {% if formset %}
+                                                    {% if formset_owner %}
                                                         <div class="col_half">
-                                                            <table class = "table table-striped">
-                                                                <thead>
-                                                                    <tr>
-
-                                                                        <th>Date</th>
-                                                                        <th>Current Status</th>
-                                                                        <th>Update To</th>
-                                                                        <th></th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-
-                                                                    {% include "owner_approval_form.html" %}
-
-                                                                </tbody>
-                                                            </table>
+                                                            {% include "owner_approval_form.html" %}
                                                         </div>
-
+                                                    {% elif formset_requestor_pending_or_confirmed %}
+                                                        <div class="col_half">
+                                                        {% include "requestor_form_pending_or_confirmed.html" %}
+                                                        </div>
+                                                    {% elif formset_requestor_to_confirm %}
+                                                        <div class="col_half">
+                                                        {% include "requestor_form_to_confirm.html" %}
+                                                        </div>
                                                     {% else %}
                                                         <div class="col_half">
                                                             <table class = "table table-striped">
