@@ -64,16 +64,18 @@ class BookingDetailForm_for_Requestor_to_Confirm(forms.ModelForm):
     # although I won't be using all of these below fields as input fields on the form, I need to have
     # booking_date included so that I can display it
     # I need to have date_confirmed so that I can update this in the view just before saving
-    # and I will include is_approved and is_denied so that when the data gets saved, they will automatically change back to
+    # and I will include is_denied so that when the data gets saved, it will automatically change back to
     # false (because this is their default field settings in the BookingDetail table) and this is handy
-    # because the purpose of this form is to ONLY save it if the requestor is confirming dates
-    # once this happens, then NONE OF THE REQUESTOR DATES IN THIS BOOKING should be anything other than confirmed
+    # because the purpose of this form is to ONLY save it if the requestor is confirming dates and
+    # once this happens, then NONE OF THE REQUESTOR DATES IN THIS BOOKING should be anything other than is_confirmed = True
+
+    is_approved = forms.BooleanField(widget=forms.HiddenInput(), required=False)
 
     class Meta:
         model = BookingDetail
         fields = ['booking_date','is_approved', 'is_denied', 'is_confirmed', 'date_confirmed']
 
-class BookingDetailForm_for_Requestor_Confirmed_or_Pending(forms.ModelForm):
+class BookingDetailForm_for_Requestor_Confirmed(forms.ModelForm):
 
     booking_date = forms.CharField(widget=forms.HiddenInput(), required=False)
 

@@ -1,0 +1,60 @@
+{% load booking_extras %}
+
+    <form method="post" action="">
+        <table class = "table table-striped">
+        <thead>
+            <tr>
+
+                <th>Date</th>
+                <th>Current Status</th>
+                <th>Owner</th>
+                <th>Confirm</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% csrf_token %}
+            {{ formset_requestor_to_confirm.management_form }}
+                {% for form in formset_requestor_to_confirm %}
+                    {{ form.id }} {{ form.is_approved }}
+                    <tr>
+
+                        {% with form.booking_date.value as the_date %}
+                             <td>{{ the_date | date:"D, d M Y"}} {{ form.booking_date }}</td>
+                        {% endwith %}
+
+                        {% with form.id.value as the_f_id %}
+                             <td>{%  get_booking_date_status the_f_id %}</td>
+                             <td>{%  get_booking_date_owner the_f_id %}</td>
+                        {% endwith %}
+
+{#                        <td>{{ form.is_confirmed }}</td>#}
+{#                        <td></td>#}
+{#                        <td>{{ form.DELETE }}</td>#}
+
+
+                            {% if form.is_approved.value == True %}
+                                <td>{{ form.is_confirmed }}</td>
+                                <td></td>
+
+                            {% else %}
+                                <td></td>
+                                <td>{{ form.DELETE }} </td>
+                            {% endif %}
+
+
+                    </tr>
+
+
+                {% endfor %}
+
+
+        </tbody>
+        </table>
+
+    <button type="submit" class="btn btn-primary">Confirm Appproved Dates</button>
+    {% if include_delete_booking_button %}
+        <a href="{% url 'delete_booking' booking.booking_id %}" class="btn btn-primary" >Delete Entire Booking</a>
+    {% endif %}
+
+    </form>

@@ -35,6 +35,7 @@
 
                                                 <p> <span style="font-family: 'Playfair Display'">Booking Reference:</span><span style="font-family: 'Calibri'; font-weight:bold"> {{ booking.booking_id }}</span>
 
+
                                                 <br>
                                                 <span style="font-family: 'Playfair Display'">Total days:</span><span style="font-family: 'Calibri'; font-weight:bold"> {% get_total_days_in_booking booking.booking_id %}</span>
                                                 <br>
@@ -56,14 +57,15 @@
                                                         <div class="col_half">
                                                             {% include "owner_approval_form.html" %}
                                                         </div>
-                                                    {% elif formset_requestor_pending_or_confirmed %}
-                                                        <div class="col_half">
-                                                        {% include "requestor_form_pending_or_confirmed.html" %}
-                                                        </div>
                                                     {% elif formset_requestor_to_confirm %}
                                                         <div class="col_half">
                                                         {% include "requestor_form_to_confirm.html" %}
                                                         </div>
+                                                    {% elif formset_requestor_confirmed %}
+                                                        <div class="col_half">
+                                                        {% include "requestor_form_confirmed.html" %}
+                                                        </div>
+
                                                     {% else %}
                                                         <div class="col_half">
                                                             <table class = "table table-striped">
@@ -94,6 +96,7 @@
                                                             </table>
                                                         </div>
                                                     {% endif %}
+                                            <br>
                                                 <p>
                                                 {%  if new == "new" %}
 
@@ -106,6 +109,11 @@
                                                 {% endif %}
                                                 </p>
 
+                                            {% if include_delete_booking_button %}
+                                                    <a href="{% url 'delete_booking' booking.booking_id %}" class="btn btn-primary" >Delete Booking</a>
+                                            {% elif user.is_superuser %}
+                                                <a href="{% url 'delete_booking' booking.booking_id %}" class="btn btn-primary" >Delete Booking</a>
+                                            {% endif %}
 
 
 

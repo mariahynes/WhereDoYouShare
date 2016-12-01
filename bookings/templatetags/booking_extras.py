@@ -118,6 +118,7 @@ def get_total_for_confirmation(asset_id, user_id, **kwargs):
     # that are waiting for original Requestor to approve
     # if kwarg 'num_bookings' == True, then it's the total bookings returned,
     # otherwise it's the number of individual dates returned
+    # if a booking is ready to be confirmed there can be NO pending records
 
     return_bookings = False
 
@@ -125,21 +126,26 @@ def get_total_for_confirmation(asset_id, user_id, **kwargs):
         return_bookings = kwargs['num_bookings']
 
     # the user_id here is checked against the requested by user field from Booking table
-    all_dates = BookingDetail.objects.all().filter(booking_id__requested_by_user_ID=user_id,
+    all_booking_dates = BookingDetail.objects.all().filter(booking_id__requested_by_user_ID=user_id,
                                                              booking_date__gt=datetime.date.today(), is_pending=False,
                                                              booking_id__asset_ID=asset_id, is_confirmed=False)
 
     if return_bookings:
         ref_set = set()
         # get the unique booking refs
-        for the_date in all_dates:
-            ref_set.add(the_date.booking_id_id)
+        for item in all_booking_dates:
+            # only add to the set if there are no other pending dates in the booking ref
+            # could be some pending if the user is the owner and has approved only their own dates
+            # or if multiple owners have to approve
+            ref = item.booking_id
+            if not is_booking_pending(ref):
+                ref_set.add(item.booking_id_id)
 
         total = len(ref_set)
 
     else:
 
-        total = all_dates.count()
+        total = all_booking_dates.count()
 
     return total
 

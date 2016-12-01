@@ -2,6 +2,7 @@ from assets.models import Asset, Asset_User_Mapping
 from blog.models import Post as BlogPost
 from forum.models import Post as ForumPost
 from forum.models import Subject, Thread
+from bookings.models import Booking
 from accounts.models import User
 import json
 
@@ -65,6 +66,22 @@ def check_if_user_is_an_owner(user_id, asset_id):
         user_is_an_owner = True
 
     return user_is_an_owner
+
+def check_if_user_is_booking_requestor(user_id, booking_id):
+
+    # this function checks to see if the user_id is the person who requested the booking
+    # if they are then this function returns TRUE
+
+    try:
+        user_linking = Booking.objects.get(requested_by_user_ID=user_id, booking_id=booking_id)
+
+    except Booking.DoesNotExist:
+        user_is_requestor = False
+
+    else:
+        user_is_requestor = True
+
+    return user_is_requestor
 
 def check_user_linked_to_blog_post(user_id, asset_id, post_id):
 

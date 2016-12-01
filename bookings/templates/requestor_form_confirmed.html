@@ -8,13 +8,13 @@
                 <th>Date</th>
                 <th>Current Status</th>
                 <th>Owner</th>
-                <th>Delete</th>
+                <th>Delete?</th>
             </tr>
         </thead>
         <tbody>
         {% csrf_token %}
-            {{ formset_requestor_pending_or_confirmed.management_form }}
-                {% for form in formset_requestor_pending_or_confirmed %}
+            {{ formset_requestor_confirmed.management_form }}
+                {% for form in formset_requestor_confirmed %}
                     {{ form.id }}
                     <tr>
                         {% with form.booking_date.value as the_id %}
@@ -33,4 +33,7 @@
         </tbody>
         </table>
         <button type="submit" class="btn btn-primary">Submit</button>
+        {% if include_delete_booking_button %}
+            <a href="{% url 'delete_booking' booking.booking_id %}" class="btn btn-primary" >Delete Entire Booking</a>
+    {% endif %}
     </form>

@@ -28,7 +28,7 @@
                                  <p>
                                        {{ page_name }}
                                         {% if return_page_user %}
-                                        (for me)
+                                        (requested by me)
                                             {% else %}
                                             (for all Members)
                                         {% endif %}
@@ -62,7 +62,7 @@
                                                     <tbody>
                                                     {%  for booking_id in bookings %}
                                                         <tr>
-                                                            <td><a href="{% url 'booking_detail' booking_id.1 %}" class="btn btn-primary">Detail </a> </td>
+                                                            <td><a href="{% url 'booking_detail' booking_id.1 %}" class="btn btn-primary">{{ booking_id.1 }}</a> </td>
                                                             <td>{% get_booking_start_date booking_id.1 as the_start %}{{ the_start | date:"l" }}, {{ the_start | date:"d M Y" }}</td>
                                                             <td>{% get_booking_end_date booking_id.1 as the_end %} {{ the_end | date:"l" }}, {{ the_end | date:"d M Y" }}</td>
 

@@ -6,14 +6,14 @@ from django.template.context_processors import csrf
 from assets.models import Asset, Asset_User_Mapping
 from bookings.templatetags.booking_extras import get_booking_start_date, is_booking_pending,is_booking_confirmed,get_booking_requestor
 from .models import Booking, BookingDetail
-from .forms import BookingForm, BookingDetailForm_for_Owner,BookingDetailForm_for_Requestor_to_Confirm,BookingDetailForm_for_Requestor_Confirmed_or_Pending
+from .forms import BookingForm, BookingDetailForm_for_Owner,BookingDetailForm_for_Requestor_to_Confirm,BookingDetailForm_for_Requestor_Confirmed
 from django.forms import modelformset_factory
 from myfunctions import get_owners_and_dates
-from home.myAuth import check_user_linked_to_asset, check_user_linked_to_owner, check_if_user_is_an_owner
+from home.myAuth import check_user_linked_to_asset, check_user_linked_to_owner, check_if_user_is_an_owner,check_if_user_is_booking_requestor
 import datetime
 from django.utils import timezone
 from django.db.models import Q
-from bookings.templatetags.booking_extras import get_owner_name_for_user_id_and_asset
+from bookings.templatetags.booking_extras import get_owner_name_for_user_id_and_asset, get_booking_end_date
 
 @login_required(login_url='/login/')
 def my_bookings(request):
@@ -37,7 +37,6 @@ def my_bookings(request):
                                              "num_bookings_future": num_bookings_future,
                                              "past_bookings": my_past_bookings,
                                              "num_bookings_past": num_bookings_past})
-
 
 @login_required(login_url='/login/')
 def all_asset_bookings(request, asset_id, user_id=0, time_period="all", status="all", owner_id=0):
@@ -82,7 +81,7 @@ def all_asset_bookings(request, asset_id, user_id=0, time_period="all", status="
     else:
         is_confirmed = ""
         is_pending = ""
-        page_desc = "%s %s" % (page_desc, "bookings")
+        page_desc = "%s %s" % (page_desc, "Bookings")
 
     if owner_id > 0:
         # an owner_id has been supplied
@@ -119,7 +118,6 @@ def all_asset_bookings(request, asset_id, user_id=0, time_period="all", status="
     return render(request, "all_bookings.html",
                   {"asset": the_asset, "bookings": all_bookings, "errors": errors, "return_page_user": my_page_display, "page_name": page_desc})
 
-
 @login_required(login_url='/login/')
 def booking_detail(request, booking_id, new=""):
 
@@ -143,9 +141,14 @@ def booking_detail(request, booking_id, new=""):
     booking_confirmed = False
     user_is_requestor = False
     user_is_owner = False
+    booking_in_future = False
+    include_delete_booking_button = False
+
+    # set the formsets to empty to start with
     formset_owner = []
-    formset_requestor_pending_or_confirmed = []
+    formset_requestor_confirmed = []
     formset_requestor_to_confirm = []
+
     # get the asset id (from the booking)
     asset_id = the_booking.asset_ID_id
 
@@ -165,6 +168,11 @@ def booking_detail(request, booking_id, new=""):
         booking_pending = is_booking_pending(booking_id)
         booking_confirmed = is_booking_confirmed(booking_id)
 
+        # check if this is a future booking
+        # if not, then display page without any forms regardless of who is looking at it
+        if get_booking_end_date(booking_id) > datetime.date.today():
+            booking_in_future = True
+
         # check the status of the user_id
         # are they the original requestor or an owner of this asset?
         is_requestor = get_booking_requestor(booking_id, return_id=True)
@@ -173,16 +181,175 @@ def booking_detail(request, booking_id, new=""):
         user_is_owner = check_if_user_is_an_owner(my_id, asset_id)
 
         # depending on the above checks, show the booking detail with different formsets
-        if user_is_owner != True and user_is_requestor != True:
-            # NORMAL MEMBER
-            # just display the details of the booking - this user is just viewing
-            formset = []
+        if (user_is_owner or user_is_requestor) and booking_in_future:
 
-        else:
-           # REQUESTOR OR OWNER
+           # REQUESTOR OR OWNER AND FUTURE BOOKING
            # so check further
-           if user_is_owner:
+           if user_is_requestor:
 
+               # USER IS REQUESTOR
+               print "User is the Requestor"
+
+               if booking_confirmed:
+
+                   print "booking is confirmed"
+                   # the form only needs to give the Requestor the option to delete individual dates when it is a confirmed booking
+                   # also gives option to delete the ENTIRE booking
+
+                   include_delete_booking_button = True
+
+                   BookingDetailFormSet = modelformset_factory(BookingDetail,
+                                                               form=BookingDetailForm_for_Requestor_Confirmed,
+                                                               max_num=1, can_delete=True)
+
+                   booking_detail_for_requestor = BookingDetail.objects.select_related().filter(
+                       booking_id_id=booking_id, booking_id__requested_by_user_ID=request.user.id).order_by(
+                       "booking_date")
+
+                   formset_requestor_confirmed = BookingDetailFormSet(queryset=booking_detail_for_requestor)
+
+                   if request.method == 'POST':
+
+                       formset_requestor_confirmed = BookingDetailFormSet(request.POST, request.FILES,
+                                                                          queryset=booking_detail_for_requestor)
+
+                       delete_count = len(formset_requestor_confirmed.deleted_forms)
+                       form_count = len(formset_requestor_confirmed)
+
+                       if delete_count > 0:
+
+                           if delete_count == form_count:
+                               print "all dates are to be deleted"
+                               # then this is the full booking to be delete, so just call the delete_booking view
+                               return redirect(reverse('delete_booking', kwargs={"booking_id": booking_id}))
+
+                           else:
+
+                               print "some dates are to be deleted"
+                               # don't save to db yet have to check if dates are still consecutive
+                               instances = formset_requestor_confirmed.save(commit=False)
+
+                               # RUN CONSECUTIVE CHECK CODE HERE >>>
+
+
+
+                               # it's ok to delete the dates set to delete
+                               for obj in formset_requestor_confirmed.deleted_objects:
+                                   obj.delete()
+
+                               if delete_count > 1:
+                                   messages.success(request, "%s dates have been removed from this booking." % delete_count)
+                               else:
+                                   messages.success(request,
+                                                    "%s dateshas been removed from this booking." % delete_count)
+                               return redirect(reverse('booking_detail', kwargs={"booking_id": booking_id}))
+
+                       else:
+                           # nothing was sent for the form to delete so send it right back
+                           print formset_requestor_confirmed.errors
+                           messages.error(request,
+                                          "Want to amend the booking? Please check the delete box on each date you want to remove.")
+                           formset_requestor_confirmed = BookingDetailFormSet(queryset=booking_detail_for_requestor)
+
+               elif booking_pending:
+
+                   # the booking is pending so the Requestor is only allowed to see it, like a normal user
+                   # or cancel the entire booking
+                   # (they will get a chance to delete dates when the booking is confirmed
+                   # add "delete entire request" button)
+                   print "booking is pending"
+                   include_delete_booking_button = True
+
+
+
+               elif booking_confirmed == False:
+                   # the booking is not confirmed but is it also not pending, so this means that the user needs to
+                   # look at the approved/denied dates and CONFIRM the booking
+                   # they do this by selecting either delete, or confirm on each date that is set to 'Approved'
+                   # and the MUST select 'Delete' for all dates that are set to 'Denied' (hopefully this will only
+                   # delete the record from BookingDetail and not the full Booking
+                   # they can also delete the ENTIRE BOOKING
+                   print "booking is not confirmed yet"
+                   BookingDetailFormSet = modelformset_factory(BookingDetail,
+                                                               form=BookingDetailForm_for_Requestor_to_Confirm,
+                                                               max_num=1, can_delete=True)
+
+                   booking_detail_for_requestor = BookingDetail.objects.select_related().filter(
+                       booking_id_id=booking_id, booking_id__requested_by_user_ID=request.user.id).order_by(
+                       "booking_date")
+
+                   formset_requestor_to_confirm = BookingDetailFormSet(queryset=booking_detail_for_requestor)
+
+                   include_delete_booking_button = True
+
+                   if request.method == 'POST':
+                       formset_requestor_to_confirm = BookingDetailFormSet(request.POST, request.FILES,
+                                                                           queryset=booking_detail_for_requestor)
+
+                       if formset_requestor_to_confirm.is_valid():
+                           print "it is valid"
+                           # don't save to db yet
+                           total_forms = len(formset_requestor_to_confirm)
+                           instances = formset_requestor_to_confirm.save(commit=False)
+                           delete_count = len(formset_requestor_to_confirm.deleted_forms)
+                           form_count = total_forms
+
+                           print "TOTAL FORMS %s" % total_forms
+                           print "DELETED INSTANCES %s" % delete_count
+
+                           is_confirmed_count = 0
+
+                           for instance in instances:
+                               confirmed = instance.is_confirmed
+                               if confirmed:
+                                   is_confirmed_count += 1
+
+                           print "Confirmed: %s Deleted: %s Form Count: %s" % (is_confirmed_count, delete_count, form_count)
+
+                           if is_confirmed_count + delete_count == form_count:
+
+                               # it's ok to update the instance now
+                               # had to wait until now because I was updating is_approved in the instance
+                               # and it was affecting the form if the code had to return because of count not matching
+                               for instance in instances:
+                                   confirmed = instance.is_confirmed
+                                   if confirmed:
+                                       is_confirmed_count += 1
+                                       instance.date_confirmed = timezone.now()
+                                       # update this in the table to False
+                                       instance.is_approved = 0
+
+                               # it's ok to delete the dates set to delete
+                               for obj in formset_requestor_to_confirm.deleted_objects:
+                                   obj.delete()
+                               # and update the other dates
+                               formset_requestor_to_confirm.save()
+
+                               # here is where the booking gets complicated
+                               # need to know if it is still consecutive dates and if not...then need to
+                               # work on this
+
+
+
+                               messages.success(request, "Thank you for confirming this booking.")
+                               return redirect(reverse('booking_detail', kwargs={"booking_id": booking_id}))
+
+                           else:
+
+                               messages.error(request,
+                                              "Oops! Please check that 'Confirmed' or 'Deleted' is selected for each date")
+                               formset_requestor_to_confirm = []
+                               formset_requestor_to_confirm = BookingDetailFormSet(queryset=booking_detail_for_requestor)
+
+                       else:
+                           print formset_requestor_to_confirm.errors
+                           messages.error(request,
+                                          "Oops! Form not valid. Please check that 'Confirmed' or 'Deleted' is selected for each date")
+                           formset_requestor_to_confirm = BookingDetailFormSet(queryset=booking_detail_for_requestor)
+
+           else:
+                #user is the owner
+               print "The user is the owner of some (or all) dates in the booking"
                if booking_pending:
                    BookingDetailFormSet = modelformset_factory(BookingDetail, form=BookingDetailForm_for_Owner,max_num=1)
                    booking_detail_for_owner = BookingDetail.objects.select_related().filter(booking_id_id=booking_id,
@@ -197,14 +364,13 @@ def booking_detail(request, booking_id, new=""):
                             print "it is valid"
                             # don't save to db yet
                             instances = formset_owner.save(commit=False)
+                            total_forms = len(formset_owner)
 
                             is_approved_count = 0
                             is_denied_count = 0
-                            form_count = 0
+                            form_count = total_forms
 
                             for instance in instances:
-
-                                form_count += 1
 
                                 approved = instance.is_approved
                                 if approved:
@@ -232,78 +398,6 @@ def booking_detail(request, booking_id, new=""):
                             messages.error(request, "Oops! We have a problem. Please check that you have chosen either 'Approved' or 'Denied' for each date requested")
                             formset_owner = BookingDetailFormSet(queryset=booking_detail_for_owner)
 
-               else:
-                   formset_owner = []
-
-           else:
-               # USER IS REQUESTOR
-               print "Requestor"
-               if booking_pending or booking_confirmed:
-                    # only show an additional delete button on all dates when it is a pending or confirmed booking
-                    BookingDetailFormSet = modelformset_factory(BookingDetail, form=BookingDetailForm_for_Requestor_Confirmed_or_Pending,
-                                                                max_num=1, can_delete=True)
-
-                    booking_detail_for_requestor = BookingDetail.objects.select_related().filter(
-                        booking_id_id=booking_id, booking_id__requested_by_user_ID=request.user.id).order_by(
-                        "booking_date")
-
-                    formset_requestor_pending_or_confirmed = BookingDetailFormSet(queryset=booking_detail_for_requestor)
-
-                    if request.method == 'POST':
-                        formset_requestor_pending_or_confirmed = BookingDetailFormSet(request.POST, request.FILES, queryset=booking_detail_for_requestor)
-
-                        if formset_requestor_pending_or_confirmed.is_valid():
-                            print "it is valid"
-                            # don't save to db yet
-                            instances = formset_requestor_pending_or_confirmed.save(commit=False)
-
-                            is_confirmed_count = 0
-                            form_count = 0
-
-                            for instance in instances:
-
-                                form_count += 1
-
-                                confirmed = instance.is_approved
-                                if confirmed:
-                                    is_confirmed_count += 1
-                                    instance.date_confirmed = timezone.now()
-
-                            print "Confirmed: %s Form Count: %s" % (is_confirmed_count, form_count)
-                            if is_confirmed_count == form_count:
-                                #formset.save()
-
-                                messages.success(request, "Thank you for updating these dates.")
-                                return redirect(reverse('booking_detail', kwargs={"booking_id": booking_id}))
-
-                            else:
-                                messages.error(request,
-                                               "Oops! Please check that you have ticked 'Confirmed' for each Approved date")
-                                formset_requestor_pending_or_confirmed = BookingDetailFormSet(queryset=booking_detail_for_requestor)
-
-                        else:
-                            print formset_requestor_pending_or_confirmed.errors
-                            messages.error(request,
-                                           "Oops! We have a problem. Please check that you have ticked 'Confirmed' for each Approved date",
-                                           )
-                            formset_requestor_pending_or_confirmed = BookingDetailFormSet(queryset=booking_detail_for_requestor)
-
-
-               elif booking_confirmed == False:
-
-                   BookingDetailFormSet = modelformset_factory(BookingDetail,
-                                                               form=BookingDetailForm_for_Requestor_to_Confirm,
-                                                               max_num=1, can_delete=True)
-
-                   booking_detail_for_requestor = BookingDetail.objects.select_related().filter(
-                       booking_id_id=booking_id, booking_id__requested_by_user_ID=request.user.id).order_by(
-                       "booking_date")
-
-                   formset_requestor_to_confirm = BookingDetailFormSet(queryset=booking_detail_for_requestor)
-
-                   formset_requestor_pending_or_confirmed = []
-
-               
 
     else:
         errors.append("You are not authorised to view this booking")
@@ -315,13 +409,13 @@ def booking_detail(request, booking_id, new=""):
         'errors': errors,
         'new': new,
         'formset_owner':formset_owner,
-        'formset_requestor_pending_or_confirmed': formset_requestor_pending_or_confirmed,
+        'formset_requestor_confirmed': formset_requestor_confirmed,
         'formset_requestor_to_confirm':formset_requestor_to_confirm,
+        'include_delete_booking_button':include_delete_booking_button,
     }
     args.update(csrf(request))
 
     return render(request, "booking_detail.html",args)
-
 
 @login_required(login_url='/login/')
 def booking_detail_BEFORE_FORMS(request, booking_id, new=""):
@@ -477,7 +571,27 @@ def make_a_booking(request, asset_id):
 
     return render(request, "new_booking.html", args)
 
+@login_required(login_url='/login/')
+def delete_booking(request,booking_id):
 
+    the_booking = get_object_or_404(Booking, pk=booking_id)
+    the_id = request.user
+    errors = []
+
+    if check_if_user_is_booking_requestor(the_id,booking_id):
+
+        # extract the asset_id from the booking so that
+        # user can be returned to their Bookings Page for that Asset
+        asset_id = the_booking.asset_ID_id
+        the_booking.delete()
+
+        messages.success(request, "This Booking (ref %s) has been deleted" % booking_id)
+        return redirect(reverse('all_asset_bookings', kwargs={"asset_id": asset_id, "user_id": request.user.id}))
+
+    else:
+
+        messages.error(request,"You are not authorised to delete this booking")
+        return redirect(reverse('profile'))
 
 def get_bookings(**kwargs):
 
