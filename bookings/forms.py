@@ -75,7 +75,7 @@ class BookingDetailForm_for_Requestor_to_Confirm(forms.ModelForm):
         model = BookingDetail
         fields = ['booking_date','is_approved', 'is_denied', 'is_confirmed', 'date_confirmed']
 
-class BookingDetailForm_for_Requestor_Confirmed(forms.ModelForm):
+class BookingDetailForm_for_Requestor_Confirmed_or_Pending(forms.ModelForm):
 
     booking_date = forms.CharField(widget=forms.HiddenInput(), required=False)
 

@@ -6,14 +6,14 @@ from django.template.context_processors import csrf
 from assets.models import Asset, Asset_User_Mapping
 from bookings.templatetags.booking_extras import get_booking_start_date, is_booking_pending,is_booking_confirmed,get_booking_requestor
 from .models import Booking, BookingDetail
-from .forms import BookingForm, BookingDetailForm_for_Owner,BookingDetailForm_for_Requestor_to_Confirm,BookingDetailForm_for_Requestor_Confirmed
+from .forms import BookingForm, BookingDetailForm_for_Owner,BookingDetailForm_for_Requestor_to_Confirm,BookingDetailForm_for_Requestor_Confirmed_or_Pending
 from django.forms import modelformset_factory
 from myfunctions import get_owners_and_dates
 from home.myAuth import check_user_linked_to_asset, check_user_linked_to_owner, check_if_user_is_an_owner,check_if_user_is_booking_requestor
 import datetime
 from django.utils import timezone
 from django.db.models import Q
-from bookings.templatetags.booking_extras import get_owner_name_for_user_id_and_asset, get_booking_end_date
+from bookings.templatetags.booking_extras import get_owner_name_for_user_id_and_asset, get_booking_end_date,booking_has_consec_dates
 
 @login_required(login_url='/login/')
 def my_bookings(request):
@@ -190,31 +190,32 @@ def booking_detail(request, booking_id, new=""):
                # USER IS REQUESTOR
                print "User is the Requestor"
 
-               if booking_confirmed:
+               if booking_confirmed or booking_pending:
 
-                   print "booking is confirmed"
-                   # the form only needs to give the Requestor the option to delete individual dates when it is a confirmed booking
+                   print "booking is confirmed or pending"
+                   # the form only needs to give the Requestor the option to delete individual dates when it is a
+                   # confirmed booking or a pending booking
                    # also gives option to delete the ENTIRE booking
 
                    include_delete_booking_button = True
 
                    BookingDetailFormSet = modelformset_factory(BookingDetail,
-                                                               form=BookingDetailForm_for_Requestor_Confirmed,
+                                                               form=BookingDetailForm_for_Requestor_Confirmed_or_Pending,
                                                                max_num=1, can_delete=True)
 
                    booking_detail_for_requestor = BookingDetail.objects.select_related().filter(
                        booking_id_id=booking_id, booking_id__requested_by_user_ID=request.user.id).order_by(
                        "booking_date")
 
-                   formset_requestor_confirmed = BookingDetailFormSet(queryset=booking_detail_for_requestor)
+                   formset_requestor_confirmed_or_pending = BookingDetailFormSet(queryset=booking_detail_for_requestor)
 
                    if request.method == 'POST':
 
-                       formset_requestor_confirmed = BookingDetailFormSet(request.POST, request.FILES,
+                       formset_requestor_confirmed_or_pending = BookingDetailFormSet(request.POST, request.FILES,
                                                                           queryset=booking_detail_for_requestor)
 
-                       delete_count = len(formset_requestor_confirmed.deleted_forms)
-                       form_count = len(formset_requestor_confirmed)
+                       delete_count = len(formset_requestor_confirmed_or_pending.deleted_forms)
+                       form_count = len(formset_requestor_confirmed_or_pending)
 
                        if delete_count > 0:
 
@@ -227,40 +228,37 @@ def booking_detail(request, booking_id, new=""):
 
                                print "some dates are to be deleted"
                                # don't save to db yet have to check if dates are still consecutive
-                               instances = formset_requestor_confirmed.save(commit=False)
-
-                               # RUN CONSECUTIVE CHECK CODE HERE >>>
-
-
+                               instances = formset_requestor_confirmed_or_pending.save(commit=False)
 
                                # it's ok to delete the dates set to delete
-                               for obj in formset_requestor_confirmed.deleted_objects:
+                               for obj in formset_requestor_confirmed_or_pending.deleted_objects:
                                    obj.delete()
 
-                               if delete_count > 1:
-                                   messages.success(request, "%s dates have been removed from this booking." % delete_count)
-                               else:
+                               # run code to break up the booking into separate consecutive date bookings IF IT IS REQUIRED
+                               num_extra_bookings = make_the_split(booking_id)
+
+                               if num_extra_bookings > 0:
                                    messages.success(request,
-                                                    "%s dateshas been removed from this booking." % delete_count)
-                               return redirect(reverse('booking_detail', kwargs={"booking_id": booking_id}))
+                                                    "This Booking (ref %s) has been split into %s Bookings with consecutive dates ranges" % (
+                                                    booking_id, num_extra_bookings + 1))
+                                   return redirect(reverse('all_asset_bookings', kwargs={"asset_id": asset_id,
+                                                                                         "user_id": request.user.id}))
+
+                               else:
+                                   if delete_count > 1:
+                                       messages.success(request,
+                                                        "%s dates have been removed from this booking." % delete_count)
+                                   else:
+                                       messages.success(request,
+                                                        "%s date has been removed from this booking." % delete_count)
+                                   return redirect(reverse('booking_detail', kwargs={"booking_id": booking_id}))
 
                        else:
                            # nothing was sent for the form to delete so send it right back
-                           print formset_requestor_confirmed.errors
+                           print formset_requestor_confirmed_or_pending.errors
                            messages.error(request,
                                           "Want to amend the booking? Please check the delete box on each date you want to remove.")
-                           formset_requestor_confirmed = BookingDetailFormSet(queryset=booking_detail_for_requestor)
-
-               elif booking_pending:
-
-                   # the booking is pending so the Requestor is only allowed to see it, like a normal user
-                   # or cancel the entire booking
-                   # (they will get a chance to delete dates when the booking is confirmed
-                   # add "delete entire request" button)
-                   print "booking is pending"
-                   include_delete_booking_button = True
-
-
+                           formset_requestor_confirmed_or_pending = BookingDetailFormSet(queryset=booking_detail_for_requestor)
 
                elif booking_confirmed == False:
                    # the booking is not confirmed but is it also not pending, so this means that the user needs to
@@ -325,14 +323,20 @@ def booking_detail(request, booking_id, new=""):
                                # and update the other dates
                                formset_requestor_to_confirm.save()
 
-                               # here is where the booking gets complicated
-                               # need to know if it is still consecutive dates and if not...then need to
-                               # work on this
+                               # run code to break up the booking into separate consecutive date bookings IF IT IS REQUIRED
+                               num_extra_bookings = make_the_split(booking_id)
 
+                               if num_extra_bookings > 0:
+                                   messages.success(request,
+                                                    "Thank you for confirming this booking. Just so you are aware, this Booking (ref %s) has been split into %s Bookings with consecutive date ranges" % (
+                                                        booking_id, num_extra_bookings + 1))
+                                   return redirect(reverse('all_asset_bookings', kwargs={"asset_id": asset_id,
+                                                                                         "user_id": request.user.id}))
 
+                               else:
+                                   messages.success(request, "Thank you for confirming this booking.")
+                                   return redirect(reverse('booking_detail', kwargs={"booking_id": booking_id}))
 
-                               messages.success(request, "Thank you for confirming this booking.")
-                               return redirect(reverse('booking_detail', kwargs={"booking_id": booking_id}))
 
                            else:
 
@@ -409,7 +413,7 @@ def booking_detail(request, booking_id, new=""):
         'errors': errors,
         'new': new,
         'formset_owner':formset_owner,
-        'formset_requestor_confirmed': formset_requestor_confirmed,
+        'formset_requestor_confirmed_or_pending': formset_requestor_confirmed_or_pending,
         'formset_requestor_to_confirm':formset_requestor_to_confirm,
         'include_delete_booking_button':include_delete_booking_button,
     }
@@ -576,7 +580,6 @@ def delete_booking(request,booking_id):
 
     the_booking = get_object_or_404(Booking, pk=booking_id)
     the_id = request.user
-    errors = []
 
     if check_if_user_is_booking_requestor(the_id,booking_id):
 
@@ -592,6 +595,108 @@ def delete_booking(request,booking_id):
 
         messages.error(request,"You are not authorised to delete this booking")
         return redirect(reverse('profile'))
+
+@login_required(login_url='/login/')
+def split_booking(request, booking_id):
+
+    the_booking = get_object_or_404(Booking, pk=booking_id)
+    the_id = request.user
+
+    if check_if_user_is_booking_requestor(the_id, booking_id):
+
+        # extract the asset_id from the booking so that
+        # user can be returned to their Bookings Page for that Asset
+        asset_id = the_booking.asset_ID_id
+
+        extra_needed = make_the_split(booking_id)
+        # booking_detail = BookingDetail.objects.all().filter(booking_id_id = booking_id).order_by("booking_date")
+        #
+        # extra_needed = 0
+        # booking_start_date = get_booking_start_date(booking_id)
+        #
+        # #loop through the dates until reaching a gap
+        # the_count = 0
+        # old_booking_id = booking_id
+        # new_booking_id = booking_id
+        #
+        # for item in booking_detail:
+        #
+        #     record_date = item.booking_date
+        #     if record_date == booking_start_date:
+        #         count = 0
+        #     else:
+        #         count += 1
+        #
+        #     next_consec_date = booking_start_date + datetime.timedelta(days=count)
+        #
+        #     if record_date != next_consec_date:
+        #         extra_needed += 1
+        #
+        #         # create a copy of the booking ref (minus pk) and catch the new pk to add
+        #         existing_booking_record = Booking.objects.get(pk=old_booking_id)
+        #         existing_booking_record.pk = None
+        #         existing_booking_record.save()
+        #         new_booking_id = existing_booking_record.pk
+        #
+        #         # then update all remaining dates at once and continue with the loop
+        #         BookingDetail.objects.all().filter(booking_id_id = old_booking_id, booking_date__gte= record_date).update(booking_id_id = new_booking_id)
+        #         old_booking_id = new_booking_id
+        #         booking_start_date = record_date
+        #         count = 0
+
+        if extra_needed > 0:
+            messages.success(request, "This Booking (ref %s) has been split into %s Bookings with consecutive dates ranges" % (booking_id, extra_needed +1))
+            return redirect(reverse('all_asset_bookings', kwargs={"asset_id": asset_id, "user_id": request.user.id}))
+
+        else:
+            messages.success(request,
+                             "Not sure why you were trying to split this Booking. All dates are already consecutive!")
+            return redirect(reverse('booking_detail', kwargs={"booking_id": booking_id}))
+
+    else:
+
+        messages.error(request, "You are not authorised to split this booking")
+        return redirect(reverse('profile'))
+
+
+def make_the_split(booking_id):
+
+    booking_detail = BookingDetail.objects.all().filter(booking_id_id=booking_id).order_by("booking_date")
+
+    extra_needed = 0
+    booking_start_date = get_booking_start_date(booking_id)
+
+    old_booking_id = booking_id
+
+    for item in booking_detail:
+
+        # loop through the dates until reaching a gap
+
+        record_date = item.booking_date
+        if record_date == booking_start_date:
+            count = 0
+        else:
+            count += 1
+
+        next_consec_date = booking_start_date + datetime.timedelta(days=count)
+
+        if record_date != next_consec_date:
+            extra_needed += 1
+
+            # create a copy of the booking ref (minus pk) and catch the new pk to add
+            existing_booking_record = Booking.objects.get(pk=old_booking_id)
+            existing_booking_record.pk = None
+            existing_booking_record.save()
+            new_booking_id = existing_booking_record.pk
+
+            # then update all remaining dates at once and continue with the loop
+            BookingDetail.objects.all().filter(booking_id_id=old_booking_id, booking_date__gte=record_date).update(
+                booking_id_id=new_booking_id)
+            old_booking_id = new_booking_id
+            booking_start_date = record_date
+            count = 0
+
+    return extra_needed
 
 def get_bookings(**kwargs):
 

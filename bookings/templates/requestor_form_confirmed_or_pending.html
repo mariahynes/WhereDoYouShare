@@ -13,8 +13,8 @@
         </thead>
         <tbody>
         {% csrf_token %}
-            {{ formset_requestor_confirmed.management_form }}
-                {% for form in formset_requestor_confirmed %}
+            {{ formset_requestor_confirmed_or_pending.management_form }}
+                {% for form in formset_requestor_confirmed_or_pending %}
                     {{ form.id }}
                     <tr>
                         {% with form.booking_date.value as the_id %}
@@ -32,7 +32,7 @@
                 {% endfor %}
         </tbody>
         </table>
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary">Delete Selected Dates</button>
         {% if include_delete_booking_button %}
             <a href="{% url 'delete_booking' booking.booking_id %}" class="btn btn-primary" >Delete Entire Booking</a>
     {% endif %}

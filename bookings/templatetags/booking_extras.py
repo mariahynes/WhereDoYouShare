@@ -308,7 +308,20 @@ def get_booking_start_date(booking_id):
     return min_date
 
 @register.simple_tag
+def get_last_date_in_booking(booking_id):
+
+    print "BookingID: %s" % booking_id
+    a_date = BookingDetail.objects.all().filter(booking_id=booking_id).order_by("-booking_date")[0]
+    last_date = a_date.booking_date
+
+    return last_date
+
+@register.simple_tag
 def get_booking_end_date(booking_id):
+
+    # for display purposes, this takes last booked date and adds '1' to be able to say
+    # from/until
+    # for exact last date use get_last_date_in_booking function
     a_date = BookingDetail.objects.all().filter(booking_id=booking_id).order_by("-booking_date")[0]
     max_date = a_date.booking_date
 
@@ -512,3 +525,20 @@ def get_total_days_in_booking(booking_id):
     total_days = a.count()
 
     return total_days
+
+@register.simple_tag
+def booking_has_consec_dates(booking_id):
+
+    start_date = get_booking_start_date(booking_id)
+    last_date = get_last_date_in_booking(booking_id)
+    num_dates = get_total_days_in_booking(booking_id)
+
+    expected_last_date = start_date + datetime.timedelta(days=num_dates-1)
+
+    if expected_last_date == last_date:
+
+        return True
+
+    else:
+
+        return False

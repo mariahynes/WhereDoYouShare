@@ -61,9 +61,9 @@
                                                         <div class="col_half">
                                                         {% include "requestor_form_to_confirm.html" %}
                                                         </div>
-                                                    {% elif formset_requestor_confirmed %}
+                                                    {% elif formset_requestor_confirmed_or_pending %}
                                                         <div class="col_half">
-                                                        {% include "requestor_form_confirmed.html" %}
+                                                        {% include "requestor_form_confirmed_or_pending.html" %}
                                                         </div>
 
                                                     {% else %}
