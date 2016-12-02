@@ -9,7 +9,7 @@ from .models import Booking, BookingDetail
 from .forms import BookingForm, BookingDetailForm_for_Owner,BookingDetailForm_for_Requestor_to_Confirm,BookingDetailForm_for_Requestor_Confirmed_or_Pending
 from django.forms import modelformset_factory
 from myfunctions import get_owners_and_dates
-from home.myAuth import check_user_linked_to_asset, check_user_linked_to_owner, check_if_user_is_an_owner,check_if_user_is_booking_requestor
+from home.myAuth import check_user_linked_to_asset, check_user_linked_to_owner, check_if_user_is_an_owner,check_if_user_is_booking_requestor,is_user_stripe_registered
 import datetime
 from django.utils import timezone
 from django.db.models import Q
@@ -146,8 +146,8 @@ def booking_detail(request, booking_id, new=""):
 
     # set the formsets to empty to start with
     formset_owner = []
-    formset_requestor_confirmed = []
     formset_requestor_to_confirm = []
+    formset_requestor_confirmed_or_pending = []
 
     # get the asset id (from the booking)
     asset_id = the_booking.asset_ID_id
@@ -341,14 +341,14 @@ def booking_detail(request, booking_id, new=""):
                            else:
 
                                messages.error(request,
-                                              "Oops! Please check that 'Confirmed' or 'Deleted' is selected for each date")
+                                              "Oops! Please check that 'Confirm' is selected for all Approved dates and 'Remove' is selected for each Denied date")
                                formset_requestor_to_confirm = []
                                formset_requestor_to_confirm = BookingDetailFormSet(queryset=booking_detail_for_requestor)
 
                        else:
                            print formset_requestor_to_confirm.errors
                            messages.error(request,
-                                          "Oops! Form not valid. Please check that 'Confirmed' or 'Deleted' is selected for each date")
+                                          "Oops! Form not valid. Please check that 'Confirm' is selected for all Approved date and 'Remove' is selected for each Denied date")
                            formset_requestor_to_confirm = BookingDetailFormSet(queryset=booking_detail_for_requestor)
 
            else:
@@ -462,7 +462,6 @@ def make_a_booking(request, asset_id):
     owner_date_object = []
     total_days_requested = 0
     booking_form = []
-
     my_id = request.user
     if check_user_linked_to_asset(my_id, asset_id):
         user_ok = True
@@ -474,56 +473,64 @@ def make_a_booking(request, asset_id):
         new_booking_form = BookingForm(request.POST)
         if new_booking_form.is_valid():
 
-            # save it in memory while getting the addition info need to save it to the database
-            new_booking = new_booking_form.save(False)
-            # get additional info
-            new_booking.asset_ID_id = asset_id
-            new_booking.requested_by_user_ID = request.user
-            # then save
-            new_booking.save()
+            # check if the user has a stripe_id registered and if not point them to register their credit card
+            if is_user_stripe_registered(my_id):
+                # save it in memory while getting the addition info need to save it to the database
+                new_booking = new_booking_form.save(False)
+                # get additional info
+                new_booking.asset_ID_id = asset_id
+                new_booking.requested_by_user_ID = request.user
+                # then save
+                new_booking.save()
 
-            # now, using the new_booking.pk, save each of the dates in BookingDetail
-            new_id = new_booking.pk
+                # now, using the new_booking.pk, save each of the dates in BookingDetail
+                new_id = new_booking.pk
 
-            start_date = request.POST['start_date']
-            start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d').date()
-            end_date = request.POST['end_date']
-            end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d').date()
-            owner_date_object = get_owners_and_dates(asset_id, start_date, end_date)
+                start_date = request.POST['start_date']
+                start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d').date()
+                end_date = request.POST['end_date']
+                end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d').date()
+                owner_date_object = get_owners_and_dates(asset_id, start_date, end_date)
 
-            print "object count is %s" % len(owner_date_object)
+                print "object count is %s" % len(owner_date_object)
 
-            for item in owner_date_object:
+                for item in owner_date_object:
 
-                owner_id = item.owner_id
-                print "ownerId: %s" % owner_id
-                print "current user: %s" % request.user.id
+                    owner_id = item.owner_id
+                    print "ownerId: %s" % owner_id
+                    print "current user: %s" % request.user.id
 
-                print "the Detail: %s" % item.date_span_available_detail
-                for available_date in item.date_span_available_detail:
-                    booking_date = available_date
+                    print "the Detail: %s" % item.date_span_available_detail
+                    for available_date in item.date_span_available_detail:
+                        booking_date = available_date
 
-                    # check if the owner is booking one of their own dates
-                    # if so, then set immediately to is_confirmed == True
-                    if owner_id == request.user.id:
+                        # check if the owner is booking one of their own dates
+                        # if so, then set immediately to is_confirmed == True
+                        if owner_id == request.user.id:
 
-                        new_record = BookingDetail(booking_date=booking_date,
-                                                   slot_owner_id_id=owner_id,
-                                                   booking_id_id=new_id,
-                                                   is_approved=True,
-                                                   date_approved=timezone.now())
-                    else:
+                            new_record = BookingDetail(booking_date=booking_date,
+                                                       slot_owner_id_id=owner_id,
+                                                       booking_id_id=new_id,
+                                                       is_approved=True,
+                                                       date_approved=timezone.now())
+                        else:
 
-                        new_record = BookingDetail(booking_date=booking_date,
-                                                   slot_owner_id_id=owner_id,
-                                                   booking_id_id=new_id,
-                                                   is_pending=True)
+                            new_record = BookingDetail(booking_date=booking_date,
+                                                       slot_owner_id_id=owner_id,
+                                                       booking_id_id=new_id,
+                                                       is_pending=True)
 
 
-                    new_record.save()
-                    new = "new"
-            # messages.success(request, "New Booking created, thanks")
-            return redirect(reverse('booking_detail', kwargs={"booking_id":new_booking.pk, "new":new}))
+                        new_record.save()
+                        new = "new"
+                # messages.success(request, "New Booking created, thanks")
+                return redirect(reverse('booking_detail', kwargs={"booking_id":new_booking.pk, "new":new}))
+
+            else:
+                request.session['asset_id_for_stripe'] = asset_id
+                request.session['start_date_for_stripe'] = request.POST['start_date']
+                request.session['end_date_for_stripe'] = request.POST['end_date']
+                return redirect(reverse('register_stripe'))
 
     else:
 
@@ -779,3 +786,8 @@ def get_bookings(**kwargs):
     date_and_booking_id = sorted(date_and_booking_id, key=lambda tup: tup[0])
 
     return date_and_booking_id
+
+
+
+
+

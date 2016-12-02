@@ -3,7 +3,7 @@ from blog.models import Post as BlogPost
 from forum.models import Post as ForumPost
 from forum.models import Subject, Thread
 from bookings.models import Booking
-from accounts.models import User
+from accounts.models import User, StripeDetail
 import json
 
 def can_user_register(user_email):
@@ -17,6 +17,21 @@ def can_user_register(user_email):
         can_register = False
 
     return can_register
+
+def is_user_stripe_registered(user_id):
+    # this function can be used by any view
+    # to check if the user has registered with Stripe
+
+    try:
+        user_details = StripeDetail.objects.get(user_id=user_id)
+
+    except StripeDetail.DoesNotExist:
+        user_is_registered = False
+
+    else:
+        user_is_registered = True
+
+    return user_is_registered
 
 def check_user_linked_to_asset(user_id, asset_id):
 

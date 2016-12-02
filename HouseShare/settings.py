@@ -159,8 +159,12 @@ SERVER_EMAIL = 'maria@databasis.ie'
 EMAIL_PORT = 25
 EMAIL_USE_TLS = False
 
-
+# DISQUS_API_KEY = 'PoUD226GfdtdFlsx3B7E0BAsqgV3gdQGDEjhVDAlJ0mOLShFshqs1yUW18qyK7I4'
 DISQUS_WEBSITE_SHORTNAME = 'wheredoyoushare'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+# Stripe environment variables
+STRIPE_PUBLISHABLE = os.getenv('STRIPE_PUBLISHABLE', 'pk_test_uO9j8R0OdPOhbUzwSI4VTevH')
+STRIPE_SECRET = os.getenv('STRIPE_SECRET', 'sk_test_D3WTWnQ99nHuosPRBfpnpSSs')

@@ -25,6 +25,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', home_views.get_index, name='index'),
     url(r'^register/$', accounts_views.register, name='register'),
+    url(r'^register_stripe/$', accounts_views.register_stripe, name='register_stripe'),
     url(r'^profile/$', accounts_views.profile, name='profile'),
     url(r'^contact/$', home_views.contact, name='contact'),
     url(r'^pages/', include('django.contrib.flatpages.urls')),

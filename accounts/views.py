@@ -1,17 +1,18 @@
 from django.contrib import messages, auth
-from .forms import UserRegistrationForm, UserLoginForm
+from .forms import UserRegistrationForm, UserLoginForm,StripeRegistrationForm
 from django.core.urlresolvers import reverse
 from django.shortcuts import render, redirect
 from django.template.context_processors import csrf
 from django.contrib.auth.decorators import login_required
 from assets.models import Asset, Asset_User_Mapping
-from bookings.models import Booking, BookingDetail
-from bookings.templatetags.booking_extras import get_booking_start_date
 from assets.forms import InviteCodeForm
 import datetime
 from django.utils import timezone
 from django.core import serializers
 from home.myAuth import check_user_linked_to_asset, can_user_register
+from django.conf import settings
+from accounts.models import User, StripeDetail
+import stripe
 
 def register(request):
 
@@ -128,3 +129,60 @@ def logout(request):
     auth.logout(request)
     # messages.success(request, 'Come back soon!')
     return redirect(reverse('index'))
+
+
+stripe.api_key = settings.STRIPE_SECRET
+
+
+def register_stripe(request):
+
+    if request.method == 'POST':
+        form = StripeRegistrationForm(request.POST)
+
+        # get this user's email address
+        this_user = User.objects.get(pk=request.user.id)
+        email_address = this_user.username
+        first_name = this_user.first_name
+        second_name = this_user.last_name
+        first_second_name = "%s %s" % (first_name, second_name)
+
+        print "%s %s" % (this_user, email_address)
+
+        if form.is_valid():
+            print "form is valid"
+            global customer
+            try:
+
+                customer = stripe.Customer.create(
+                    source=form.cleaned_data['stripe_id'],
+                    description=first_second_name,
+                    email=email_address
+                )
+            except stripe.error.CardError, e:
+                messages.error(request, "Your card was declined :-(")
+
+            # check if there is a customer id
+            if customer.id:
+                print "customer id: %s" % customer.id
+
+                new_stripe = StripeDetail(user_id=request.user,
+                                           stripe_id=customer.id)
+
+                new_stripe.save()
+
+                asset_id = request.session.get('asset_id_for_stripe')
+                return redirect(reverse('make_a_booking', kwargs={"asset_id": asset_id}))
+
+            else:
+                messages.error(request, "Sorry, we are unable to take a payment with that card")
+        else:
+            print "form not valid %s" % form.errors
+            messages.error(request, "Sorry, we are unable to take a payment with that card")
+    else:
+
+        form = StripeRegistrationForm()
+
+    args = {'form': form, 'publishable': settings.STRIPE_PUBLISHABLE}
+    args.update(csrf(request))
+
+    return render(request, 'register_stripe.html', args)

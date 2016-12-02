@@ -3,6 +3,7 @@ from .forms import ContactForm
 from django.core.mail import send_mail
 from django.http import HttpResponseRedirect
 
+
 # function to return the index.html template
 def get_index(request):
     return render(request, 'index.html')
@@ -24,3 +25,5 @@ def contact(request):
             initial={'subject': 'Where | do you Share? | Question'}
         )
     return render(request, 'contact_form.html', {'form':form})
+
+

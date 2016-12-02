@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load booking_extras %}
+    {% load bootstrap_tags %}
+    {% block content %}
+    {% load staticfiles %}
+    {% load assets_extras %}
+        {% block head_style %}
+
+        {% endblock %}
+
+        {% block head_js %}
+
+          <script src="https://js.stripe.com/v2/" type="text/javascript"></script>
+          <script type="text/javascript">
+              //<![CDATA[
+              Stripe.publishableKey = '{{ publishable }}';
+              //]]>
+          </script>
+          <script type="text/javascript" src="{% static "js/stripe.js" %}"></script>
+
+
+        {% endblock %}
+
+         <!-- Slider ============================================= -->
+		<section id="slider" class="full-screen  slider-parallax">
+
+			<div class="full-screen section nopadding nomargin noborder ohidden" style="background: url({% static 'myimages/ought54.jpg' %}) bottom center no-repeat; background-size: cover;">
+
+				<div class="container " >
+				    <div class="vertical-middle" >
+
+				        <div id="section-about" class="page-section">
+
+					        <div class="container clearfix opacity_none"> <!--clearfix removed-->
+
+                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">Register</h2>
+
+                                    <div data-animate="fadeIn" class="col_half">
+
+                                        <p  class="lead divleft bottommargin" style="max-width: 700px;">
+                                            <legend data-animate="fadeInUp">Create a new account</legend>
+
+                                        <p>
+                                                Before making a booking, please register your Credit Card details with Stripe.<br>
+                                                               Your details will be kept on their secure servers. <br>
+                                                            No payment details are stored on this site.</p>
+                                                  <form role="form" method="post" id="register-stripe-form" action="{% url 'register_stripe' %}">
+
+
+                                                    {% csrf_token %}
+                                                    {{ form|as_bootstrap }}
+                                                    <div class="form-group">
+                                                      <input class="btn btn-primary" id="validate_card_btn" name="commit" type="submit" value="Validate Credit Card">
+                                                    </div>
+                                                      <div id="credit-card-errors" style="display:none">
+                                                      <div class="alert-message block-message error" id="stripe-error-message"></div>
+                                                    </div>
+                                                  </form>
+
+                                        </p>
+
+                                </div>
+
+                                        <div class="clear"></div>
+
+                                        <div class="row topmargin-lg divcenter" style="max-width: 1000px;"></div>
+
+
+
+				            </div>
+
+                       </div>
+
+					</div>
+				</div>
+
+			</div>
+
+		</section> <!--#slider end -->
+
+
+
+    {% endblock %}
+

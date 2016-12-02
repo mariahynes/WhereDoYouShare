@@ -300,6 +300,26 @@ def get_owners_and_dates(asset_ID, request_start, request_end):
     requested_num_days = end_date.toordinal() - start_date.toordinal()
     print "%s nights" % requested_num_days
 
+    # check here if there is only one Owner
+    if the_asset_mapping.count() == 1:
+
+        # check Booking table to find out the number of days un-available for the range
+        date_ranges = check_availability(asset_ID, start_date, end_date)
+        unavailable_details = date_ranges['unavailable']
+        num_days_available = requested_num_days - len(unavailable_details)
+        num_days_unavailable = requested_num_days - num_days_available
+        slot_owner_on_requested_start_date = sort_order_of_owners.get(1)
+        o = User.objects.get(id=slot_owner_on_requested_start_date)
+        available_details = date_ranges['available']
+        o_and_d = Owners_And_Dates(asset_ID, slot_owner_on_requested_start_date, o.first_name, o.last_name,
+                                   start_date, end_date, start_date, end_date,
+                                   requested_num_days, num_days_available, num_days_unavailable, unavailable_details,
+                                   available_details)
+        owners_and_dates_list.append(o_and_d)
+
+        return owners_and_dates_list
+
+
     if str(slot_duration) == "Week":
         slot_duration_days = 7
     elif str(slot_duration) == "Month":

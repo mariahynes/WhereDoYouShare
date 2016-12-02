@@ -43,7 +43,7 @@
                                         <form method="POST" enctype="multipart/form-data">
                                             {% csrf_token %}
                                             {{ form | as_bootstrap }}
-                                            <button class="btn btn-danger" onclick="location.href='/blog/blog/{{ asset_id }}/{{ post.id }}'"><i class="fa fa-backward"></i> Cancel</button>
+                                            <button class="btn btn-danger" onclick="location.href='/blog/blog/{{ asset.id }}/{{ post.id }}'"><i class="fa fa-backward"></i> Cancel</button>
                                             <button type="submit" class="btn btn-info">Save </button>
 
 
