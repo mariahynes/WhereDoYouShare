@@ -7,54 +7,56 @@
                 .opacity9{
                     opacity:2;
                 }
+                input {
+                    width: 100%;
+                    padding: 12px 20px;
+                    margin: 2px 0;
+                    box-sizing: border-box;
+                    border-radius: 10px;
+                    border: none;
+}               }
             </style>
         {% endblock %}
         <!-- Slider ============================================= -->
 		<section id="slider" class="full-screen  slider-parallax">
-
+        <div class="slider-parallax-inner">
 			<div class="full-screen section nopadding nomargin noborder ohidden" style="background: url({% static 'myimages/login.jpg' %}) bottom center no-repeat; background-size: cover;">
 
-				<div class="container dark" >
-				    <div class="vertical-middle">
+                <div class="row nomargin" style="position: relative; z-index: 2;">
+						<div class="col-md-offset-2 col-md-3 full-screen" style="background-color: rgba(0,0,0,0.45);">
+							<div class="vertical-middle col-padding">
+								<div class="heading-block nobottomborder bottommargin-sm dark">
+									<h1 style="font-size: 22px;">Sign In</h1>
+									<div class="not-dark">
+                                        <span style="font-size: 16px;" class="t300 capitalize ls1 notopmargin"></span></div>
+								</div>
+                                <form role="form" class="clearfix" method="post" action="{% url 'login' %}">
 
-				        <div id="section-about" class="page-section">
-
-					        <div class="container clearfix"> <!--clearfix removed-->
-
-                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">Sign In</h2>
-
-                                    <div class="col_half">
-
-                                        <p data-animate="fadeInUp" class="lead divleft bottommargin" style="max-width: 700px;">
-                                            <legend data-animate="fadeInUp">Login</legend>
-                                                 <form role="form" method="post" action="{% url 'login' %}">
-
-                                                    {% csrf_token %}
-                                                    {{ form | as_bootstrap }}
-                                                    <div class="form-group">
-                                                        <button type="submit" class="btn btn-primary">Sign In</button>
-                                                    </div>
-                                                </form>
-
-                                        </p>
-
-                                     </div>
-
-                                    <div class="clear"></div>
-
-                                    <div class="row topmargin-lg divcenter" style="max-width: 1000px;"></div>
+                                    {% csrf_token %}
+                                    <div class="col_full not-dark">
+										 <label for="id_email" class="capitalize t600 dark">Email</label>
+                                           <div class="not-dark"> {{ form.email }} </div>
+                                    </div>
 
 
+                                    <div class="col_full not-dark">
+										<label for="id_password" class="capitalize t600 dark">Password</label>
+                                           <div class="not-dark"> {{ form.password }}</div>
+                                    </div>
 
-				            </div>
 
-                       </div>
+                                    <div class="form-group">
+                                        <button type="submit" class="t400 capitalize button button-border button-light button-circle nomargin">Start Sharing</button>
+                                    </div>
+                                </form>
 
+							</div>
+
+						</div>
 					</div>
-				</div>
 
 			</div>
-
+        </div>
 		</section> <!--#slider end -->
 
 

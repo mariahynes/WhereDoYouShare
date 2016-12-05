@@ -8,7 +8,7 @@
 
 	<!-- Stylesheets
 	============================================= -->
-	<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700|Roboto:300,400,500,700|Playfair+Display:400italic" rel="stylesheet" type="text/css" />
+	<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700|Roboto:300,400,500,700|Playfair+Display:400italic rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}" type="text/css" />
 	<link rel="stylesheet" href="{% static 'style.css' %}" type="text/css" />
 
@@ -20,8 +20,6 @@
 	<link rel="stylesheet" href="{% static 'css/animate.css' %}" type="text/css" />
 	<link rel="stylesheet" href="{% static 'css/magnific-popup.css' %}" type="text/css" />
 
-	<!--<link rel="stylesheet" href="{% static 'one-page/css/fonts.css' %}" type="text/css" />-->
-
 	<link rel="stylesheet" href="{% static 'css/responsive.css' %}" type="text/css" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<!--[if lt IE 9]>
@@ -30,9 +28,6 @@
 
     <script type="text/javascript" src="{% static 'js/jquery.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/components/daterangepicker.js' %}"></script>
-
-{#	<script type="text/javascript" src="{% static 'js/jquery.js' %}"></script>#}
-{#	<script type="text/javascript" src="{% static 'js/plugins.js' %}"></script>#}
     <link rel="stylesheet" href="{% static "css/font-awesome-4.6.3/css/font-awesome.css" %}">
 
 	<!-- Document Title
@@ -42,14 +37,15 @@
     {% block head_js %}{% endblock %}
     {% block head_style %}{% endblock %}
 
+   <link rel="stylesheet" href="{% static 'css/colors.css' %}" type="text/css" />
 
 </head>
 
-<body class="stretched">
+<body class="stretched  data-loader='1' data-animation-in='fadeIn' data-speed-in='100' data-animation-out='fadeOut' data-speed-out='100'">
 
 	<!-- Document Wrapper class="clearfix"
 	============================================= -->
-	<div id="wrapper" >
+	<div id="wrapper" class="clearfix">
 
 		<!-- Header
 		============================================= -->
@@ -160,6 +156,9 @@
 
         {% block content %}
 
+
+
+
         {% endblock %}
 
 
@@ -180,7 +179,7 @@
 
 						<div class="col-md-4">
 
-							<div class="widget clearfix">
+							<div class="widget clearfix hidden-xs">
 								<h4>Site Links</h4>
 
 								<ul class="list-unstyled footer-site-links nobottommargin">
@@ -199,15 +198,14 @@
 						<div class="col-md-4">
 
 							<div class="widget clearfix">
-								<h4>Subscribe</h4>
+                                <h4>Copyright</h4>
+                                <span class="ls5" style="font-family: 'Playfair Display'; font-style: italic; text-transform: lowercase; color: #FFF;"> Databasis</span><br>
+{#                                 http://stackoverflow.com/questions/4562587/shortest-way-to-print-current-year-in-javascript#}
+                                <script>document.write(new Date().getFullYear())</script><br>
+                                All Rights Reserved
 
-								<div id="widget-subscribe-form-result" data-notify-type="success" data-notify-msg=""></div>
-								<form id="widget-subscribe-form" action="{% static 'include/subscribe.php' %}" role="form" method="post" class="nobottommargin">
-									<input type="email" id="widget-subscribe-form-email" name="widget-subscribe-form-email" class="form-control input-lg not-dark required email" placeholder="Your Email Address">
-									<button class="button button-border button-circle button-light topmargin-sm" type="submit">Subscribe Now</button>
-								</form>
 							</div>
-
+                            <br><br>
 						</div>
 
 						<div class="col-md-4">
@@ -215,25 +213,16 @@
 							<div class="widget clearfix">
 								<h4>Contact</h4>
 
-								<p class="lead"><span class="ls5" style="font-family: 'Playfair Display'; font-style: italic; text-transform: lowercase; color: #FFF;">DATABASIS</span><br>Dublin, Ireland</p>
+								<p class="lead"><a target="_blank" href="http://www.databasis.ie"><span class="ls5" style="font-family: 'Playfair Display'; font-style: italic; text-transform: lowercase; color: #FFF;">DATABASIS</span></a>
+                                    <br>Dublin, Ireland</p>
 
 								<div class="center topmargin-sm">
-									<a href="#" class="social-icon inline-block noborder si-small si-facebook" title="Facebook">
-										<i class="icon-facebook"></i>
-										<i class="icon-facebook"></i>
-									</a>
-									<a href="#" class="social-icon inline-block noborder si-small si-twitter" title="Twitter">
-										<i class="icon-twitter"></i>
-										<i class="icon-twitter"></i>
-									</a>
-									<a href="#" class="social-icon inline-block noborder si-small si-github" title="Github">
+
+									<a target="_blank" href="https://github.com/mariahynes/HouseShare" class="social-icon inline-block noborder si-small si-github" title="Github">
 										<i class="icon-github"></i>
 										<i class="icon-github"></i>
 									</a>
-									<a href="#" class="social-icon inline-block noborder si-small si-pinterest" title="Pinterest">
-										<i class="icon-pinterest"></i>
-										<i class="icon-pinterest"></i>
-									</a>
+
 								</div>
 							</div>
 
@@ -244,11 +233,12 @@
 				</div>
 			</div>
 
-			<div id="copyrights">
-				<div class="container center clearfix">
-					Copyright  <span class="ls5" style="font-family: 'Playfair Display'; font-style: italic; text-transform: lowercase; color: #FFF;"> Databasis</span> 2016 | All Rights Reserved
-				</div>
-			</div>
+{#			<div id="copyrights">#}
+{#				<div class="container center clearfix">#}
+                    {#                                 http://stackoverflow.com/questions/4562587/shortest-way-to-print-current-year-in-javascript#}
+{#					Copyright  <span class="ls5" style="font-family: 'Playfair Display'; font-style: italic; text-transform: lowercase; color: #FFF;"> Databasis</span>  <script>document.write(new Date().getFullYear())</script> | All Rights Reserved#}
+{#				</div>#}
+{#			</div>#}
 
 		</footer><!-- #footer end -->
 

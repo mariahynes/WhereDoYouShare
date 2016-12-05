@@ -4,35 +4,71 @@
     {% load staticfiles %}
         {% block head_style %}
             <style>
-                .opacity5{
-                    opacity:0.5;
+                .opacity9{
+                    opacity:2;
                 }
-                .opacity_none{
-                    opacity:1;
-                }
-                .width_narrow{
-                    width:50px;
-                }
+                input {
+                    width: 100%;
+                    padding: 12px 20px;
+                    margin: 2px 0;
+                    box-sizing: border-box;
+                    border-radius: 10px;
+                    border: none;
+               }
+
             </style>
         {% endblock %}
         <!-- Slider ============================================= -->
-		<section id="slider" class="full-screen  slider-parallax">
-
+		<section id="slider" class="full-screen ">
+        <div class="slider-parallax-inner">
 			<div class="full-screen section nopadding nomargin noborder ohidden" style="background: url({% static 'myimages/ought5.jpg' %}) bottom center no-repeat; background-size: cover;">
 
-				<div class="container dark" >
-				    <div class="vertical-middle" >
+                <div class="row nomargin" style="position: relative; z-index: 2;">
+						<div class="col-md-offset-2 col-md-3 full-screen" style="background-color: rgba(0,0,0,0.45);">
+							<div class="vertical-middle col-padding">
+								<div class="heading-block nobottomborder bottommargin-sm dark">
+									<h1 style="font-size: 22px;">Register</h1>
+									<div class="not-dark">
+                                        <span style="font-size: 16px;" class="t300 capitalize ls1 notopmargin"></span></div>
+								</div>
+                                <form role="form" class="clearfix" method="post" action="{% url 'register' %}">
 
-				        <div id="section-about" class="page-section">
+                                    {% csrf_token %}
+                                    <div class="col_full not-dark">
+										 <label for="id_email" class="capitalize t600 dark">Email</label>
+                                           <div class="not-dark"> {{ form.email }} </div><br>
+                                        <label for="id_first_name" class="capitalize t600 dark">First Name</label>
+                                           <div class="not-dark"> {{ form.first_name }} </div><br>
+                                        <label for="id_last_name" class="capitalize t600 dark">Surname</label>
+                                           <div class="not-dark"> {{ form.last_name }} </div><br>
+                                        <label for="id_password1" class="capitalize t600 dark">Password</label>
+                                           <div class="not-dark"> {{ form.password1 }}</div><br>
+                                        <label for="id_password2" class="capitalize t600 dark">Repeat Password</label>
+                                           <div class="not-dark"> {{ form.password2 }}</div>
+                                    </div>
 
-					        <div class="container clearfix opacity_none"> <!--clearfix removed-->
+                                    <br>
 
-                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">Register</h2>
 
-                                    <div data-animate="fadeIn" class="col_half">
+                                    <div class="form-group">
+                                        <button type="submit" class="t400 capitalize button button-border button-light button-circle nomargin">Sign me up for Sharing!</button>
+                                    </div>
+                                </form>
 
-                                        <p  class="lead divleft bottommargin" style="max-width: 700px;">
-                                            <legend data-animate="fadeInUp">Create a new account</legend>
+							</div>
+
+						</div>
+					</div>
+
+			</div>
+        </div>
+		</section> <!--#slider end -->
+
+
+
+    {% endblock %}
+
+                                                <legend data-animate="fadeInUp">Create a new account</legend>
                                                 <form role="form" method="post" id="register-form" action="{% url 'register' %}">
 
 
@@ -42,28 +78,3 @@
                                                         <button type="submit" class="btn btn-primary">Create account</button>
                                                     </div>
                                                 </form>
-
-                                        </p>
-
-                                </div>
-
-                                        <div class="clear"></div>
-
-                                        <div class="row topmargin-lg divcenter" style="max-width: 1000px;"></div>
-
-
-
-				            </div>
-
-                       </div>
-
-					</div>
-				</div>
-
-			</div>
-
-		</section> <!--#slider end -->
-
-
-
-    {% endblock %}

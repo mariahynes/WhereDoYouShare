@@ -54,12 +54,15 @@
                                                     <button class="btn btn-default" onclick="location.href='/blog/blog/{{ asset_id }}/{{ post.id }}/delete'">Delete <i class="fa fa-trash-o"></i> </button>
                                                     {% endif %}
                                                     </p>
+                                                    <div id="comments" class="clearfix">
+                                                    <h3 id="comments-title">Comments</h3>
 
                                                     {% load disqus_tags %}
                                                     {% set_disqus_title post.title %}
                                                     {% disqus_show_comments %}
 
-                                                </div>
+
+                                                    </div>
 
 
                                         {% endif %}
