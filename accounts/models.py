@@ -13,7 +13,7 @@ class AccountUserManager(UserManager):
        """
         now = timezone.now()
         if not email:
-            raise ValueError('The given username must be set')
+            raise ValueError('The email must be set')
 
         email = self.normalize_email(email)
         user = self.model(username=email, email=email,

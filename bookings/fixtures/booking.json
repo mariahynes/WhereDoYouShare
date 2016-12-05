@@ -1,0 +1,750 @@
+[
+{
+    "model": "bookings.booking",
+    "pk": 1,
+    "fields": {
+        "asset_ID": 1,
+        "requested_by_user_ID": 8,
+        "deposit_paid": false,
+        "date_created": "2016-10-15 20:34:32.052000"
+    }
+},
+{
+    "model": "bookings.booking",
+    "pk": 2,
+    "fields": {
+        "asset_ID": 1,
+        "requested_by_user_ID": 8,
+        "deposit_paid": false,
+        "date_created": "2016-10-15T20:34:32.052Z"
+    }
+},
+{
+    "model": "bookings.booking",
+    "pk": 3,
+    "fields": {
+        "asset_ID": 1,
+        "requested_by_user_ID": 8,
+        "deposit_paid": false,
+        "date_created": "2016-10-15T20:37:54.476Z"
+    }
+},
+{
+    "model": "bookings.booking",
+    "pk": 4,
+    "fields": {
+        "asset_ID": 1,
+        "requested_by_user_ID": 8,
+        "deposit_paid": false,
+        "date_created": "2016-10-15T20:43:42.467Z"
+    }
+},
+{
+    "model": "bookings.booking",
+    "pk": 5,
+    "fields": {
+        "asset_ID": 2,
+        "requested_by_user_ID": 8,
+        "deposit_paid": false,
+        "date_created": "2016-10-16T19:53:36Z"
+    }
+},
+{
+    "model": "bookings.booking",
+    "pk": 20,
+    "fields": {
+        "asset_ID": 1,
+        "requested_by_user_ID": 8,
+        "deposit_paid": false,
+        "date_created": "2016-11-22T22:34:14.730Z"
+    }
+},
+{
+    "model": "bookings.booking",
+    "pk": 21,
+    "fields": {
+        "asset_ID": 1,
+        "requested_by_user_ID": 22,
+        "deposit_paid": false,
+        "date_created": "2016-11-23T23:54:42.394Z"
+    }
+},
+{
+    "model": "bookings.booking",
+    "pk": 22,
+    "fields": {
+        "asset_ID": 1,
+        "requested_by_user_ID": 8,
+        "deposit_paid": false,
+        "date_created": "2016-11-26T16:07:41.044Z"
+    }
+},
+{
+    "model": "bookings.booking",
+    "pk": 36,
+    "fields": {
+        "asset_ID": 1,
+        "requested_by_user_ID": 8,
+        "deposit_paid": false,
+        "date_created": "2016-11-26T17:54:55.113Z"
+    }
+},
+{
+    "model": "bookings.booking",
+    "pk": 43,
+    "fields": {
+        "asset_ID": 1,
+        "requested_by_user_ID": 13,
+        "deposit_paid": false,
+        "date_created": "2016-11-26T18:41:57.838Z"
+    }
+},
+{
+    "model": "bookings.booking",
+    "pk": 44,
+    "fields": {
+        "asset_ID": 1,
+        "requested_by_user_ID": 8,
+        "deposit_paid": false,
+        "date_created": "2016-11-27T23:00:31.327Z"
+    }
+},
+{
+    "model": "bookings.booking",
+    "pk": 46,
+    "fields": {
+        "asset_ID": 1,
+        "requested_by_user_ID": 8,
+        "deposit_paid": false,
+        "date_created": "2016-12-01T20:50:18.123Z"
+    }
+},
+{
+    "model": "bookings.booking",
+    "pk": 47,
+    "fields": {
+        "asset_ID": 1,
+        "requested_by_user_ID": 8,
+        "deposit_paid": false,
+        "date_created": "2016-12-01T20:50:18.123Z"
+    }
+},
+{
+    "model": "bookings.booking",
+    "pk": 52,
+    "fields": {
+        "asset_ID": 1,
+        "requested_by_user_ID": 8,
+        "deposit_paid": false,
+        "date_created": "2016-11-26T17:54:55.113Z"
+    }
+},
+{
+    "model": "bookings.booking",
+    "pk": 53,
+    "fields": {
+        "asset_ID": 1,
+        "requested_by_user_ID": 8,
+        "deposit_paid": false,
+        "date_created": "2016-11-22T22:34:14.730Z"
+    }
+},
+{
+    "model": "bookings.booking",
+    "pk": 58,
+    "fields": {
+        "asset_ID": 3,
+        "requested_by_user_ID": 8,
+        "deposit_paid": false,
+        "date_created": "2016-12-02T22:34:03.791Z"
+    }
+},
+{
+    "model": "bookings.booking",
+    "pk": 59,
+    "fields": {
+        "asset_ID": 3,
+        "requested_by_user_ID": 8,
+        "deposit_paid": false,
+        "date_created": "2016-12-02T22:34:03.791Z"
+    }
+},
+{
+    "model": "bookings.bookingdetail",
+    "pk": 2,
+    "fields": {
+        "booking_id": 3,
+        "slot_owner_id": 13,
+        "booking_date": "2016-11-28",
+        "date_created": "2016-11-22T15:30:05.099Z",
+        "is_confirmed": false,
+        "date_confirmed": null,
+        "is_pending": true,
+        "is_approved": false,
+        "date_approved": null,
+        "is_denied": false,
+        "date_denied": null
+    }
+},
+{
+    "model": "bookings.bookingdetail",
+    "pk": 3,
+    "fields": {
+        "booking_id": 3,
+        "slot_owner_id": 13,
+        "booking_date": "2016-11-29",
+        "date_created": "2016-11-22T15:30:05.099Z",
+        "is_confirmed": true,
+        "date_confirmed": null,
+        "is_pending": true,
+        "is_approved": false,
+        "date_approved": null,
+        "is_denied": false,
+        "date_denied": null
+    }
+},
+{
+    "model": "bookings.bookingdetail",
+    "pk": 5,
+    "fields": {
+        "booking_id": 5,
+        "slot_owner_id": 21,
+        "booking_date": "2016-11-28",
+        "date_created": "2016-11-22T15:30:05.099Z",
+        "is_confirmed": false,
+        "date_confirmed": null,
+        "is_pending": true,
+        "is_approved": false,
+        "date_approved": null,
+        "is_denied": false,
+        "date_denied": null
+    }
+},
+{
+    "model": "bookings.bookingdetail",
+    "pk": 6,
+    "fields": {
+        "booking_id": 4,
+        "slot_owner_id": 17,
+        "booking_date": "2016-12-01",
+        "date_created": "2016-11-22T15:30:05.099Z",
+        "is_confirmed": false,
+        "date_confirmed": null,
+        "is_pending": true,
+        "is_approved": false,
+        "date_approved": null,
+        "is_denied": false,
+        "date_denied": null
+    }
+},
+{
+    "model": "bookings.bookingdetail",
+    "pk": 90,
+    "fields": {
+        "booking_id": 20,
+        "slot_owner_id": 17,
+        "booking_date": "2016-12-02",
+        "date_created": "2016-11-22T22:34:14.853Z",
+        "is_confirmed": false,
+        "date_confirmed": null,
+        "is_pending": true,
+        "is_approved": false,
+        "date_approved": null,
+        "is_denied": false,
+        "date_denied": null
+    }
+},
+{
+    "model": "bookings.bookingdetail",
+    "pk": 93,
+    "fields": {
+        "booking_id": 53,
+        "slot_owner_id": 15,
+        "booking_date": "2016-12-04",
+        "date_created": "2016-11-22T22:34:15.118Z",
+        "is_confirmed": false,
+        "date_confirmed": null,
+        "is_pending": true,
+        "is_approved": false,
+        "date_approved": null,
+        "is_denied": false,
+        "date_denied": null
+    }
+},
+{
+    "model": "bookings.bookingdetail",
+    "pk": 94,
+    "fields": {
+        "booking_id": 21,
+        "slot_owner_id": 16,
+        "booking_date": "2016-12-28",
+        "date_created": "2016-11-23T23:54:42.485Z",
+        "is_confirmed": false,
+        "date_confirmed": null,
+        "is_pending": true,
+        "is_approved": false,
+        "date_approved": null,
+        "is_denied": false,
+        "date_denied": null
+    }
+},
+{
+    "model": "bookings.bookingdetail",
+    "pk": 95,
+    "fields": {
+        "booking_id": 21,
+        "slot_owner_id": 16,
+        "booking_date": "2016-12-29",
+        "date_created": "2016-11-23T23:54:42.546Z",
+        "is_confirmed": false,
+        "date_confirmed": null,
+        "is_pending": true,
+        "is_approved": false,
+        "date_approved": null,
+        "is_denied": false,
+        "date_denied": null
+    }
+},
+{
+    "model": "bookings.bookingdetail",
+    "pk": 201,
+    "fields": {
+        "booking_id": 36,
+        "slot_owner_id": 24,
+        "booking_date": "2017-01-02",
+        "date_created": "2016-11-26T17:54:55.317Z",
+        "is_confirmed": false,
+        "date_confirmed": null,
+        "is_pending": true,
+        "is_approved": false,
+        "date_approved": null,
+        "is_denied": false,
+        "date_denied": null
+    }
+},
+{
+    "model": "bookings.bookingdetail",
+    "pk": 202,
+    "fields": {
+        "booking_id": 36,
+        "slot_owner_id": 24,
+        "booking_date": "2017-01-03",
+        "date_created": "2016-11-26T17:54:55.395Z",
+        "is_confirmed": false,
+        "date_confirmed": null,
+        "is_pending": true,
+        "is_approved": false,
+        "date_approved": null,
+        "is_denied": false,
+        "date_denied": null
+    }
+},
+{
+    "model": "bookings.bookingdetail",
+    "pk": 205,
+    "fields": {
+        "booking_id": 52,
+        "slot_owner_id": 24,
+        "booking_date": "2017-01-06",
+        "date_created": "2016-11-26T17:54:55.668Z",
+        "is_confirmed": false,
+        "date_confirmed": null,
+        "is_pending": true,
+        "is_approved": false,
+        "date_approved": null,
+        "is_denied": false,
+        "date_denied": null
+    }
+},
+{
+    "model": "bookings.bookingdetail",
+    "pk": 206,
+    "fields": {
+        "booking_id": 52,
+        "slot_owner_id": 24,
+        "booking_date": "2017-01-07",
+        "date_created": "2016-11-26T17:54:55.767Z",
+        "is_confirmed": false,
+        "date_confirmed": null,
+        "is_pending": true,
+        "is_approved": false,
+        "date_approved": null,
+        "is_denied": false,
+        "date_denied": null
+    }
+},
+{
+    "model": "bookings.bookingdetail",
+    "pk": 244,
+    "fields": {
+        "booking_id": 43,
+        "slot_owner_id": 24,
+        "booking_date": "2017-01-13",
+        "date_created": "2016-11-26T18:41:57.991Z",
+        "is_confirmed": false,
+        "date_confirmed": null,
+        "is_pending": true,
+        "is_approved": false,
+        "date_approved": null,
+        "is_denied": false,
+        "date_denied": null
+    }
+},
+{
+    "model": "bookings.bookingdetail",
+    "pk": 245,
+    "fields": {
+        "booking_id": 43,
+        "slot_owner_id": 24,
+        "booking_date": "2017-01-14",
+        "date_created": "2016-11-26T18:41:58.063Z",
+        "is_confirmed": false,
+        "date_confirmed": null,
+        "is_pending": true,
+        "is_approved": false,
+        "date_approved": null,
+        "is_denied": false,
+        "date_denied": null
+    }
+},
+{
+    "model": "bookings.bookingdetail",
+    "pk": 246,
+    "fields": {
+        "booking_id": 43,
+        "slot_owner_id": 13,
+        "booking_date": "2017-01-15",
+        "date_created": "2016-11-26T18:41:58.124Z",
+        "is_confirmed": false,
+        "date_confirmed": null,
+        "is_pending": false,
+        "is_approved": true,
+        "date_approved": "2016-11-26T18:41:58.124Z",
+        "is_denied": false,
+        "date_denied": null
+    }
+},
+{
+    "model": "bookings.bookingdetail",
+    "pk": 247,
+    "fields": {
+        "booking_id": 43,
+        "slot_owner_id": 13,
+        "booking_date": "2017-01-16",
+        "date_created": "2016-11-26T18:41:58.180Z",
+        "is_confirmed": false,
+        "date_confirmed": null,
+        "is_pending": false,
+        "is_approved": true,
+        "date_approved": "2016-11-26T18:41:58.180Z",
+        "is_denied": false,
+        "date_denied": null
+    }
+},
+{
+    "model": "bookings.bookingdetail",
+    "pk": 248,
+    "fields": {
+        "booking_id": 43,
+        "slot_owner_id": 13,
+        "booking_date": "2017-01-17",
+        "date_created": "2016-11-26T18:41:58.283Z",
+        "is_confirmed": false,
+        "date_confirmed": null,
+        "is_pending": false,
+        "is_approved": true,
+        "date_approved": "2016-11-26T18:41:58.282Z",
+        "is_denied": false,
+        "date_denied": null
+    }
+},
+{
+    "model": "bookings.bookingdetail",
+    "pk": 249,
+    "fields": {
+        "booking_id": 43,
+        "slot_owner_id": 13,
+        "booking_date": "2017-01-18",
+        "date_created": "2016-11-26T18:41:58.382Z",
+        "is_confirmed": false,
+        "date_confirmed": null,
+        "is_pending": false,
+        "is_approved": true,
+        "date_approved": "2016-11-26T18:41:58.382Z",
+        "is_denied": false,
+        "date_denied": null
+    }
+},
+{
+    "model": "bookings.bookingdetail",
+    "pk": 250,
+    "fields": {
+        "booking_id": 44,
+        "slot_owner_id": 13,
+        "booking_date": "2017-01-22",
+        "date_created": "2016-11-27T23:00:31.420Z",
+        "is_confirmed": true,
+        "date_confirmed": "2016-12-01T19:11:07.770Z",
+        "is_pending": false,
+        "is_approved": true,
+        "date_approved": "2016-11-30T21:26:52.075Z",
+        "is_denied": false,
+        "date_denied": null
+    }
+},
+{
+    "model": "bookings.bookingdetail",
+    "pk": 251,
+    "fields": {
+        "booking_id": 44,
+        "slot_owner_id": 13,
+        "booking_date": "2017-01-23",
+        "date_created": "2016-11-27T23:00:31.488Z",
+        "is_confirmed": true,
+        "date_confirmed": "2016-12-01T19:11:07.770Z",
+        "is_pending": false,
+        "is_approved": true,
+        "date_approved": "2016-11-30T21:26:52.075Z",
+        "is_denied": false,
+        "date_denied": null
+    }
+},
+{
+    "model": "bookings.bookingdetail",
+    "pk": 257,
+    "fields": {
+        "booking_id": 46,
+        "slot_owner_id": 13,
+        "booking_date": "2017-03-26",
+        "date_created": "2016-12-01T20:50:18.207Z",
+        "is_confirmed": true,
+        "date_confirmed": "2016-12-01T21:17:07.992Z",
+        "is_pending": false,
+        "is_approved": false,
+        "date_approved": "2016-12-01T21:16:21.759Z",
+        "is_denied": false,
+        "date_denied": null
+    }
+},
+{
+    "model": "bookings.bookingdetail",
+    "pk": 258,
+    "fields": {
+        "booking_id": 46,
+        "slot_owner_id": 13,
+        "booking_date": "2017-03-27",
+        "date_created": "2016-12-01T20:50:18.279Z",
+        "is_confirmed": true,
+        "date_confirmed": "2016-12-01T21:17:07.992Z",
+        "is_pending": false,
+        "is_approved": false,
+        "date_approved": "2016-12-01T21:16:21.759Z",
+        "is_denied": false,
+        "date_denied": null
+    }
+},
+{
+    "model": "bookings.bookingdetail",
+    "pk": 260,
+    "fields": {
+        "booking_id": 47,
+        "slot_owner_id": 13,
+        "booking_date": "2017-03-29",
+        "date_created": "2016-12-01T20:50:18.421Z",
+        "is_confirmed": true,
+        "date_confirmed": "2016-12-01T21:17:07.992Z",
+        "is_pending": false,
+        "is_approved": false,
+        "date_approved": "2016-12-01T21:16:21.759Z",
+        "is_denied": false,
+        "date_denied": null
+    }
+},
+{
+    "model": "bookings.bookingdetail",
+    "pk": 261,
+    "fields": {
+        "booking_id": 47,
+        "slot_owner_id": 13,
+        "booking_date": "2017-03-30",
+        "date_created": "2016-12-01T20:50:18.494Z",
+        "is_confirmed": true,
+        "date_confirmed": "2016-12-01T21:17:07.992Z",
+        "is_pending": false,
+        "is_approved": false,
+        "date_approved": "2016-12-01T21:16:21.759Z",
+        "is_denied": false,
+        "date_denied": null
+    }
+},
+{
+    "model": "bookings.bookingdetail",
+    "pk": 291,
+    "fields": {
+        "booking_id": 58,
+        "slot_owner_id": 19,
+        "booking_date": "2016-12-15",
+        "date_created": "2016-12-02T22:34:03.956Z",
+        "is_confirmed": true,
+        "date_confirmed": "2016-12-02T22:42:56.499Z",
+        "is_pending": false,
+        "is_approved": false,
+        "date_approved": "2016-12-02T22:37:28.353Z",
+        "is_denied": false,
+        "date_denied": null
+    }
+},
+{
+    "model": "bookings.bookingdetail",
+    "pk": 292,
+    "fields": {
+        "booking_id": 58,
+        "slot_owner_id": 19,
+        "booking_date": "2016-12-16",
+        "date_created": "2016-12-02T22:34:04.018Z",
+        "is_confirmed": true,
+        "date_confirmed": "2016-12-02T22:42:56.499Z",
+        "is_pending": false,
+        "is_approved": false,
+        "date_approved": "2016-12-02T22:37:28.353Z",
+        "is_denied": false,
+        "date_denied": null
+    }
+},
+{
+    "model": "bookings.bookingdetail",
+    "pk": 293,
+    "fields": {
+        "booking_id": 58,
+        "slot_owner_id": 19,
+        "booking_date": "2016-12-17",
+        "date_created": "2016-12-02T22:34:04.076Z",
+        "is_confirmed": true,
+        "date_confirmed": "2016-12-02T22:42:56.499Z",
+        "is_pending": false,
+        "is_approved": false,
+        "date_approved": "2016-12-02T22:37:28.353Z",
+        "is_denied": false,
+        "date_denied": null
+    }
+},
+{
+    "model": "bookings.bookingdetail",
+    "pk": 294,
+    "fields": {
+        "booking_id": 58,
+        "slot_owner_id": 19,
+        "booking_date": "2016-12-18",
+        "date_created": "2016-12-02T22:34:04.135Z",
+        "is_confirmed": true,
+        "date_confirmed": "2016-12-02T22:42:56.499Z",
+        "is_pending": false,
+        "is_approved": false,
+        "date_approved": "2016-12-02T22:37:28.353Z",
+        "is_denied": false,
+        "date_denied": null
+    }
+},
+{
+    "model": "bookings.bookingdetail",
+    "pk": 298,
+    "fields": {
+        "booking_id": 59,
+        "slot_owner_id": 19,
+        "booking_date": "2016-12-22",
+        "date_created": "2016-12-02T22:34:04.407Z",
+        "is_confirmed": true,
+        "date_confirmed": "2016-12-02T22:42:56.499Z",
+        "is_pending": false,
+        "is_approved": false,
+        "date_approved": "2016-12-02T22:37:28.353Z",
+        "is_denied": false,
+        "date_denied": null
+    }
+},
+{
+    "model": "bookings.bookingdetail",
+    "pk": 299,
+    "fields": {
+        "booking_id": 59,
+        "slot_owner_id": 19,
+        "booking_date": "2016-12-23",
+        "date_created": "2016-12-02T22:34:04.493Z",
+        "is_confirmed": true,
+        "date_confirmed": "2016-12-02T22:42:56.499Z",
+        "is_pending": false,
+        "is_approved": false,
+        "date_approved": "2016-12-02T22:37:28.353Z",
+        "is_denied": false,
+        "date_denied": null
+    }
+},
+{
+    "model": "bookings.bookingdetail",
+    "pk": 300,
+    "fields": {
+        "booking_id": 59,
+        "slot_owner_id": 19,
+        "booking_date": "2016-12-24",
+        "date_created": "2016-12-02T22:34:04.582Z",
+        "is_confirmed": true,
+        "date_confirmed": "2016-12-02T22:42:56.499Z",
+        "is_pending": false,
+        "is_approved": false,
+        "date_approved": "2016-12-02T22:37:28.353Z",
+        "is_denied": false,
+        "date_denied": null
+    }
+},
+{
+    "model": "bookings.bookingdetail",
+    "pk": 301,
+    "fields": {
+        "booking_id": 59,
+        "slot_owner_id": 19,
+        "booking_date": "2016-12-25",
+        "date_created": "2016-12-02T22:34:04.659Z",
+        "is_confirmed": true,
+        "date_confirmed": "2016-12-02T22:42:56.499Z",
+        "is_pending": false,
+        "is_approved": false,
+        "date_approved": "2016-12-02T22:37:28.353Z",
+        "is_denied": false,
+        "date_denied": null
+    }
+},
+{
+    "model": "bookings.bookingdetail",
+    "pk": 302,
+    "fields": {
+        "booking_id": 59,
+        "slot_owner_id": 19,
+        "booking_date": "2016-12-26",
+        "date_created": "2016-12-02T22:34:04.733Z",
+        "is_confirmed": true,
+        "date_confirmed": "2016-12-02T22:42:56.499Z",
+        "is_pending": false,
+        "is_approved": false,
+        "date_approved": "2016-12-02T22:37:28.353Z",
+        "is_denied": false,
+        "date_denied": null
+    }
+},
+{
+    "model": "bookings.bookingdetail",
+    "pk": 303,
+    "fields": {
+        "booking_id": 59,
+        "slot_owner_id": 19,
+        "booking_date": "2016-12-27",
+        "date_created": "2016-12-02T22:34:04.807Z",
+        "is_confirmed": true,
+        "date_confirmed": "2016-12-02T22:42:56.499Z",
+        "is_pending": false,
+        "is_approved": false,
+        "date_approved": "2016-12-02T22:37:28.353Z",
+        "is_denied": false,
+        "date_denied": null
+    }
+}
+]

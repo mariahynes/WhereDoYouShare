@@ -1,0 +1,286 @@
+[
+{
+    "model": "assets.asset",
+    "pk": 1,
+    "fields": {
+        "asset_display_name": "Lissaniska",
+        "asset_type": 1,
+        "sharing_with_other_owners": true,
+        "sharing_start_date": "2015-02-01",
+        "slot_duration_unit": 1,
+        "number_of_slot_units": 2,
+        "date_created": "2016-10-10T20:40:25.196Z"
+    }
+},
+{
+    "model": "assets.asset",
+    "pk": 2,
+    "fields": {
+        "asset_display_name": "Le Rouret",
+        "asset_type": 1,
+        "sharing_with_other_owners": false,
+        "sharing_start_date": "2016-01-01",
+        "slot_duration_unit": 2,
+        "number_of_slot_units": 1,
+        "date_created": "2016-10-10T20:44:00Z"
+    }
+},
+{
+    "model": "assets.asset",
+    "pk": 3,
+    "fields": {
+        "asset_display_name": "Moving Van",
+        "asset_type": 1,
+        "sharing_with_other_owners": false,
+        "sharing_start_date": "2016-12-01",
+        "slot_duration_unit": 3,
+        "number_of_slot_units": 1,
+        "date_created": "2016-12-02T22:05:40Z"
+    }
+},
+{
+    "model": "assets.asset_user_mapping",
+    "pk": 1,
+    "fields": {
+        "user_ID": 8,
+        "asset_ID": 1,
+        "is_owner": false,
+        "position_in_rotation": 0,
+        "date_created": "2016-10-10T20:44:37.458Z",
+        "is_activated": true,
+        "date_activated": "2016-10-10T20:44:31Z",
+        "inviter": 13
+    }
+},
+{
+    "model": "assets.asset_user_mapping",
+    "pk": 2,
+    "fields": {
+        "user_ID": 8,
+        "asset_ID": 2,
+        "is_owner": false,
+        "position_in_rotation": 0,
+        "date_created": "2016-10-10T20:44:54.026Z",
+        "is_activated": true,
+        "date_activated": "2016-10-10T20:44:51Z",
+        "inviter": 21
+    }
+},
+{
+    "model": "assets.asset_user_mapping",
+    "pk": 3,
+    "fields": {
+        "user_ID": 13,
+        "asset_ID": 1,
+        "is_owner": true,
+        "position_in_rotation": 2,
+        "date_created": "2016-10-11T09:42:29Z",
+        "is_activated": true,
+        "date_activated": "2016-10-11T09:42:24Z",
+        "inviter": 13
+    }
+},
+{
+    "model": "assets.asset_user_mapping",
+    "pk": 4,
+    "fields": {
+        "user_ID": 10,
+        "asset_ID": 2,
+        "is_owner": false,
+        "position_in_rotation": 0,
+        "date_created": "2016-10-11T20:18:39Z",
+        "is_activated": true,
+        "date_activated": "2016-10-11T20:18:31Z",
+        "inviter": 13
+    }
+},
+{
+    "model": "assets.asset_user_mapping",
+    "pk": 5,
+    "fields": {
+        "user_ID": 24,
+        "asset_ID": 1,
+        "is_owner": true,
+        "position_in_rotation": 1,
+        "date_created": "2016-10-18T19:20:33Z",
+        "is_activated": true,
+        "date_activated": null,
+        "inviter": 24
+    }
+},
+{
+    "model": "assets.asset_user_mapping",
+    "pk": 6,
+    "fields": {
+        "user_ID": 15,
+        "asset_ID": 1,
+        "is_owner": true,
+        "position_in_rotation": 4,
+        "date_created": "2016-10-18T19:21:11Z",
+        "is_activated": true,
+        "date_activated": null,
+        "inviter": 15
+    }
+},
+{
+    "model": "assets.asset_user_mapping",
+    "pk": 7,
+    "fields": {
+        "user_ID": 16,
+        "asset_ID": 1,
+        "is_owner": true,
+        "position_in_rotation": 5,
+        "date_created": "2016-10-18T19:21:27Z",
+        "is_activated": true,
+        "date_activated": null,
+        "inviter": 16
+    }
+},
+{
+    "model": "assets.asset_user_mapping",
+    "pk": 8,
+    "fields": {
+        "user_ID": 17,
+        "asset_ID": 1,
+        "is_owner": true,
+        "position_in_rotation": 3,
+        "date_created": "2016-10-18T19:21:48Z",
+        "is_activated": true,
+        "date_activated": null,
+        "inviter": 17
+    }
+},
+{
+    "model": "assets.asset_user_mapping",
+    "pk": 15,
+    "fields": {
+        "user_ID": 19,
+        "asset_ID": 1,
+        "is_owner": false,
+        "position_in_rotation": 0,
+        "date_created": "2016-11-18T21:26:01.385Z",
+        "is_activated": true,
+        "date_activated": "2016-11-18T21:26:01Z",
+        "inviter": 13
+    }
+},
+{
+    "model": "assets.asset_user_mapping",
+    "pk": 16,
+    "fields": {
+        "user_ID": 19,
+        "asset_ID": 2,
+        "is_owner": false,
+        "position_in_rotation": 0,
+        "date_created": "2016-11-18T21:36:26.112Z",
+        "is_activated": true,
+        "date_activated": "2016-11-18T21:36:26Z",
+        "inviter": 21
+    }
+},
+{
+    "model": "assets.asset_user_mapping",
+    "pk": 17,
+    "fields": {
+        "user_ID": 13,
+        "asset_ID": 2,
+        "is_owner": false,
+        "position_in_rotation": 0,
+        "date_created": "2016-11-18T21:53:00.203Z",
+        "is_activated": true,
+        "date_activated": "2016-11-18T21:53:00Z",
+        "inviter": 21
+    }
+},
+{
+    "model": "assets.asset_user_mapping",
+    "pk": 18,
+    "fields": {
+        "user_ID": 21,
+        "asset_ID": 2,
+        "is_owner": true,
+        "position_in_rotation": 1,
+        "date_created": "2016-11-18T21:54:56.237Z",
+        "is_activated": true,
+        "date_activated": "2016-11-18T21:54:56Z",
+        "inviter": 21
+    }
+},
+{
+    "model": "assets.asset_user_mapping",
+    "pk": 19,
+    "fields": {
+        "user_ID": 22,
+        "asset_ID": 2,
+        "is_owner": true,
+        "position_in_rotation": 2,
+        "date_created": "2016-11-18T22:00:07Z",
+        "is_activated": true,
+        "date_activated": null,
+        "inviter": 22
+    }
+},
+{
+    "model": "assets.asset_user_mapping",
+    "pk": 20,
+    "fields": {
+        "user_ID": 8,
+        "asset_ID": 3,
+        "is_owner": false,
+        "position_in_rotation": 0,
+        "date_created": "2016-12-02T22:06:41Z",
+        "is_activated": true,
+        "date_activated": "2016-12-02T22:07:05Z",
+        "inviter": 19
+    }
+},
+{
+    "model": "assets.asset_user_mapping",
+    "pk": 21,
+    "fields": {
+        "user_ID": 19,
+        "asset_ID": 3,
+        "is_owner": true,
+        "position_in_rotation": 1,
+        "date_created": "2016-12-02T22:07:20Z",
+        "is_activated": true,
+        "date_activated": "2016-12-02T22:07:32Z",
+        "inviter": 19
+    }
+},
+{
+    "model": "assets.assettype",
+    "pk": 1,
+    "fields": {
+        "asset_type": "Property"
+    }
+},
+{
+    "model": "assets.assettype",
+    "pk": 2,
+    "fields": {
+        "asset_type": "Vehicle"
+    }
+},
+{
+    "model": "assets.durationtype",
+    "pk": 1,
+    "fields": {
+        "duration_type": "Week"
+    }
+},
+{
+    "model": "assets.durationtype",
+    "pk": 2,
+    "fields": {
+        "duration_type": "Month"
+    }
+},
+{
+    "model": "assets.durationtype",
+    "pk": 3,
+    "fields": {
+        "duration_type": "One Owner"
+    }
+}
+]

@@ -17,5 +17,3 @@ urlpatterns = [
 
 ]
 
-
-# def all_bookings(request, asset_id=0, status = "", time_period = "", user_id=0):

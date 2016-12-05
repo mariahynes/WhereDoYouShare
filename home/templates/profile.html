@@ -49,9 +49,11 @@
                                                             <span class="caret"></span></button>
 
                                                             <ul class="dropdown-menu">
-                                                                <li><a href="{% url 'asset_detail' asset.asset_ID_id %}">View Details</a></li>
-                                                            <li class="divider"></li>
+{#                                                                <li><a href="{% url 'asset_detail' asset.asset_ID_id %}">View Details</a></li>#}
+{#                                                            <li class="divider"></li>#}
 
+                                                                <li><a href="{% url 'make_a_booking' asset.asset_ID_id %}">Make a Booking</a></li>
+                                                            <li class="divider"></li>
                                                             {% get_total_pending asset.asset_ID user.id num_bookings=True as totes_pending %}
                                                                 {%  if totes_pending > 0 %}
                                                                     <li><a href="{% url 'all_asset_bookings' asset.asset_ID_id user.id "future" "pending" %}">My Pending Requests <span class="badge">{{totes_pending}}</span></a></li>
@@ -65,9 +67,9 @@
                                                                 <li><a href="{% url 'all_asset_bookings' asset.asset_ID_id user.id "future" "confirmed" %}">My Bookings <span class="badge">{{ totes_fully_confirmed }}</span></a></li>
                                                                 {% endif %}
 
-                                                                <li><a href="{% url 'make_a_booking' asset.asset_ID_id %}">Make a Booking</a></li>
                                                                 {% get_total_bookings asset.asset_ID as totes_bookings %}
                                                                 {% if totes_bookings > 0 %}
+                                                                    <li class="divider"></li>
                                                                     <li><a href="{% url 'all_asset_bookings' asset.asset_ID_id "future" %}">View all Future Bookings <span class="badge">{{ totes_bookings }}</span></a></li>
                                                                 {% endif %}
                                                             {% get_total_bookings_past asset.asset_ID as totes_bookings_past %}

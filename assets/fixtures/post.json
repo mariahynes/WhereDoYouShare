@@ -1,0 +1,62 @@
+[
+{
+    "model": "blog.post",
+    "pk": 1,
+    "fields": {
+        "author": 8,
+        "asset_ID": 1,
+        "title": "My First Post",
+        "content": "<p>Hi guys, <strong>Lissaniska</strong> is beautiful. If you haven't been in a while, you should take some time out and visit. Oughtarard has some great places to eat and what better way to wake up in the morning than looking out at the stunning, peaceful view of Lough Corrib??! Take a look at my <strong>early morning photo</strong>, amazing weather for the autumn mid-term school break.</p>",
+        "created_date": "2016-11-12T17:35:24.492Z",
+        "published_date": "2016-11-15T20:20:48.497Z",
+        "last_edited_date": "2016-11-16T13:37:37.390Z",
+        "num_views": 172,
+        "image": "blog_images/booking.jpg"
+    }
+},
+{
+    "model": "blog.post",
+    "pk": 2,
+    "fields": {
+        "author": 10,
+        "asset_ID": 2,
+        "title": "David's Birthday",
+        "content": "We all went to Le Rouret for David's 70th birthday in August. We were there for three whole weeks! We all went to Le Rouret for David's 70th birthday in August. We were there for three whole weeks! We all went to Le Rouret for David's 70th birthday in August. We were there for three whole weeks! We all went to Le Rouret for David's 70th birthday in August. We were there for three whole weeks! We all went to Le Rouret for David's 70th birthday in August. We were there for three whole weeks! We all went to Le Rouret for David's 70th birthday in August. We were there for three whole weeks!",
+        "created_date": "2016-11-13T18:46:56.601Z",
+        "published_date": "2016-11-13T19:15:37.074Z",
+        "last_edited_date": null,
+        "num_views": 24,
+        "image": "blog_images/6_OEekwFc.jpg"
+    }
+},
+{
+    "model": "blog.post",
+    "pk": 3,
+    "fields": {
+        "author": 10,
+        "asset_ID": 2,
+        "title": "Always sunny!",
+        "content": "It feels like it's always sunny in Le Rouret, but especially if you go there in August.",
+        "created_date": "2016-11-13T18:50:57.094Z",
+        "published_date": "2016-11-13T18:50:57.094Z",
+        "last_edited_date": null,
+        "num_views": 4,
+        "image": "blog_images/8.jpg"
+    }
+},
+{
+    "model": "blog.post",
+    "pk": 4,
+    "fields": {
+        "author": 8,
+        "asset_ID": 2,
+        "title": "Christmas in Le Rouret",
+        "content": "I think it would be strange to be looking out at the pool and not to be able to use it. The kids would go mad! So mental note...don't go to Le Rouret in the Winter unless the kids are staying at home!",
+        "created_date": "2016-11-13T19:33:46.822Z",
+        "published_date": "2016-11-13T19:34:12.334Z",
+        "last_edited_date": null,
+        "num_views": 10,
+        "image": "blog_images/10.jpg"
+    }
+}
+]

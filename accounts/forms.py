@@ -15,6 +15,19 @@ class UserRegistrationForm(UserCreationForm):
         widget=forms.PasswordInput
     )
 
+    first_name = forms.CharField(
+        label="First Name"
+    )
+
+    last_name = forms.CharField(
+        label="Surname"
+    )
+
+    email = forms.CharField(
+        label="Email",
+        widget = forms.EmailInput
+    )
+
     class Meta:
         model = User
         fields = ['email', 'first_name','last_name','password1', 'password2']
@@ -30,11 +43,41 @@ class UserRegistrationForm(UserCreationForm):
 
         return password2
 
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+
+        if not email:
+            message = "Please enter your email address"
+            raise forms.ValidationError(message)
+
+        return email
+
+    def clean_first_name(self):
+        first_name = self.cleaned_data.get('first_name')
+
+        if not first_name:
+            message = "Please enter your first name"
+            raise forms.ValidationError(message)
+
+        return first_name
+
+    def clean_last_name(self):
+        last_name = self.cleaned_data.get('last_name')
+
+        if not last_name:
+            message = "Please enter your surname"
+            raise forms.ValidationError(message)
+
+        return last_name
+
     def save(self, commit=True):
         instance = super(UserRegistrationForm, self).save(commit=False)
 
         # automatically set to email address to create a unique identifier
+        instance.email = instance.email
         instance.username = instance.email
+        # instance.first_name = instance.first_name
+        # instance.last_name =  instance.last_name
 
         if commit:
             instance.save()

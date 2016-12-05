@@ -30,7 +30,7 @@
                                                  <form role="form" method="post" action="{% url 'login' %}">
 
                                                     {% csrf_token %}
-                                                    {{ form| as_bootstrap }}
+                                                    {{ form | as_bootstrap }}
                                                     <div class="form-group">
                                                         <button type="submit" class="btn btn-primary">Sign In</button>
                                                     </div>
