@@ -4,9 +4,6 @@
     {% load staticfiles %}
         {% block head_style %}
             <style>
-                .opacity9{
-                    opacity:2;
-                }
                 input {
                     width: 100%;
                     padding: 12px 20px;
@@ -68,13 +65,3 @@
 
     {% endblock %}
 
-                                                <legend data-animate="fadeInUp">Create a new account</legend>
-                                                <form role="form" method="post" id="register-form" action="{% url 'register' %}">
-
-
-                                                    {% csrf_token %}
-                                                    {{ form | as_bootstrap }}
-                                                    <div class = "form-group width_narrow">
-                                                        <button type="submit" class="btn btn-primary">Create account</button>
-                                                    </div>
-                                                </form>

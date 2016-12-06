@@ -44,40 +44,54 @@
 
                                     {% if bookings %}
                                             <p>
-                                        <table class = "table table-striped">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>ID</th>
-                                                            <th>Using it from</th>
-                                                            <th>Returning it on</th>
-                                                            <th>Days</th>
-                                                            <th>Requested By</th>
-                                                            <th>Slot Owner</th>
-                                                            <th>Status</th>
+                                        <div class = "table-responsive">
+                                            <table class = "table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>ID</th>
+                                                        <th>Using it from</th>
+                                                        <th>Returning it on</th>
+                                                        <th>Days</th>
+                                                        <th>Requested By</th>
+                                                        <th>Slot Owner</th>
+                                                        <th>Status</th>
 
 
-                                                            <th></th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    {%  for booking_id in bookings %}
-                                                        <tr>
-                                                            <td><a href="{% url 'booking_detail' booking_id.1 %}" class="btn btn-primary">{{ booking_id.1 }}</a> </td>
-                                                            <td>{% get_booking_start_date booking_id.1 as the_start %}{{ the_start | date:"l" }}, {{ the_start | date:"d M Y" }}</td>
-                                                            <td>{% get_booking_end_date booking_id.1 as the_end %} {{ the_end | date:"l" }}, {{ the_end | date:"d M Y" }}</td>
-
-                                                            <td>{% get_total_days_in_booking booking_id.1 %}</td>
-                                                            <td>{% get_booking_requestor booking_id.1 %}</td>
-                                                            <td>{% get_booking_slot_owner booking_id.1 %}</td>
-                                                            <td>{% get_booking_status booking_id.1 %}</td>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                {%  for booking_id in bookings %}
 
 
-                                                            <td></td>
-                                                        </tr>
-                                                    {% endfor %}
+                                                    <tr data-toggle="popover" data-html=true title="Booking Ref {{ booking_id.1 }}" data-placement="top" data-trigger="hover"
+                                                            data-content="<table class='table'>
+                                                            <tr>
+                                                            <td>
+                                                            {% get_booking_status booking_id.1 %}
 
-                                                     </tbody>
-                                                </table>
+                                                            </td>
+                                                            </tr>
+                                                            </table>">
+                                                        <td> <a href="{% url 'booking_detail' booking_id.1 %}" class="btn btn-primary">{{ booking_id.1 }}</a> </td>
+                                                        <td>{% get_booking_start_date booking_id.1 as the_start %}{{ the_start | date:"l" }}, {{ the_start | date:"d M Y" }}</td>
+                                                        <td>{% get_booking_end_date booking_id.1 as the_end %} {{ the_end | date:"l" }}, {{ the_end | date:"d M Y" }}</td>
+
+                                                        <td>{% get_total_days_in_booking booking_id.1 %}</td>
+                                                        <td>{% get_booking_requestor booking_id.1 %}</td>
+                                                        <td>{% get_booking_slot_owner booking_id.1 %}</td>
+                                                        <td>{% get_booking_status booking_id.1 %}</td>
+
+
+                                                        <td></td>
+
+                                                    </tr>
+
+                                                {% endfor %}
+
+                                                 </tbody>
+                                            </table>
+                                        </div>
                                         <p>
                                         <a href="{% url 'profile' %}" class="btn btn-primary">Back to My Profile</a>
                                         </p>

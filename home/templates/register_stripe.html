@@ -5,7 +5,25 @@
     {% load staticfiles %}
     {% load assets_extras %}
         {% block head_style %}
+            <style>
+                input {
+                    width: 100%;
+                    padding: 12px 20px;
+                    margin: 2px 0;
+                    box-sizing: border-box;
+                    border-radius: 10px;
+                    border: none;
+               }
+            select {
+                    width: 20%;
+                    padding: 12px 5px;
+                    margin: 2px 0;
+                    box-sizing: border-box;
+                    border-radius: 10px;
+                    border: none;
+               }
 
+            </style>
         {% endblock %}
 
         {% block head_js %}
@@ -20,65 +38,55 @@
 
 
         {% endblock %}
+        <!-- Slider ============================================= -->
+		<section id="slider" class="full-screen ">
+        <div class="slider-parallax-inner">
+			<div class="full-screen section nopadding nomargin noborder ohidden" style="background: url({% static 'myimages/ought5.jpg' %}) bottom center no-repeat; background-size: cover;">
 
-         <!-- Slider ============================================= -->
-		<section id="slider" class="full-screen  slider-parallax">
+                <div class="row nomargin" style="position: relative; z-index: 2;">
+						<div class="col-md-offset-2 col-md-3 full-screen" style="background-color: rgba(0,0,0,0.45);">
+							<div class="vertical-middle col-padding">
+								<div class="heading-block nobottomborder bottommargin-sm dark">
+									<h1 style="font-size: 22px;">Register</h1>
+									<div class="not-dark">
+                                        <span style="font-size: 16px;" class="t300 ls1 notopmargin">
+                                            <br>Before making a booking, please register your Credit Card securely with Stripe.<br>
+                                                                <br>
+                                                            No payment details will be stored on this site
+                                        </span></div>
+								</div>
+                                <form role="form" class="clearfix" method="post" id="register-stripe-form" action="{% url 'register_stripe' %}">
 
-			<div class="full-screen section nopadding nomargin noborder ohidden" style="background: url({% static 'myimages/ought54.jpg' %}) bottom center no-repeat; background-size: cover;">
+                                    {% csrf_token %}
+                                    <div class="col_full not-dark">
+										 <label for="id_credit_card_number" class="capitalize t600 dark">Credit Card Number</label>
+                                           <div class="not-dark"> {{ form.credit_card_number }} </div><br>
+                                        <label for="id_cvv" class="capitalize t600 dark">CVV Code</label>
+                                           <div class="not-dark"> {{ form.cvv }} </div><br>
+                                        <label for="id_expiry_month" class="capitalize t600 dark">Expires</label>
+                                           <div class="not-dark"> {{ form.expiry_month }} {{ form.expiry_year }}</div><br>
+                                           {{ form.stripe_id }}
+                                    </div>
 
-				<div class="container " >
-				    <div class="vertical-middle" >
+                                    <br>
+                                    <div id="credit-card-errors" style="display:none">
+                                         <div class="alert-message block-message error style-msg dark" id="stripe-error-message"></div>
+                                     </div>
+                                    <br>
+                                     <div class="form-group">
+                                         <input class="t400 capitalize button button-border button-light button-circle nomargin" id="validate_card_btn" name="commit" type="submit" value="Validate Credit Card">
+                                     </div>
 
-				        <div id="section-about" class="page-section">
+                                </form>
 
-					        <div class="container clearfix opacity_none"> <!--clearfix removed-->
+							</div>
 
-                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">Register</h2>
-
-                                    <div data-animate="fadeIn" class="col_half">
-
-                                        <p  class="lead divleft bottommargin" style="max-width: 700px;">
-                                            <legend data-animate="fadeInUp">Create a new account</legend>
-
-                                        <p>
-                                                Before making a booking, please register your Credit Card details with Stripe.<br>
-                                                               Your details will be kept on their secure servers. <br>
-                                                            No payment details are stored on this site.</p>
-                                                  <form role="form" method="post" id="register-stripe-form" action="{% url 'register_stripe' %}">
-
-
-                                                    {% csrf_token %}
-                                                    {{ form|as_bootstrap }}
-                                                    <div class="form-group">
-                                                      <input class="btn btn-primary" id="validate_card_btn" name="commit" type="submit" value="Validate Credit Card">
-                                                    </div>
-                                                      <div id="credit-card-errors" style="display:none">
-                                                      <div class="alert-message block-message error" id="stripe-error-message"></div>
-                                                    </div>
-                                                  </form>
-
-                                        </p>
-
-                                </div>
-
-                                        <div class="clear"></div>
-
-                                        <div class="row topmargin-lg divcenter" style="max-width: 1000px;"></div>
-
-
-
-				            </div>
-
-                       </div>
-
+						</div>
 					</div>
-				</div>
 
 			</div>
-
+        </div>
 		</section> <!--#slider end -->
-
-
 
     {% endblock %}
 

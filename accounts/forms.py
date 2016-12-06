@@ -73,11 +73,7 @@ class UserRegistrationForm(UserCreationForm):
     def save(self, commit=True):
         instance = super(UserRegistrationForm, self).save(commit=False)
 
-        # automatically set to email address to create a unique identifier
-        instance.email = instance.email
         instance.username = instance.email
-        # instance.first_name = instance.first_name
-        # instance.last_name =  instance.last_name
 
         if commit:
             instance.save()
@@ -91,11 +87,25 @@ class UserLoginForm(forms.Form):
 
 class StripeRegistrationForm(forms.Form):
 
-    MONTH_CHOICES = [(i,i,) for i in xrange(1,13)]
+    #MONTH_CHOICES = [(i,i,) for i in xrange(1,13)]
+    MONTH_CHOICES = (
+        (1, 'JAN'),
+        (2, 'FEB'),
+        (3, 'MAR'),
+        (4, 'APR'),
+        (5, 'MAY'),
+        (6, 'JUN'),
+        (7, 'JUL'),
+        (8, 'AUG'),
+        (9, 'SEP'),
+        (10, 'OCT'),
+        (11, 'NOV'),
+        (12, 'DEC'),
+    )
     YEAR_CHOICES = [(i,i,) for i in xrange(2016,2036)]
 
     credit_card_number = forms.CharField(label='Credit Card Number')
-    cvv = forms.CharField(label='Security Code (CVV)')
+    cvv = forms.CharField(max_length=4,label='Security Code (CVV)' )
     expiry_month = forms.ChoiceField(label='Month', choices=MONTH_CHOICES)
     expiry_year = forms.ChoiceField(label='Year', choices=YEAR_CHOICES)
     stripe_id = forms.CharField(widget=forms.HiddenInput) # this field will be saved to the StripeDetails table

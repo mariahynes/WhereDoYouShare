@@ -14,9 +14,10 @@ class BookingForm(forms.ModelForm):
 
     # start_date = forms.DateField(label="Start Date", widget=DateInput, input_formats=['%d-%m-%Y'])
     # end_date = forms.DateField(label="End Date", widget=DateInput,input_formats=['%d-%m-%Y'])
-    start_date = forms.DateField(label="I need it from", widget=DateInput )
-    end_date = forms.DateField(label="I will give it back on", widget=DateInput)
-
+    # start_date = forms.DateField(label="I need it from", widget=DateInput )
+    # end_date = forms.DateField(label="I will give it back on", widget=DateInput)
+    start_date = forms.CharField(label="I need it from")
+    end_date = forms.CharField(label="I will give it back on")
     def clean_start_date(self):
 
         #start date must be in the future

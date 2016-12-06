@@ -257,15 +257,14 @@ def booking_detail(request, booking_id, new=""):
                            # nothing was sent for the form to delete so send it right back
                            print formset_requestor_confirmed_or_pending.errors
                            messages.error(request,
-                                          "Want to amend the booking? Please check the delete box on each date you want to remove.")
+                                          "Want to amend the booking? Please set Remove to 'Yes' on each date you want to remove.")
                            formset_requestor_confirmed_or_pending = BookingDetailFormSet(queryset=booking_detail_for_requestor)
 
                elif booking_confirmed == False:
                    # the booking is not confirmed but is it also not pending, so this means that the user needs to
                    # look at the approved/denied dates and CONFIRM the booking
                    # they do this by selecting either delete, or confirm on each date that is set to 'Approved'
-                   # and the MUST select 'Delete' for all dates that are set to 'Denied' (hopefully this will only
-                   # delete the record from BookingDetail and not the full Booking
+                   # and the MUST select 'Delete' for all dates that are set to 'Denied'
                    # they can also delete the ENTIRE BOOKING
                    print "booking is not confirmed yet"
                    BookingDetailFormSet = modelformset_factory(BookingDetail,
@@ -309,6 +308,7 @@ def booking_detail(request, booking_id, new=""):
                                # it's ok to update the instance now
                                # had to wait until now because I was updating is_approved in the instance
                                # and it was affecting the form if the code had to return because of count not matching
+                               is_confirmed_count = 0
                                for instance in instances:
                                    confirmed = instance.is_confirmed
                                    if confirmed:
@@ -316,10 +316,10 @@ def booking_detail(request, booking_id, new=""):
                                        instance.date_confirmed = timezone.now()
                                        # update this in the table to False
                                        instance.is_approved = 0
-
+                               print "confirmed count after ok: %s" % is_confirmed_count
                                # it's ok to delete the dates set to delete
                                for obj in formset_requestor_to_confirm.deleted_objects:
-                                   obj.delete()
+                                    obj.delete()
                                # and update the other dates
                                formset_requestor_to_confirm.save()
 
@@ -341,7 +341,7 @@ def booking_detail(request, booking_id, new=""):
                            else:
 
                                messages.error(request,
-                                              "Oops! Please check that 'Confirm' is selected for all Approved dates and 'Remove' is selected for each Denied date")
+                                              "Oops! To confirm your Booking, all dates (approved or denied) have to be set to 'Yes'")
                                formset_requestor_to_confirm = []
                                formset_requestor_to_confirm = BookingDetailFormSet(queryset=booking_detail_for_requestor)
 
@@ -372,6 +372,7 @@ def booking_detail(request, booking_id, new=""):
 
                             is_approved_count = 0
                             is_denied_count = 0
+                            both_count = 0
                             form_count = total_forms
 
                             for instance in instances:
@@ -386,8 +387,11 @@ def booking_detail(request, booking_id, new=""):
                                     is_denied_count += 1
                                     instance.date_denied = timezone.now()
 
+                                if approved and denied:
+                                    both_count += 1
+
                             print "Approved: %s Denied: %s Form Count: %s" % (is_approved_count, is_denied_count,form_count)
-                            if is_approved_count + is_denied_count == form_count:
+                            if (is_approved_count + is_denied_count == form_count) and both_count == 0:
                                 formset_owner.save()
 
                                 messages.success(request, "Thank you for updating these dates.")
@@ -395,11 +399,11 @@ def booking_detail(request, booking_id, new=""):
 
                             else:
                                 messages.error(request,
-                                               "Oops! Please check that you have chosen either 'Approved' or 'Denied' for each date requested")
+                                               "Oops! Please check that (only one of) 'Approved' or 'Denied' is set to Yes for each date requested")
                                 formset_owner = BookingDetailFormSet(queryset=booking_detail_for_owner)
                        else:
                             print formset_owner.errors
-                            messages.error(request, "Oops! We have a problem. Please check that you have chosen either 'Approved' or 'Denied' for each date requested")
+                            messages.error(request, "Oops! Please check that (only one of) 'Approved' or 'Denied' is set to Yes for each date requested")
                             formset_owner = BookingDetailFormSet(queryset=booking_detail_for_owner)
 
 

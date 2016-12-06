@@ -1,40 +1,48 @@
 {% extends 'base.html' %}
-
+    {% load bootstrap_tags %}
     {% block content %}
     {% load staticfiles %}
-        <!-- Slider ============================================= -->
-		<section id="slider" class="full-screen  slider-parallax">
+        {% block head_style %}
+            <style>
+                input {
+                    width: 100%;
+                    padding: 12px 20px;
+                    margin: 2px 0;
+                    box-sizing: border-box;
+                    border-radius: 10px;
+                    border: none;
+               }
 
+            </style>
+        {% endblock %}
+        <!-- Slider ============================================= -->
+		<section id="slider" class="full-screen slider-parallax ">
+        <div class="slider-parallax-inner">
 			<div class="full-screen section nopadding nomargin noborder ohidden" style="background: url({% static 'myimages/wex1.jpg' %}) bottom center no-repeat; background-size: cover;">
 
-				<div class="container dark" >
-				    <div class="vertical-middle">
+                <div class="row nomargin" style="position: relative; z-index: 2;">
+						<div class="col-md-offset-2 col-md-5 full-screen" style="background-color: rgba(0,0,0,0.45);">
+							<div class="vertical-middle col-padding">
+								<div class="heading-block nobottomborder bottommargin-sm dark">
+									<h1 style="max-width: 700px;font-style: normal; font-size: 40px; font-family: 'Titillium Web';">{{ flatpage.title }}</h1>
+									<div class="not-dark">
+                                        <span style="font-size: 16px;" class="t300 capitalize ls1 notopmargin"></span></div>
+								</div>
+                                <div class="dark" style="max-width: 700px; font-size:18px; font-family: 'Titillium Web';">
+                                {{ flatpage.content }}
+                                    </div>
 
-				        <div id="section-about" class="page-section">
+							</div>
 
-					        <div class="container clearfix">
-
-                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">{{ flatpage.title }}</h2>
-
-                                <p data-animate="fadeInUp" class="lead divleft bottommargin" style="max-width: 700px;">{{ flatpage.content }}</p>
-
-
-
-                                <div class="clear"></div>
-
-                                <div class="row topmargin-lg divcenter" style="max-width: 1000px;"></div>
-
-				            </div>
-
-                       </div>
-
+						</div>
 					</div>
-				</div>
 
 			</div>
-
+        </div>
 		</section> <!--#slider end -->
 
 
 
     {% endblock %}
+
+

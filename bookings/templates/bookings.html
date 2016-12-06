@@ -11,7 +11,7 @@
             </style>
         {% endblock %}
         <!-- Slider ============================================= -->
-		<section id="slider" class="full-screen  slider-parallax">
+		<section id="slider" class="full-screen">
 
 			<div class="full-screen section nopadding nomargin noborder ohidden" style="background: url({% static 'myimages/login1.jpg' %}) bottom center no-repeat; background-size: cover;">
 
@@ -24,16 +24,7 @@
 
                                 <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">Your Bookings</h2>
 
-                                    {% if assets %}
-                                            <table class = "table">
 
-                                            {% for asset in assets %}
-
-                                                <a href="{% url 'make_a_booking' asset.asset_ID_id %}" role="button" class = "btn btn-primary">Make a Booking | {{ asset.asset_ID.asset_display_name }}</a>
-                                                &nbsp
-                                            {% endfor %}
-                                            </table>
-                                    {% endif %}
 
                                         {% if num_bookings_future > 0 %}
 
@@ -42,9 +33,11 @@
                                                          booking{{ total|pluralize }}: </span>
                                                     {%  endwith %}
                                                     <div class="col_full">
-                                                        <table class = "table table-striped">
+                                                        <div class = "table-responsive">
+                                                        <table class = "table">
                                                             <thead>
                                                                 <tr>
+                                                                    <th>Ref</th>
                                                                     <th>Name</th>
                                                                     <th>From</th>
                                                                     <th>Until</th>
@@ -56,7 +49,20 @@
                                                             <tbody>
                                                             {%  for booking_id in future_bookings %}
                                                                 <tr>
-                                                                    <td>{% get_booking_asset_name booking_id.1 %}</td>
+                                                                    <td><a href="{% url 'booking_detail' booking_id.1 %}" class="btn btn-primary">{{ booking_id.1 }}</a> </td>
+                                                                    <td>{% get_booking_asset_name booking_id.1 %}
+                                                                       <span data-toggle="popover" data-html=true title="Check Availability" data-placement="top" data-trigger="hover"
+                                                                            data-content="<table class='table'>
+                                                                            <tr>
+                                                                            <td>
+                                                                            for {% get_booking_asset_name booking_id.1 %}
+
+                                                                            </td>
+                                                                            </tr>
+                                                                            </table>">
+                                                                           {% get_booking_asset_id booking_id.1 as ref_id %}
+                                                                       <a href="{% url 'make_a_booking' ref_id %}">  <i class="fa fa-plus" aria-hidden="true"></i></span></a>
+                                                                    </td>
                                                                     <td>{% get_booking_start_date  booking_id.1 as the_start %}{{ the_start | date:"D" }}, {{ the_start | date:"d M Y" }} </td>
                                                                     <td>{% get_booking_end_date  booking_id.1 as the_end %}{{ the_end | date:"D" }}, {{ the_end | date:"d M Y" }} </td>
                                                                     <td>{% get_booking_status booking_id.1 %}</td>
@@ -67,6 +73,7 @@
 
                                                              </tbody>
                                                         </table>
+                                                        </div>
                                                     </div>
 
 
@@ -86,9 +93,11 @@
                                                          booking{{ total|pluralize }}: </span>
                                                     {%  endwith %}
                                                     <div class="col_full">
-                                                        <table class = "table table-striped">
+                                                        <div class = "table-responsive">
+                                                        <table class = "table">
                                                             <thead>
                                                                 <tr>
+                                                                    <th>Ref</th>
                                                                     <th>Name</th>
                                                                     <th>From</th>
                                                                     <th>Until</th>
@@ -100,7 +109,20 @@
                                                             <tbody>
                                                             {%  for booking_id in past_bookings %}
                                                                 <tr>
-                                                                    <td>{% get_booking_asset_name booking_id.1 %}</td>
+                                                                    <td><a href="{% url 'booking_detail' booking_id.1 %}" class="btn btn-primary">{{ booking_id.1 }}</a> </td></td>
+                                                                    <td>{% get_booking_asset_name booking_id.1 %}
+                                                                       <span data-toggle="popover" data-html=true title="Check Availability" data-placement="top" data-trigger="hover"
+                                                                            data-content="<table class='table'>
+                                                                            <tr>
+                                                                            <td>
+                                                                            for {% get_booking_asset_name booking_id.1 %}
+
+                                                                            </td>
+                                                                            </tr>
+                                                                            </table>">
+                                                                           {% get_booking_asset_id booking_id.1 as ref_id %}
+                                                                       <a href="{% url 'make_a_booking' ref_id %}">  <i class="fa fa-plus" aria-hidden="true"></i></span></a>
+                                                                    </td>
                                                                     <td>{% get_booking_start_date  booking_id.1 as the_start %}{{ the_start | date:"D" }}, {{ the_start | date:"d M Y" }} </td>
                                                                     <td>{% get_booking_end_date  booking_id.1 as the_end %}{{ the_end | date:"D" }}, {{ the_end | date:"d M Y" }} </td>
                                                                     <td>{% get_booking_status booking_id.1 %}</td>
@@ -111,10 +133,12 @@
 
                                                              </tbody>
                                                         </table>
+                                                        </div>
                                                     </div>
 
 
                                                 </p>
+                                        <br><br>
 
 
 

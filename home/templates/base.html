@@ -8,18 +8,25 @@
 
 	<!-- Stylesheets
 	============================================= -->
-	<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700|Roboto:300,400,500,700|Playfair+Display:400italic rel="stylesheet" type="text/css" />
+	<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700|Roboto:300,400,500,700|Playfair+Display:400italic" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css?family=Titillium+Web" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}" type="text/css" />
 	<link rel="stylesheet" href="{% static 'style.css' %}" type="text/css" />
 
 
-
 	<link rel="stylesheet" href="{% static 'css/dark.css' %}" type="text/css" />
 	<link rel="stylesheet" href="{% static 'css/font-icons.css' %}" type="text/css" />
-	<!--<link rel="stylesheet" href="{% static 'one-page/css/et-line.css' %}" type="text/css" /> -->
 	<link rel="stylesheet" href="{% static 'css/animate.css' %}" type="text/css" />
 	<link rel="stylesheet" href="{% static 'css/magnific-popup.css' %}" type="text/css" />
 
+	<link rel="stylesheet" href="{% static 'css/components/datepicker.css' %}" type="text/css" />
+	<link rel="stylesheet" href="{% static 'css/components/timepicker.css' %}" type="text/css" />
+	<link rel="stylesheet" href="{% static 'css/components/daterangepicker.css' %}" type="text/css" />
+
+
+
+    <link rel="stylesheet" href="{% static 'css/components/bs-switches.css' %}" type="text/css" />
+    <link rel="stylesheet" href="{% static 'css/components/radio-checkbox.css' %}" type="text/css" />
 	<link rel="stylesheet" href="{% static 'css/responsive.css' %}" type="text/css" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<!--[if lt IE 9]>
@@ -27,9 +34,9 @@
 	<![endif]-->
 
     <script type="text/javascript" src="{% static 'js/jquery.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/components/daterangepicker.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/myJquery.js' %}"></script>
     <link rel="stylesheet" href="{% static "css/font-awesome-4.6.3/css/font-awesome.css" %}">
-
+    <script type="text/javascript" src="{% static 'js/components/bs-switches.js' %}"></script>
 	<!-- Document Title
 	============================================= -->
 	<title>Where | do you Share?</title>
@@ -71,7 +78,7 @@
 
 						<ul >
 							<li><a href="/" ><div>Home</div></a></li>
-							<li><a href="/pages/share"><div>Sharing</div></a></li>
+
 
                             {% if user.is_authenticated %}
 
@@ -87,13 +94,13 @@
                                 <li><a href="{% url 'my_bookings' %}"><div>Bookings</div></a></li>
 
                             {% else %}
-
+                                <li><a href="/pages/share"><div>Sharing</div></a></li>
                                 <li><a href="{% url 'login' %}">Sign In</a></li>
 							    <li><a href="{% url 'register' %}"><div>Register</div></a></li>
 
                             {%  endif %}
 
-                            <li><a href="/pages/about"><div>About</div></a></li>
+{#                            <li><a href="/pages/about"><div>About</div></a></li>#}
 {#							<li><a href="/pages/contact"><div>Contact</div></a></li>#}
 {#                            <li><a href="{% url 'contact' %}"><div>Contact</div></a></li>#}
 
@@ -187,7 +194,7 @@
 									<li><a href="/pages/share" data-easing="easeInOutExpo" data-speed="1250" data-offset="70">Sharing</a></li>
 									<li><a href="/pages/login" data-scrollto="#section-works" data-easing="easeInOutExpo" data-speed="1250" data-offset="70">Sign In</a></li>
 									<li><a href="/pages/register" data-scrollto="#section-services" data-easing="easeInOutExpo" data-speed="1250" data-offset="70">Register</a></li>
-									<li><a href="/pages/about" data-scrollto="#section-blog" data-easing="easeInOutExpo" data-speed="1250" data-offset="70">About</a></li>
+{#									<li><a href="/pages/about" data-scrollto="#section-blog" data-easing="easeInOutExpo" data-speed="1250" data-offset="70">About</a></li>#}
 {#									<li><a href="/pages/contact" data-scrollto="#section-contact" data-easing="easeInOutExpo" data-speed="1250" data-offset="70">Contact</a></li>#}
 								</ul>
 							</div>
@@ -253,12 +260,20 @@
 	<script type="text/javascript" src="{% static 'js/jquery.js' %}"></script>
 	<script type="text/javascript" src="{% static 'js/plugins.js' %}"></script>
 
+
 	<script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=true"></script>
 	<script type="text/javascript" src="{% static 'js/jquery.gmap.js' %}"></script>
 
 	<!-- Footer Scripts
 	============================================= -->
 	<script type="text/javascript" src="{% static 'js/functions.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/components/bs-switches.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/components/daterangepicker.js' %}"></script>
+
+    <script type="text/javascript" src="{% static 'js/components/moment.js' %}"></script>
+	<script type="text/javascript" src="{% static 'js/components/datepicker.js' %}"></script>
+	<script type="text/javascript" src="{% static 'js/components/timepicker.js' %}"></script>
+
 
 	<script type="text/javascript">
 
@@ -361,6 +376,8 @@
 					});
 				}
 			});
+
+
 
 
 

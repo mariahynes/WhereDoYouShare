@@ -3,49 +3,87 @@
     {% load bootstrap_tags %}
     {% block content %}
     {% load staticfiles %}
-        {% block head_js %}
-            <script>
-            $(document).ready(function(){
-                $('[data-toggle="popover"]').popover();
-            });
-            </script>
+        {% block head_style %}
+            <style>
+                input {
+                    width:20%;
+                    padding: 12px 20px;
+                    margin: 2px 0;
+                    box-sizing: border-box;
+                    border-radius: 10px;
+                    border: none;
+               }
+            </style>
+        {% endblock %}
+         {% block head_js%}
+
 
         {% endblock %}
         <!-- Slider ============================================= -->
-		<section id="slider" class="full-screen  slider-parallax">
+		<section id="slider" class="full-screen">
+        <div class="slider-parallax-inner">
+			<div class="full-screen section nopadding nomargin noborder ohidden" style="background: url({% static 'myimages/ought5.jpg' %}) bottom center no-repeat; background-size: cover;">
 
-			<div class="full-screen section nopadding nomargin noborder ohidden" style="background: url({% static 'myimages/booking.jpg' %}) bottom center no-repeat; background-size: cover;">
-
-				<div class="container dark" >
-				    <div class="vertical-middle">
-
-				        <div id="section-about" class="page-section">
-
-					        <div class="container clearfix"> <!--clearfix removed-->
+                <div class="row nomargin" style="position: relative; z-index: 2;">
+						<div class="col-md-offset-2 col-md-9 full-screen" style="background-color: rgba(0,0,0,0.45);">
+							<div class="vertical-middle col-padding">
 
                             {% if user_ok == True %}
 
-                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">Check Availability | {{ the_asset.asset_display_name }}</h2>
+{#                                <div class="input-daterange travel-date-group dark">#}
+{#                                             <label for="">Inline Calendar</label>#}
+{#									            <div class="inline-calendar dark"></div>#}
+{#                                <label for="">Highlight Today</label>#}
+{#									<input type="text" value="" class="sm-form-control tleft today" placeholder="MM/DD/YYYY">#}
+{##}
+{#                                </div>#}
 
-                                    <div data-animate="fadeInUp" class="lead divleft bottommargin"  style="max-width: 700px;">
-                                             <form role="form" method="get" action="{% url 'make_a_booking' the_asset.id %}">
-                                                <div>
-                                                 {{ booking_form | as_bootstrap }}
-                                                 </div>
-                                                {% if errors %}
+
+                                <div class="heading-block nobottomborder bottommargin-sm dark">
+									<h1 style="font-size: 22px;">Check Availability | {{ the_asset.asset_display_name }}</h1>
+									<div class="not-dark">
+                                        <span style="font-size: 16px;" class="t300 capitalize ls1 notopmargin"></span></div>
+								</div>
+
+                                <form role="form" method="get" action="{% url 'make_a_booking' the_asset.id %}">
+                                    {% csrf_token %}
+                                 <div class="input-daterange travel-date-group dark">
+{#                                        <div class="col_full not-dark">#}
+                                             <label for="id_start_date" class="capitalize t600 dark">I need it from</label><br>
+                                                {{ booking_form.start_date }}
+                                            <label for="id_end_date" class="capitalize t600 dark">I will give it back on</label><br>
+                                               {{ booking_form.end_date }} <br>
+
+{#                                        </div>#}
+                                 </div>
+
+                                    <br>
+                                            {% if errors %}
                                                     {% for error in errors %}
                                                         <p style="color:red">{{ error }}</p>
                                                     {% endfor %}
                                                 {% endif %}
-                                                <div class="form-group">
-                                                    <button type="submit" class="btn btn-primary">Check Availability</button>
-                                                </div>
-                                            </form>
+
+                                    <div class="form-group">
+                                        <button type="submit" class="t400 capitalize button button-border button-light button-circle nomargin">Check Availability</button>
                                     </div>
 
-                                    <div class="col_four_fifth">
+                                </form>
 
-                                        {% if owner_date_object %}
+                                {%  else %}
+
+
+                                    {% if errors %}
+                                        {% for error in errors %}
+                                            <p style="color:red">{{ error }}</p>
+                                        {% endfor %}
+                                    {% endif %}
+
+                                {% endif %}
+
+							</div>
+
+                         {% if owner_date_object %}
                                              <p><span style="font-family: 'Playfair Display'">
                                                  <i class="fa fa-calendar" aria-hidden="true"></i>
                                                  You are checking {{ owner_date_object | get_total_days_requested }}
@@ -96,12 +134,14 @@
                                              {% endwith %}
 
 
-
+{#table table-striped #}
                                              </span>
-                                                    <table class = "table table-striped">
+
+                                            <div class = "table-responsive">
+                                                    <table class = "table">
                                                         <thead>
                                                             <tr>
-                                                                <th>Owner</th>
+                                                                <th>Slot Owner</th>
                                                                 <th>Requested From</th>
                                                                 <th>Requested Until</th>
                                                                 <th>Available</th>
@@ -155,6 +195,7 @@
                                                              {% endfor %}
                                                         </tbody>
                                                     </table>
+                                                </div>
 
                                             </p>
 
@@ -172,50 +213,263 @@
                                                             <button type="submit" class="btn btn-primary">Request the Date{{ owner_date_object | get_total_days_available | pluralize}}</button>
                                                         </div>
                                                     </form>
-                                                </div>
-
-
+                                                    </div>
 
                                                 {% endif %}
 
                                             {% endwith %}
 
-
                                         {% endif %}
-                                    </div>
 
 
-
-
-
-                            {%  else %}
-
-
-                                    {% if errors %}
-                                        {% for error in errors %}
-                                            <p style="color:red">{{ error }}</p>
-                                        {% endfor %}
-                                    {% endif %}
-
-                            {% endif %}
-
-                                    <div class="clear"></div>
-
-                                    <div class="row topmargin-lg divcenter" style="max-width: 1000px;"></div>
-
-
-
-				            </div>
-
-                       </div>
-
+						</div>
 					</div>
-				</div>
 
 			</div>
-
+        </div>
 		</section> <!--#slider end -->
 
-
+    <script>updateDateFields_showToday();</script>
 
     {% endblock %}
+
+{##}
+{##}
+{#{% extends 'base.html' %}#}
+{#{% load booking_extras %}#}
+{#    {% load bootstrap_tags %}#}
+{#    {% block content %}#}
+{#    {% load staticfiles %}#}
+{#        {% block head_js %}#}
+{#            <script>#}
+{##}
+{##}
+{##}
+{#            </script>#}
+{##}
+{#        {% endblock %}#}
+{#        <!-- Slider ============================================= -->#}
+{#		<section id="slider" class="full-screen">#}
+{##}
+{#			<div class="full-screen section nopadding nomargin noborder ohidden" style="background: url({% static 'myimages/bookingdd.jpg' %}) bottom center no-repeat; background-size: cover;">#}
+{##}
+{#				<div class="container dark" >#}
+{#				    <div class="vertical-middle">#}
+{##}
+{#				        <div id="section-about" class="page-section">#}
+{##}
+{#					        <div class="container clearfix"> <!--clearfix removed-->#}
+{##}
+{##}
+{##}
+{##}
+{#                            {% if user_ok == True %}#}
+{##}
+{#                                <div class="input-daterange travel-date-group">#}
+{#                                             <label for="">Inline Calendar</label>#}
+{#									            <div class="inline-calendar not-dark"></div>#}
+{#                                <label for="">Highlight Today</label>#}
+{#									<input type="text" value="" class="sm-form-control tleft today" placeholder="MM/DD/YYYY">#}
+{##}
+{#                                </div>#}
+{##}
+{##}
+{#                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">Check Availability | {{ the_asset.asset_display_name }}</h2>#}
+{##}
+{#                                    <div data-animate="fadeInUp" class="lead divleft bottommargin"  style="max-width: 700px;">#}
+{#                                             <form role="form" method="get" action="{% url 'make_a_booking' the_asset.id %}">#}
+{#                                                <div>#}
+{#                                                 {{ booking_form | as_bootstrap }}#}
+{#                                                 </div>#}
+{##}
+{##}
+{##}
+{##}
+{#                                             </div>#}
+{#                                                {% if errors %}#}
+{#                                                    {% for error in errors %}#}
+{#                                                        <p style="color:red">{{ error }}</p>#}
+{#                                                    {% endfor %}#}
+{#                                                {% endif %}#}
+{#                                                <div class="form-group">#}
+{#                                                    <button type="submit" class="btn btn-primary">Check Availability</button>#}
+{#                                                </div>#}
+{#                                            </form>#}
+{#                                    </div>#}
+{##}
+{#                                    <div class="col_four_fifth">#}
+{##}
+{#                                        {% if owner_date_object %}#}
+{#                                             <p><span style="font-family: 'Playfair Display'">#}
+{#                                                 <i class="fa fa-calendar" aria-hidden="true"></i>#}
+{#                                                 You are checking {{ owner_date_object | get_total_days_requested }}#}
+{#                                                 date{{ owner_date_object | get_total_days_requested | pluralize }}<br>#}
+{##}
+{#                                             {% with totes_avail=owner_date_object|get_total_days_available %}#}
+{#                                                {% if totes_avail > 0 %}#}
+{#                                                    {%  with total=owner_date_object|length %}#}
+{#                                                     {% if total > 1 %}#}
+{#                                                        <i class="fa fa-user-plus" aria-hidden="true"></i>#}
+{#                                                    {% else %}#}
+{#                                                         <i class="fa fa-user" aria-hidden="true"></i>#}
+{#                                                    {% endif %}#}
+{#                                                    {%  endwith %}#}
+{#                                                    {{ owner_date_object | get_total_days_requested | pluralize:" It,They"}} fall{{ owner_date_object | get_total_days_requested | pluralize:"s,"}}#}
+{#                                                        in {{ owner_date_object | get_total_owner_slots }}#}
+{#                                                    {%  with total=owner_date_object|length %}#}
+{#                                                         owner-slot{{ total|pluralize }}#}
+{#                                                    {%  endwith %}#}
+{#                                                 {% endif %}#}
+{#                                             {% endwith %}#}
+{#                                            <br>#}
+{##}
+{##}
+{#                                             {% with totes_unavail=owner_date_object|get_total_days_unavailable %}#}
+{#                                                 {% if totes_unavail > 0 %}#}
+{#                                                      <i class="fa fa-times" aria-hidden="true"></i>#}
+{##}
+{#                                                     {% with totes_requested=owner_date_object|get_total_days_requested %}#}
+{#                                                        {% if totes_unavail == totes_requested %}#}
+{##}
+{#                                                            {{ totes_unavail|pluralize:"It is,They are"}} unavailable#}
+{##}
+{#                                                        {% else %}#}
+{#                                                             {{ owner_date_object | get_total_days_unavailable }}#}
+{#                                                             of {{ owner_date_object | get_total_days_unavailable |pluralize:"them,these dates"}}#}
+{#                                                             {{ owner_date_object | get_total_days_unavailable | pluralize:"is,are"}}#}
+{#                                                            unavailable<br>#}
+{##}
+{#                                                         {% endif %}#}
+{#                                                     {% endwith %}#}
+{##}
+{#                                                {% else %}#}
+{#                                                     <i class="fa fa-check" aria-hidden="true"></i>#}
+{#                                                     The {{ owner_date_object | get_total_days_available | pluralize:"date is, dates are" }}#}
+{#                                                     available <br>#}
+{#                                                 {% endif %}#}
+{#                                             {% endwith %}#}
+{##}
+{##}
+{#table table-striped #}
+{#                                             </span>#}
+{##}
+{#                                            <div class = "table-responsive">#}
+{#                                                    <table class = "table">#}
+{#                                                        <thead>#}
+{#                                                            <tr>#}
+{#                                                                <th>Slot Owner</th>#}
+{#                                                                <th>Requested From</th>#}
+{#                                                                <th>Requested Until</th>#}
+{#                                                                <th>Available</th>#}
+{#                                                                <th>Unavailable</th>#}
+{#                                                            </tr>#}
+{#                                                        </thead>#}
+{#                                                        <tbody>#}
+{##}
+{#                                                            {% for owner in owner_date_object %}#}
+{#                                                                <tr>#}
+{#                                                                    <td>#}
+{#                                                                        <button class="btn btn-primary" data-toggle="popover" data-html=true title="Slot Dates" data-trigger="hover"#}
+{#                                                                                data-content="<table class='table'>#}
+{#                                                                                <tr><td>From</td><td>{{ owner.start_for_owner | date:'D d M y'}}</td></tr>#}
+{#                                                                                <tr><td>Until</td><td> {{ owner.end_for_owner | date:'D d M y'}}</td></tr>#}
+{#                                                                                </table>">{{ owner.first_name }} {{ owner.last_name }}</button>#}
+{#                                                                    </td>#}
+{#                                                                    <td>{{ owner.start_requested | date:"l"}}, {{ owner.start_requested | date:"d M y"}}</td>#}
+{#                                                                    <td>{{ owner.end_requested | date:"l"}}, {{ owner.end_requested | date:"d M y"}}</td>#}
+{##}
+{#                                                                <td>#}
+{#                                                                    {% if owner.days_available > 0 %}#}
+{#                                                                    <button class="btn btn-success" data-toggle="popover" data-html=true, data-placement="left"  title="Available Dates" data-trigger="hover"#}
+{#                                                                            data-content="<table class='table'>#}
+{#                                                                                        {% for item in owner.date_span_available_detail %}#}
+{#                                                                                        <tr><td> {{ item | date:'l'}}</td><td> {{ item | date:'d M y'}}</td></tr>#}
+{#                                                                                        {% endfor %}#}
+{#                                                                                        </table>">{{ owner.days_available }}</button>#}
+{#                                                                    {% endif %}#}
+{#                                                                </td>#}
+{#                                                                <td>#}
+{#                                                                    {% if owner.days_unavailable > 0 %}#}
+{#                                                                    <button class="btn btn-danger" data-toggle="popover" data-html=true, data-placement="left"  title="Unavailable Dates" data-trigger="hover"#}
+{#                                                                            data-content="<table class='table'>#}
+{#                                                                                        {% for item in owner.date_span_unavailable_detail %}#}
+{#                                                                                        <tr>#}
+{#                                                                                           {% if item.requested_by_user_id.id == user.id %}#}
+{#                                                                                            <td> {{ item.date_booked | date:'D'}} </td><td> {{ item.date_booked | date:'d M y'}} </td>#}
+{#                                                                                            <td> {{ item.status }} for you </td>#}
+{#                                                                                            {% else %}#}
+{#                                                                                             <td> {{ item.date_booked | date:'D'}} </td><td> {{ item.date_booked | date:'d M y'}} </td>#}
+{#                                                                                             <td> {{ item.status }} for {{ item.requested_by_user }} </td>                                                                                                     </td>#}
+{#                                                                                              {% endif %}#}
+{#                                                                                               </tr>#}
+{#                                                                                             {% endfor %}</table>">{{ owner.days_unavailable }} </button>#}
+{#                                                                    {% endif %}#}
+{##}
+{#                                                                </td>#}
+{##}
+{#                                                                </tr>#}
+{#                                                             {% endfor %}#}
+{#                                                        </tbody>#}
+{#                                                    </table>#}
+{#                                                </div>#}
+{##}
+{#                                            </p>#}
+{##}
+{#                                            {% with totes_unavail=owner_date_object|get_total_days_unavailable %}#}
+{##}
+{#                                                {% if totes_unavail == 0 %}#}
+{##}
+{#                                                    <div class="col_half">#}
+{#                                                    <form role="form" method="post" action="{% url 'make_a_booking' the_asset.id %}">#}
+{#                                                        {% csrf_token %}#}
+{#                                                        <div class="hidden">#}
+{#                                                                 {{ booking_form | as_bootstrap }}#}
+{#                                                        </div>#}
+{#                                                        <div class="form-group">#}
+{#                                                            <button type="submit" class="btn btn-primary">Request the Date{{ owner_date_object | get_total_days_available | pluralize}}</button>#}
+{#                                                        </div>#}
+{#                                                    </form>#}
+{#                                                    </div>#}
+{#                                                    #}
+{#                                                {% endif %}#}
+{##}
+{#                                            {% endwith %}#}
+{##}
+{#                                        {% endif %}#}
+{#                                    </div>#}
+{##}
+{##}
+{##}
+{##}
+{##}
+{#                            {%  else %}#}
+{##}
+{##}
+{#                                    {% if errors %}#}
+{#                                        {% for error in errors %}#}
+{#                                            <p style="color:red">{{ error }}</p>#}
+{#                                        {% endfor %}#}
+{#                                    {% endif %}#}
+{##}
+{#                            {% endif %}#}
+{##}
+{#                                    <div class="clear"></div>#}
+{##}
+{#                                    <div class="row topmargin-lg divcenter" style="max-width: 1000px;"></div>#}
+{##}
+{##}
+{##}
+{#				            </div>#}
+{##}
+{#                       </div>#}
+{##}
+{#					</div>#}
+{#				</div>#}
+{##}
+{#			</div>#}
+{##}
+{#		</section> <!--#slider end -->#}
+{##}
+{##}
+{##}
+{#    {% endblock %}#}

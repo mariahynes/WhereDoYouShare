@@ -4,11 +4,10 @@
     {% block content %}
     {% load staticfiles %}
         {% block head_style %}
-            <style>
-                .opacity9{
-                    opacity:2;
-                }
-            </style>
+
+        {% endblock %}
+        {% block head_js %}
+
         {% endblock %}
         <!-- Slider ============================================= -->
 {#		<section id="slider" class="full-screen  slider-parallax">#}
@@ -54,21 +53,22 @@
                                                     </span>
                                                 <br>
                                                     {% if formset_owner %}
-                                                        <div class="col_half">
+                                                        <div class="col_full">
                                                             {% include "owner_approval_form.html" %}
                                                         </div>
                                                     {% elif formset_requestor_to_confirm %}
-                                                        <div class="col_half">
+                                                        <div class="col_full">
                                                         {% include "requestor_form_to_confirm.html" %}
                                                         </div>
                                                     {% elif formset_requestor_confirmed_or_pending %}
-                                                        <div class="col_half">
+                                                        <div class="col_full">
                                                         {% include "requestor_form_confirmed_or_pending.html" %}
                                                         </div>
 
                                                     {% else %}
-                                                        <div class="col_half">
-                                                            <table class = "table table-striped">
+                                                        <div class = "table-responsive">
+                                                            <table class = "table">
+
                                                                 <thead>
                                                                     <tr>
 
@@ -159,6 +159,10 @@
 
 {#		</section> <!--#slider end -->#}
 
+<script>
+    jQuery(".bt-switch").bootstrapSwitch();
+    updateCheckboxes();
+</script>
 
 
     {% endblock %}

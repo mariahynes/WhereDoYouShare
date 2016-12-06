@@ -379,6 +379,13 @@ def get_booking_asset_name(booking_id):
     return asset
 
 @register.simple_tag
+def get_booking_asset_id(booking_id):
+    a_name = BookingDetail.objects.all().filter(booking_id=booking_id).order_by("-booking_date")[0]
+    asset = a_name.booking_id.asset_ID_id
+
+    return asset
+
+@register.simple_tag
 def get_booking_status(booking_id):
 
     if is_booking_confirmed(booking_id):
