@@ -59,6 +59,7 @@ def thread(request, asset_id, subject_id, thread_id):
 
     # this view shows the one thread only
     errors = []
+    content_error = ""
     thread = get_object_or_404(Thread, pk=thread_id)
     subject = get_object_or_404(Subject, pk=subject_id)
     the_asset = get_object_or_404(Asset, pk=asset_id)
@@ -100,6 +101,7 @@ def thread(request, asset_id, subject_id, thread_id):
 def new_thread(request, asset_id, subject_id):
 
     errors = []
+    content_error = ""
     subject = get_object_or_404(Subject, pk=subject_id)
     the_asset = get_object_or_404(Asset, pk=asset_id)
 
@@ -121,19 +123,27 @@ def new_thread(request, asset_id, subject_id):
             post_form = PostForm(request.POST)
 
             if thread_form.is_valid() and post_form.is_valid():
-                thread = thread_form.save(False)
-                thread.subject = subject
-                thread.user = request.user
-                thread.save()
 
-                post = post_form.save(False)
-                post.user = request.user
-                post.thread = thread
-                post.save()
+                # before saving check the content of the comment field
+                if len(post_form.cleaned_data['comment']) == 0:
+                    thread_form = ThreadForm(request.POST)
+                    post_form = PostForm(request.POST)
+                    content_error = "Please don't save your new thread without posting a starting comment!"
 
-                messages.success(request, "Thanks for your new Thread")
+                else:
+                    thread = thread_form.save(False)
+                    thread.subject = subject
+                    thread.user = request.user
+                    thread.save()
 
-                return redirect(reverse('thread', kwargs={"asset_id":asset_id, "subject_id":subject_id, "thread_id":thread.pk}))
+                    post = post_form.save(False)
+                    post.user = request.user
+                    post.thread = thread
+                    post.save()
+
+                    messages.success(request, "Thanks for your new Thread")
+
+                    return redirect(reverse('thread', kwargs={"asset_id":asset_id, "subject_id":subject_id, "thread_id":thread.pk}))
 
         else:
             thread_form = ThreadForm()
@@ -145,6 +155,7 @@ def new_thread(request, asset_id, subject_id):
         'subject': subject,
         'asset': the_asset,
         'errors': errors,
+        'content_error': content_error
     }
     args.update(csrf(request))
 
@@ -155,6 +166,7 @@ def new_post(request, asset_id, subject_id, thread_id):
 
     # this view allows the user to add a post to a thread
     errors = []
+    content_error = ""
     thread = get_object_or_404(Thread, pk=thread_id)
     subject = get_object_or_404(Subject, pk=subject_id)
     the_asset = get_object_or_404(Asset, pk=asset_id)
@@ -184,14 +196,20 @@ def new_post(request, asset_id, subject_id, thread_id):
         if request.method == "POST":
             form = PostForm(request.POST)
             if form.is_valid():
-                post = form.save(False)
-                post.thread = thread
-                post.user = request.user
-                post.save()
 
-                messages.success(request, "Your post has been added to %s" % thread.name)
+                # before saving check the content of the comment field
+                if len(form.cleaned_data['comment']) == 0:
+                    form = PostForm(request.POST)
+                    content_error = "Please don't save a blank post!"
+                else:
+                    post = form.save(False)
+                    post.thread = thread
+                    post.user = request.user
+                    post.save()
 
-                return redirect(reverse('thread', kwargs={"asset_id":asset_id, "subject_id":subject_id, "thread_id":thread.pk}))
+                    messages.success(request, "Your post has been added to %s" % thread.name)
+
+                    return redirect(reverse('thread', kwargs={"asset_id":asset_id, "subject_id":subject_id, "thread_id":thread.pk}))
 
             else:
                 form = PostForm()
@@ -204,6 +222,7 @@ def new_post(request, asset_id, subject_id, thread_id):
             'form': form,
             'form_action': reverse('new_post', kwargs={"asset_id":asset_id, "subject_id":subject_id, "thread_id":thread.id}),
             'button_text': "Update Post",
+            'content_error':content_error,
     }
     args.update(csrf(request))
 
@@ -214,6 +233,7 @@ def edit_post(request, asset_id, subject_id, thread_id, post_id):
     # this sends user to the post_form.html mentioned in the new_post view (for editing)
     # and to thread.html for viewing after editing
     errors = []
+    content_error = ""
     post = get_object_or_404(Post, pk=post_id)
     thread = get_object_or_404(Thread, pk=thread_id)
     subject = get_object_or_404(Subject, pk=subject_id)
@@ -252,10 +272,16 @@ def edit_post(request, asset_id, subject_id, thread_id, post_id):
         if request.method == "POST":
             form = PostForm(request.POST, instance=post)
             if form.is_valid():
-                form.save()
-                messages.success(request,"This Post has been updated")
+                # before saving check the content of the comment field
+                if len(form.cleaned_data['comment']) == 0:
+                    post = get_object_or_404(Post, pk=post_id)
+                    form = PostForm(instance=post)
+                    content_error = "Please don't save a blank post!"
+                else:
+                    form.save()
+                    messages.success(request,"This Post has been updated")
 
-                return redirect(reverse('thread', kwargs={"asset_id":asset_id, "subject_id":subject_id, "thread_id":thread.pk}))
+                    return redirect(reverse('thread', kwargs={"asset_id":asset_id, "subject_id":subject_id, "thread_id":thread.pk}))
 
         else:
             form = PostForm(instance=post)
@@ -268,6 +294,7 @@ def edit_post(request, asset_id, subject_id, thread_id, post_id):
         'form': form,
         'form_action': reverse('edit_post', kwargs={'asset_id':asset_id, "subject_id":subject_id, "thread_id":thread_id, "post_id":post_id}),
         'button_text': "Update Post",
+        'content_error':content_error,
     }
     args.update(csrf(request))
 

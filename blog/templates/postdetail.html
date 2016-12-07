@@ -11,12 +11,12 @@
             </style>
         {% endblock %}
         <!-- Slider ============================================= -->
-		<section id="slider" class="full-screen ">
+		<section id="slider" class="">
 
-			<div class="full-screen section nopadding nomargin noborder ohidden" style="background: url({% static 'myimages/login1.jpg' %}) bottom center no-repeat; background-size: cover;">
+			<div class="section nopadding nomargin noborder ohidden" style="background: url({% static 'myimages/login1.jpg' %}) bottom center no-repeat; background-size: cover;">
 
 				<div class="container " >
-				    <div class="vertical-middle">
+				    <div class="">
 
 				        <div id="section-about" class="page-section">
 
@@ -59,8 +59,8 @@
                                                     <p><button class="btn btn-default" onclick="location.href='/blog/blog/{{ asset_id }}'"><i class="fa fa-backward"></i> Back to Blog</button>
 
                                                     {% if show_edit or user.is_staff %}
-                                                    <button class="btn btn-default" onclick="location.href='/blog/blog/{{ asset_id }}/{{ post.id }}/edit'">Edit <i class="fa fa-pencil-square-o"></i> </button>
-                                                    <button class="btn btn-default" onclick="location.href='/blog/blog/{{ asset_id }}/{{ post.id }}/delete'">Delete <i class="fa fa-trash-o"></i> </button>
+                                                        <button class="btn btn-default" onclick="location.href='/blog/blog/{{ asset_id }}/{{ post.id }}/edit'">Edit <i class="fa fa-pencil-square-o"></i> </button>
+                                                        <button class="btn btn-default" onclick="location.href='/blog/blog/{{ asset_id }}/{{ post.id }}/delete'">Delete <i class="fa fa-trash-o"></i> </button>
                                                     {% endif %}
                                                     </p>
 

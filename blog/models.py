@@ -11,7 +11,7 @@ class Post(models.Model):
     author = models.ForeignKey(settings.AUTH_USER_MODEL)
     asset_ID = models.ForeignKey(Asset)
     title = models.CharField(max_length=200)
-    content = HTMLField()
+    content = HTMLField(blank=True)
     created_date = models.DateTimeField(auto_now_add=True)
     published_date = models.DateTimeField(blank=True, null=True)
     last_edited_date = models.DateTimeField(blank=True,null=True)

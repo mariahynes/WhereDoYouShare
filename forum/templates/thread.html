@@ -13,18 +13,22 @@
             </style>
         {% endblock %}
         <!-- Slider ============================================= -->
-		<section id="slider" class="full-screen  slider-parallax">
+		<section id="slider" class="full-screen  ">
 
 			<div class="full-screen section nopadding nomargin noborder ohidden" style="background: url({% static 'myimages/login1.jpg' %}) bottom center no-repeat; background-size: cover;">
 
 				<div class="container " >
+
+
 				    <div class="vertical-middle">
 
 				        <div id="section-about" class="page-section">
 
 					        <div class="container clearfix"> <!--clearfix removed-->
 
-                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';"> {{ thread.name }} <small><small>({{ asset.asset_display_name }} | {{ subject.name }}) </small> </small></h2>
+                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';"> {{ thread.name }}
+                                    <div class="visible-xs"<br></div>
+                                    <small><small>({{ asset.asset_display_name }} | {{ subject.name }}) </small> </small></h2>
 
                                     {% if errors %}
                                         {% for error in errors %}
@@ -49,7 +53,7 @@
 
                                                 <section class="post">
                                                     <div>
-                                                    <p>{{ post.user.first_name }} {{ post.user.last_name }}</p>
+                                                   {{ post.user.first_name }} {{ post.user.last_name }} says:
                                                     </div>
                                                     <div class="comment-content">
                                                      {% autoescape off %}

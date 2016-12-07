@@ -32,3 +32,5 @@ def last_posted_user_name(thread):
        return "%s %s" % (first_name, last_name)
    else:
        return ""
+
+

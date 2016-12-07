@@ -24,7 +24,7 @@
 			<div class="full-screen section nopadding nomargin noborder ohidden" style="background: url({% static 'myimages/login1.jpg' %}) bottom center no-repeat; background-size: cover;">
 
 				<div class="container " >
-				    <div class="vertical-middle">
+				    <div >
 
 				        <div id="section-about" class="page-section">
 
@@ -42,9 +42,12 @@
                                                    <form method="post" action="{{ form_action }}">
                                                        {% csrf_token %}
                                                        {{ form | as_bootstrap }}
-
+                                                        {% if content_error %}
+                                                        <div class="sb-msg" style="color: red"><i class="icon-warning-sign"></i><strong>Warning!</strong>  {{ content_error }}</div><br>
+                                                        {% endif %}
                                                        <div class="form-group">
-                                                           <button type="submit" class="btn-primary"> {{ button_text }}</button>
+                                                           <button type="button" class="t400 capitalize button button-border button-dark button-circle nomargin" onclick="location.href='/forum/forum/{{ asset.id }}/{{ subject.id }}/{{ thread.id }}'"><i class="fa fa-backward"></i> Cancel</button>
+                                                           <button type="submit" class="t400 capitalize button button-border button-dark button-circle nomargin">{{ button_text }}</button>
                                                        </div>
                                                    </form>
 

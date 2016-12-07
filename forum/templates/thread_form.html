@@ -44,6 +44,9 @@
                                                        {{ thread_form | as_bootstrap }}
                                                        <hr>
                                                        {{ post_form | as_bootstrap }}
+                                                       {% if content_error %}
+                                                        <div class="sb-msg" style="color: red"><i class="icon-warning-sign"></i><strong>Warning!</strong>  {{ content_error }}</div><br>
+                                                        {% endif %}
 
                                                        <div class="form-group">
                                                            <button type="submit" class="btn-primary"> Submit New Thread</button>

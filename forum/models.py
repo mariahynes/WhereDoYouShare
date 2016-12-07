@@ -10,7 +10,7 @@ class Subject(models.Model):
 
     name = models.CharField(max_length=255)
     asset_id = models.ForeignKey(Asset)
-    description = HTMLField()
+    description = HTMLField(blank=True)
 
     def __unicode__(self):
         return self.name
