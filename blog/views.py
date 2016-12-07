@@ -6,6 +6,7 @@ from assets.models import Asset
 from .forms import BlogPostForm
 from django.contrib.auth.decorators import login_required
 import json
+from django.template.context_processors import csrf
 
 @login_required(login_url='/login/')
 def post_list(request, asset_id):
@@ -94,6 +95,7 @@ def post_detail(request, asset_id, id):
 def new_blog_post(request, asset_id):
     errors = []
     the_asset = get_object_or_404(Asset, pk=asset_id)
+    form = BlogPostForm()
 
     # asset exists, now check user
     my_id = request.user
@@ -102,21 +104,31 @@ def new_blog_post(request, asset_id):
         errors.append("You are not authorised to post on this Blog")
         the_asset = []
 
-    # check POST or GET
-    if request.method == "POST":
-        form = BlogPostForm(request.POST, request.FILES)
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.author = request.user
-            post.published_date = timezone.now()
-            post.asset_ID_id = asset_id
-            post.save()
-            return redirect(post_detail, asset_id, post.pk)
-
     else:
-        form = BlogPostForm()
+        # check POST or GET
+        if request.method == "POST":
+            print "is a post"
+            form = BlogPostForm(request.POST, request.FILES)
+            if form.is_valid():
+                print "is valid"
+                post = form.save(commit=False)
+                post.author = request.user
+                post.published_date = timezone.now()
+                post.asset_ID_id = asset_id
+                post.save()
+                return redirect(post_detail, asset_id, post.pk)
 
-    return render(request, 'blogpostform.html', {'form': form, 'asset': the_asset, 'errors':errors})
+        else:
+            form = BlogPostForm()
+
+    args = {
+        'errors': errors,
+        'asset': the_asset,
+        'form': form,
+    }
+    args.update(csrf(request))
+
+    return render(request, 'blogpostform.html', args)
 
 @login_required(login_url='/login/')
 def edit_blog_post(request, asset_id, id):

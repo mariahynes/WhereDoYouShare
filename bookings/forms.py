@@ -12,29 +12,43 @@ class DateInput(forms.DateInput):
 
 class BookingForm(forms.ModelForm):
 
-    # start_date = forms.DateField(label="Start Date", widget=DateInput, input_formats=['%d-%m-%Y'])
-    # end_date = forms.DateField(label="End Date", widget=DateInput,input_formats=['%d-%m-%Y'])
-    # start_date = forms.DateField(label="I need it from", widget=DateInput )
-    # end_date = forms.DateField(label="I will give it back on", widget=DateInput)
+    # need dates to be in 'text' format so the datepicker will work
     start_date = forms.CharField(label="I need it from")
     end_date = forms.CharField(label="I will give it back on")
+
     def clean_start_date(self):
 
         #start date must be in the future
         user_start = self.cleaned_data['start_date']
-        if user_start < datetime.date.today():
+
+        # date will come back in the format MM/DD/YYY
+        # change it to date object
+        the_start = datetime.datetime.strptime(user_start,'%m/%d/%Y')
+        the_start = the_start.toordinal()
+        the_start = datetime.date.fromordinal(the_start)
+        print "the start %s" % the_start
+
+        if the_start < datetime.date.today():
             raise forms.ValidationError("Please enter a future date")
 
-        return user_start
+        return the_start
 
     def clean_end_date(self):
 
         # end date must be in the future
         user_end = self.cleaned_data['end_date']
-        if user_end <= datetime.date.today():
+
+        # date will come back in the format MM/DD/YYY
+        # change it to date object
+        the_end = datetime.datetime.strptime(user_end,'%m/%d/%Y')
+        the_end = the_end.toordinal()
+        the_end = datetime.date.fromordinal(the_end)
+        print "the end %s" % the_end
+
+        if the_end <= datetime.date.today():
             raise forms.ValidationError("Please enter a future date")
 
-        return user_end
+        return the_end
 
     class Meta:
         model = Booking

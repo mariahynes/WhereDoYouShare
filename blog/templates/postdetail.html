@@ -11,7 +11,7 @@
             </style>
         {% endblock %}
         <!-- Slider ============================================= -->
-		<section id="slider" class="full-screen  slider-parallax">
+		<section id="slider" class="full-screen ">
 
 			<div class="full-screen section nopadding nomargin noborder ohidden" style="background: url({% static 'myimages/login1.jpg' %}) bottom center no-repeat; background-size: cover;">
 
@@ -38,12 +38,21 @@
                                                         {{ post.created_date | started_time }} | {{ post.num_views }}
                                                 {%  with total=post.num_views %}view{{ total|pluralize }}{%  endwith %}
                                                     </div>
-                                                    <h1>{{ post.title }} <small><small>by {{ post.author.first_name }} {{ post.author.last_name }}</small></small></h1>
+                                           <div class="single-post nobottommargin">
+
+                                                <div class="entry clearfix">
+
+                                                    <div class="entry-title">
+                                                        <h1>{{ post.title }} <small><small>by {{ post.author.first_name }} {{ post.author.last_name }}</small></small></h1>
+                                                    </div>
                                                     {%  if post.image %}
-                                                       <div class="row">
-                                                        <div class="col-sm-2">
+                                                        <div class="entry-image bottommargin">
+
+{#                                                       <div class="row">#}
+{#                                                        <div class="col-sm-2">#}
                                                            <img class="img-rounded img-responsive"  src="/media/{{ post.image }}">
-                                                       </div>
+{#                                                       </div>#}
+                                                        </div>
                                                     {%  endif %}
                                                     <p> {% autoescape off %}{{ post.content|linebreaks }}{% endautoescape %}</p>
 
@@ -54,15 +63,16 @@
                                                     <button class="btn btn-default" onclick="location.href='/blog/blog/{{ asset_id }}/{{ post.id }}/delete'">Delete <i class="fa fa-trash-o"></i> </button>
                                                     {% endif %}
                                                     </p>
+
                                                     <div id="comments" class="clearfix">
-                                                    <h3 id="comments-title">Comments</h3>
+                                                            <h3 id="comments-title">Comments</h3>
 
-                                                    {% load disqus_tags %}
-                                                    {% set_disqus_title post.title %}
-                                                    {% disqus_show_comments %}
-
-
+                                                            {% load disqus_tags %}
+                                                            {% set_disqus_title post.title %}
+                                                            {% disqus_show_comments %}
                                                     </div>
+                                                </div>
+                                            </div>
 
 
                                         {% endif %}

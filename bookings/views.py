@@ -491,9 +491,9 @@ def make_a_booking(request, asset_id):
                 new_id = new_booking.pk
 
                 start_date = request.POST['start_date']
-                start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d').date()
+                start_date = datetime.datetime.strptime(start_date, '%m/%d/%Y').date()
                 end_date = request.POST['end_date']
-                end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d').date()
+                end_date = datetime.datetime.strptime(end_date, '%m/%d/%Y').date()
                 owner_date_object = get_owners_and_dates(asset_id, start_date, end_date)
 
                 print "object count is %s" % len(owner_date_object)
@@ -544,11 +544,11 @@ def make_a_booking(request, asset_id):
             new_booking_form = BookingForm(request.GET)
             if new_booking_form.is_valid():
                 start_date = request.GET['start_date']
-                start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d').date()
+                start_date = datetime.datetime.strptime(start_date, '%m/%d/%Y').date()
 
                 if 'end_date' in request.GET:
                     end_date = request.GET['end_date']
-                    end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d').date()
+                    end_date = datetime.datetime.strptime(end_date, '%m/%d/%Y').date()
 
                 if end_date.toordinal() - start_date.toordinal() < 0:
                     errors.append('Your end date is earlier than your start date - please correct!')
@@ -557,6 +557,11 @@ def make_a_booking(request, asset_id):
 
                 elif end_date.toordinal() == start_date.toordinal():
                     errors.append('Your start and end dates are the same - please correct!')
+
+                    new_booking_form = BookingForm(request.GET)
+
+                elif end_date.toordinal() - start_date.toordinal() >60 :
+                    errors.append('You cannot request more than 60 days at a time!')
 
                     new_booking_form = BookingForm(request.GET)
 
