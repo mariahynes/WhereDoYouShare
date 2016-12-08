@@ -17,6 +17,7 @@ class Asset(models.Model):
     number_of_slot_units = models.IntegerField(blank=False)
     date_created = models.DateTimeField(default=timezone.now)
     asset_users = models.ManyToManyField(settings.AUTH_USER_MODEL, through='Asset_User_Mapping', through_fields=('asset_ID','user_ID'))
+    image = models.ImageField(upload_to='asset_images', blank=True, null=True)
 
     def __unicode__(self):
         return self.asset_display_name

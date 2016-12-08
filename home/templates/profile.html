@@ -14,170 +14,214 @@
         {% endblock %}
         <!-- Slider ============================================= -->
 
-{#        <section id="content">#}
-{##}
-{#			<div class="content-wrap">#}
+        <section id="content">
+
+			<div class="content-wrap">
 {##}
 {#				<div class="container clearfix">#}
 
 
-        <section id="slider" >
+{#        <section id="slider" >#}
+{##}
+{#			<div class=" section nopadding nomargin noborder ohidden" style="background: url({% static 'myimages/ought5.jpg' %}) bottom center no-repeat; background-size: cover;">#}
 
-			<div class=" section nopadding nomargin noborder ohidden" style="background: url({% static 'myimages/ought5.jpg' %}) bottom center no-repeat; background-size: cover;">
-
-				<div class="container dark" >
+				<div class="container clearfix" >
 {#				    <div class="vertical-middle" >#}
-                    <div>
-				        <div id="section-about" class="page-section">
-
-					        <div class="container clearfix">
-
-                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 20px; font-family: 'Playfair Display';">Profile Settings | {{ user.first_name }} {{ user.last_name }}</h2>
-
-                                        <div data-animate="fadeInUp" class="lead divleft bottommargin" style="max-width: 700px; ">
-                                            <span style="font-family: 'Playfair Display'">  </span> </div>
-
-                                        <div data-animate="fadeInUp" class="col_half">
-
-
-                                            {% if assets %}
-                                            <p>
-                                                {% for asset in assets %}
 
 
 
-                                                    {% with asset.asset_ID.asset_type as the_type %}
-                                                        {% if the_type == 'Property' %}
 
-                                                            <div class="feature-box fbox-large fbox-effect">
-                                                            <div class="fbox-icon">
-                                                            <i class="fa fa-car" aria-hidden="true"></i>
-                                                            </div>
 
-                                                        {% else %}
+                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 20px; font-family: 'Playfair Display';">Profile Settings | {{ user.first_name }} {{ user.last_name }}</h2>
 
-                                                            <div class="feature-box fbox-large fbox-effect">
-                                                            <div class="fbox-icon">
-                                                            <i class="fa fa-bed" aria-hidden="true"></i>
-                                                            </div>
+                        <div data-animate="fadeInUp" class="lead divleft bottommargin" style="max-width: 700px; ">
+                            <span style="font-family: 'Playfair Display'">  </span> </div>
+
+                        <div data-animate="fadeInUp" class="col_half">
+
+
+                            {% if assets %}
+                            <div id="portfolio" class="portfolio grid-container portfolio-3 clearfix">
+
+                                {% for asset in assets %}
+
+                                    <article class="portfolio-item pf-media pf-icons">
+                                        <div class="portfolio-image">
+                                            <a href="portfolio-single.html">
+                                                <img src="/media/{{ asset.asset_ID.image }}" alt="{{ asset.asset_ID.asset_display_name }}">
+                                            </a>
+                                            <div class="portfolio-overlay">
+                                                <a href="/media/{{ asset.asset_ID.image }}" class="left-icon" data-lightbox="image"><i class="icon-line-plus"></i></a>
+                                                <a href="portfolio-single.html" class="right-icon"><i class="icon-line-ellipsis"></i></a>
+                                            </div>
+                                        </div>
+                                        <div class="portfolio-desc">
+                                            <div class="dropdown">
+                                                <h3>
+                                                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                                    {% if asset.is_owner %}
+                                                        {{ asset.asset_ID.asset_display_name }} <small>(Owner)</small>
+                                                    {% else %}
+                                                        {{ asset.asset_ID.asset_display_name }}
+                                                    {% endif %}
+                                                    <span class="caret"></span>
+                                                    </a>
+                                                </h3>
+
+                                                <ul class="dropdown-menu" role="menu">
+    {#                                                                <li><a href="{% url 'asset_detail' asset.asset_ID_id %}">View Details</a></li>#}
+    {#                                                            <li class="divider"></li>#}
+
+                                                    <li><a href="{% url 'make_a_booking' asset.asset_ID_id %}">Make a Booking</a></li>
+                                                <li class="divider"></li>
+                                                {% get_total_pending asset.asset_ID user.id num_bookings=True as totes_pending %}
+                                                    {%  if totes_pending > 0 %}
+                                                        <li><a href="{% url 'all_asset_bookings' asset.asset_ID_id user.id "future" "pending" %}">My Pending Requests <span class="badge">{{totes_pending}}</span></a></li>
+                                                    {% endif %}
+                                                {% get_total_for_confirmation asset.asset_ID user.id num_bookings=True as totes_confirm %}
+                                                    {% if totes_confirm > 0 %}
+                                                    <li><a href="{% url 'all_asset_bookings' asset.asset_ID_id user.id "future" "confirming" %}">My Requests to Confirm <span class="badge">{{ totes_confirm }}</span></a></li>
+                                                    {% endif %}
+                                                {% get_total_confirmed_bookings asset.asset_ID user.id as totes_fully_confirmed %}
+                                                    {% if totes_fully_confirmed > 0 %}
+                                                    <li><a href="{% url 'all_asset_bookings' asset.asset_ID_id user.id "future" "confirmed" %}">My Bookings <span class="badge">{{ totes_fully_confirmed }}</span></a></li>
+                                                    {% endif %}
+
+                                                    {% get_total_bookings asset.asset_ID as totes_bookings %}
+                                                    {% if totes_bookings > 0 %}
+                                                        <li class="divider"></li>
+                                                        <li><a href="{% url 'all_asset_bookings' asset.asset_ID_id "future" %}">View all Future Bookings <span class="badge">{{ totes_bookings }}</span></a></li>
+                                                    {% endif %}
+                                                {% get_total_bookings_past asset.asset_ID as totes_bookings_past %}
+                                                    {% if totes_bookings_past > 0 %}
+                                                        <li><a href="{% url 'all_asset_bookings' asset.asset_ID_id "past" %}">View all Past Bookings <span class="badge">{{ totes_bookings_past }}</span></a></li>
+                                                    {% endif %}
+                                                <li class="divider"></li>
+                                                    <li><a href="{% url 'post_list' asset.asset_ID_id %}">{{ asset.asset_ID.asset_display_name }} Blog</a></li>
+                                                    <li><a href="{% url 'forum' asset.asset_ID_id %}">{{ asset.asset_ID.asset_display_name }} Forum</a></li>
+
+                                                    {%  if asset.is_owner %}
+                                                        {% get_total_for_approval asset.asset_ID user.id num_bookings=True as totes_approve %}
+                                                        {% if totes_approve > 0 %}
+                                                        <li class="divider"></li>
+                                                        <li><a href="{% url 'all_asset_bookings' asset.asset_ID_id user.id "future" "pending" user.id %}">My Pending Approvals <span class="badge">{{ totes_approve }}</span></a></li>
                                                         {% endif %}
-                                                    {% endwith %}
-                                                    </div>
-                                                </div>
+                                                    {% else %}
+                                                        {% get_total_for_approval_linked asset.asset_ID user.id num_bookings=True as totes_approve_linked %}
+                                                        {% if totes_approve_linked > 0 %}
+                                                        <li class="divider"></li>
+                                                        <li><a href="{% url 'all_asset_bookings' asset.asset_ID_id user.id "future" "pending" asset.inviter_id %}">Pending Approvals (for your shared time-slot) <span class="badge">{{ totes_approve_linked }}</span></a></li>
+                                                        {% endif %}
+
+                                                    {%  endif %}
 
 
-
-
-{#<i class="fa fa-home" aria-hidden="true"></i><i class="fa fa-bed" aria-hidden="true"></i><i class="icon-screen i-alt"></i><i class="fa fa-car" aria-hidden="true"></i>#}
-
-
-
-
-
-
-
-
-
-
-                                                    <p>
-
-                                                    <div class="dropdown">
-
-                                                        <button class="btn btn-primary btn-lg btn-block dropdown-toggle" type="button" data-toggle="dropdown">
-                                                            {%  if asset.is_owner %}
-                                                            {{ asset.asset_ID.asset_display_name }} (Owner)
-                                                                {% else %}
-                                                                {{ asset.asset_ID.asset_display_name }}
-                                                            {%  endif %}
-                                                            <span class="caret"></span></button>
-
-                                                            <ul class="dropdown-menu">
-{#                                                                <li><a href="{% url 'asset_detail' asset.asset_ID_id %}">View Details</a></li>#}
-{#                                                            <li class="divider"></li>#}
-
-                                                                <li><a href="{% url 'make_a_booking' asset.asset_ID_id %}">Make a Booking</a></li>
-                                                            <li class="divider"></li>
-                                                            {% get_total_pending asset.asset_ID user.id num_bookings=True as totes_pending %}
-                                                                {%  if totes_pending > 0 %}
-                                                                    <li><a href="{% url 'all_asset_bookings' asset.asset_ID_id user.id "future" "pending" %}">My Pending Requests <span class="badge">{{totes_pending}}</span></a></li>
-                                                                {% endif %}
-                                                            {% get_total_for_confirmation asset.asset_ID user.id num_bookings=True as totes_confirm %}
-                                                                {% if totes_confirm > 0 %}
-                                                                <li><a href="{% url 'all_asset_bookings' asset.asset_ID_id user.id "future" "confirming" %}">My Requests to Confirm <span class="badge">{{ totes_confirm }}</span></a></li>
-                                                                {% endif %}
-                                                            {% get_total_confirmed_bookings asset.asset_ID user.id as totes_fully_confirmed %}
-                                                                {% if totes_fully_confirmed > 0 %}
-                                                                <li><a href="{% url 'all_asset_bookings' asset.asset_ID_id user.id "future" "confirmed" %}">My Bookings <span class="badge">{{ totes_fully_confirmed }}</span></a></li>
-                                                                {% endif %}
-
-                                                                {% get_total_bookings asset.asset_ID as totes_bookings %}
-                                                                {% if totes_bookings > 0 %}
-                                                                    <li class="divider"></li>
-                                                                    <li><a href="{% url 'all_asset_bookings' asset.asset_ID_id "future" %}">View all Future Bookings <span class="badge">{{ totes_bookings }}</span></a></li>
-                                                                {% endif %}
-                                                            {% get_total_bookings_past asset.asset_ID as totes_bookings_past %}
-                                                                {% if totes_bookings_past > 0 %}
-                                                                    <li><a href="{% url 'all_asset_bookings' asset.asset_ID_id "past" %}">View all Past Bookings <span class="badge">{{ totes_bookings_past }}</span></a></li>
-                                                                {% endif %}
-                                                            <li class="divider"></li>
-                                                                <li><a href="{% url 'post_list' asset.asset_ID_id %}">{{ asset.asset_ID.asset_display_name }} Blog</a></li>
-                                                                <li><a href="{% url 'forum' asset.asset_ID_id %}">{{ asset.asset_ID.asset_display_name }} Forum</a></li>
-
-                                                                {%  if asset.is_owner %}
-                                                                    {% get_total_for_approval asset.asset_ID user.id num_bookings=True as totes_approve %}
-                                                                    {% if totes_approve > 0 %}
-                                                                    <li class="divider"></li>
-                                                                    <li><a href="{% url 'all_asset_bookings' asset.asset_ID_id user.id "future" "pending" user.id %}">My Pending Approvals <span class="badge">{{ totes_approve }}</span></a></li>
-                                                                    {% endif %}
-                                                                {% else %}
-                                                                    {% get_total_for_approval_linked asset.asset_ID user.id num_bookings=True as totes_approve_linked %}
-                                                                    {% if totes_approve_linked > 0 %}
-                                                                    <li class="divider"></li>
-                                                                    <li><a href="{% url 'all_asset_bookings' asset.asset_ID_id user.id "future" "pending" asset.inviter_id %}">Pending Approvals (for your shared time-slot) <span class="badge">{{ totes_approve_linked }}</span></a></li>
-                                                                    {% endif %}
-
-                                                                {%  endif %}
-
-
-                                                            </ul>
-
-                                                    </div>
-                                                    </p>
-
-
-
-                                                {% endfor %}
-
-
-                                            </p>
-                                            {% else %}
-                                               <p>You are not sharing anything...yet!</p>
-
-                                            {% endif %}
-                                            <div>
-
-                                                    <form role="form" method="post" action="">
-                                                        {% csrf_token %}
-                                                         {{ invitecodeform | as_bootstrap}}
-                                                        <div class="form-group">
-                                                            <button type="submit" class="btn btn-primary">Submit the Code</button>{% if code_message %}{{ code_message }}{% endif %}
-                                                        </div>
-                                                    </form>
+                                                </ul>
 
                                             </div>
-
+                                            <span><a href="{% url 'make_a_booking' asset.asset_ID_id %}">Check Availability</a></span>
                                         </div>
-                                        <div class="clear"></div>
-
-                                        <div class="row topmargin-lg divcenter" style="max-width: 1000px;"></div>
+                                </article>
 
 
+{##}
+{#                                    <div class="dropdown">#}
+{##}
+{#                                        <button class="btn btn-primary btn-lg btn-block dropdown-toggle" type="button" data-toggle="dropdown">#}
+{#                                            {%  if asset.is_owner %}#}
+{#                                            {{ asset.asset_ID.asset_display_name }} (Owner)#}
+{#                                                {% else %}#}
+{#                                                {{ asset.asset_ID.asset_display_name }}#}
+{#                                            {%  endif %}#}
+{#                                            <span class="caret"></span></button>#}
+{##}
+{#                                            <ul class="dropdown-menu">#}
+{#                                                                <li><a href="{% url 'asset_detail' asset.asset_ID_id %}">View Details</a></li>#}
+{#                                                            <li class="divider"></li>#}
+{##}
+{#                                                <li><a href="{% url 'make_a_booking' asset.asset_ID_id %}">Make a Booking</a></li>#}
+{#                                            <li class="divider"></li>#}
+{#                                            {% get_total_pending asset.asset_ID user.id num_bookings=True as totes_pending %}#}
+{#                                                {%  if totes_pending > 0 %}#}
+{#                                                    <li><a href="{% url 'all_asset_bookings' asset.asset_ID_id user.id "future" "pending" %}">My Pending Requests <span class="badge">{{totes_pending}}</span></a></li>#}
+{#                                                {% endif %}#}
+{#                                            {% get_total_for_confirmation asset.asset_ID user.id num_bookings=True as totes_confirm %}#}
+{#                                                {% if totes_confirm > 0 %}#}
+{#                                                <li><a href="{% url 'all_asset_bookings' asset.asset_ID_id user.id "future" "confirming" %}">My Requests to Confirm <span class="badge">{{ totes_confirm }}</span></a></li>#}
+{#                                                {% endif %}#}
+{#                                            {% get_total_confirmed_bookings asset.asset_ID user.id as totes_fully_confirmed %}#}
+{#                                                {% if totes_fully_confirmed > 0 %}#}
+{#                                                <li><a href="{% url 'all_asset_bookings' asset.asset_ID_id user.id "future" "confirmed" %}">My Bookings <span class="badge">{{ totes_fully_confirmed }}</span></a></li>#}
+{#                                                {% endif %}#}
+{##}
+{#                                                {% get_total_bookings asset.asset_ID as totes_bookings %}#}
+{#                                                {% if totes_bookings > 0 %}#}
+{#                                                    <li class="divider"></li>#}
+{#                                                    <li><a href="{% url 'all_asset_bookings' asset.asset_ID_id "future" %}">View all Future Bookings <span class="badge">{{ totes_bookings }}</span></a></li>#}
+{#                                                {% endif %}#}
+{#                                            {% get_total_bookings_past asset.asset_ID as totes_bookings_past %}#}
+{#                                                {% if totes_bookings_past > 0 %}#}
+{#                                                    <li><a href="{% url 'all_asset_bookings' asset.asset_ID_id "past" %}">View all Past Bookings <span class="badge">{{ totes_bookings_past }}</span></a></li>#}
+{#                                                {% endif %}#}
+{#                                            <li class="divider"></li>#}
+{#                                                <li><a href="{% url 'post_list' asset.asset_ID_id %}">{{ asset.asset_ID.asset_display_name }} Blog</a></li>#}
+{#                                                <li><a href="{% url 'forum' asset.asset_ID_id %}">{{ asset.asset_ID.asset_display_name }} Forum</a></li>#}
+{##}
+{#                                                {%  if asset.is_owner %}#}
+{#                                                    {% get_total_for_approval asset.asset_ID user.id num_bookings=True as totes_approve %}#}
+{#                                                    {% if totes_approve > 0 %}#}
+{#                                                    <li class="divider"></li>#}
+{#                                                    <li><a href="{% url 'all_asset_bookings' asset.asset_ID_id user.id "future" "pending" user.id %}">My Pending Approvals <span class="badge">{{ totes_approve }}</span></a></li>#}
+{#                                                    {% endif %}#}
+{#                                                {% else %}#}
+{#                                                    {% get_total_for_approval_linked asset.asset_ID user.id num_bookings=True as totes_approve_linked %}#}
+{#                                                    {% if totes_approve_linked > 0 %}#}
+{#                                                    <li class="divider"></li>#}
+{#                                                    <li><a href="{% url 'all_asset_bookings' asset.asset_ID_id user.id "future" "pending" asset.inviter_id %}">Pending Approvals (for your shared time-slot) <span class="badge">{{ totes_approve_linked }}</span></a></li>#}
+{#                                                    {% endif %}#}
+{##}
+{#                                                {%  endif %}#}
+{##}
+{##}
+{#                                            </ul>#}
+{##}
+{#                                    </div>#}
+{#                                    </p>#}
 
-				            </div>
 
-                       </div>
 
-					</div>
+                                {% endfor %}
+
+                            </div>
+
+                            {% else %}
+                               <p>You are not sharing anything...yet!</p>
+
+                            {% endif %}
+                            <div>
+
+                                    <form role="form" method="post" action="">
+                                        {% csrf_token %}
+                                         {{ invitecodeform | as_bootstrap}}
+                                        <div class="form-group">
+                                            <button type="submit" class="btn btn-primary">Submit the Code</button>{% if code_message %}{{ code_message }}{% endif %}
+                                        </div>
+                                    </form>
+
+                            </div>
+
+                        </div>
+                        <div class="clear"></div>
+
+                        <div class="row topmargin-lg divcenter" style="max-width: 1000px;"></div>
+
+
+
+
+
+{##}
+{#                    </div>#}
+
 				</div>
 
 			</div>
