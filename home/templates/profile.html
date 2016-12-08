@@ -13,13 +13,21 @@
 
         {% endblock %}
         <!-- Slider ============================================= -->
-        <section id="slider" class="full-screen  slider-parallax" xmlns="http://www.w3.org/1999/html">
 
-			<div class="full-screen section nopadding nomargin noborder ohidden" style="background: url({% static 'myimages/ought5.jpg' %}) bottom center no-repeat; background-size: cover;">
+{#        <section id="content">#}
+{##}
+{#			<div class="content-wrap">#}
+{##}
+{#				<div class="container clearfix">#}
+
+
+        <section id="slider" >
+
+			<div class=" section nopadding nomargin noborder ohidden" style="background: url({% static 'myimages/ought5.jpg' %}) bottom center no-repeat; background-size: cover;">
 
 				<div class="container dark" >
-				    <div class="vertical-middle" >
-
+{#				    <div class="vertical-middle" >#}
+                    <div>
 				        <div id="section-about" class="page-section">
 
 					        <div class="container clearfix">
@@ -35,6 +43,41 @@
                                             {% if assets %}
                                             <p>
                                                 {% for asset in assets %}
+
+
+
+                                                    {% with asset.asset_ID.asset_type as the_type %}
+                                                        {% if the_type == 'Property' %}
+
+                                                            <div class="feature-box fbox-large fbox-effect">
+                                                            <div class="fbox-icon">
+                                                            <i class="fa fa-car" aria-hidden="true"></i>
+                                                            </div>
+
+                                                        {% else %}
+
+                                                            <div class="feature-box fbox-large fbox-effect">
+                                                            <div class="fbox-icon">
+                                                            <i class="fa fa-bed" aria-hidden="true"></i>
+                                                            </div>
+                                                        {% endif %}
+                                                    {% endwith %}
+                                                    </div>
+                                                </div>
+
+
+
+
+{#<i class="fa fa-home" aria-hidden="true"></i><i class="fa fa-bed" aria-hidden="true"></i><i class="icon-screen i-alt"></i><i class="fa fa-car" aria-hidden="true"></i>#}
+
+
+
+
+
+
+
+
+
 
                                                     <p>
 

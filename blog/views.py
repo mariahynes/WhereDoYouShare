@@ -7,6 +7,8 @@ from .forms import BlogPostForm
 from django.contrib.auth.decorators import login_required
 import json
 from django.template.context_processors import csrf
+from django.contrib import messages
+from django.core.urlresolvers import reverse
 
 @login_required(login_url='/login/')
 def post_list(request, asset_id):
@@ -212,4 +214,45 @@ def edit_blog_post(request, asset_id, id):
 
     return render(request, 'blogpostform.html', args)
 
+@login_required(login_url='/login/')
+def delete_blog_post(request, asset_id, id):
+    errors = []
+    content_error = ""
+    form = []
+    the_asset = []
 
+    #  first check does the post exist?
+    if blog_post_exists(asset_id, id) == False:
+
+        errors.append("This page does not exist")
+
+    else:
+        # it does exist
+        post = Post.objects.get(id=id, asset_ID_id=asset_id)
+        the_asset = get_object_or_404(Asset, pk=asset_id)
+
+        # but now check that this user is allowed to view posts for this asset
+        my_id = request.user
+
+        if check_user_linked_to_asset(my_id, asset_id) == False:
+            # prepare the error message
+            errors.append("You are not authorised to delete this Post")
+            # set these to empty
+            the_asset = []
+
+        # and finally check if the user is the one who CREATED this post
+        # only they should be allowed to delete (or the staff)
+
+        if check_user_linked_to_blog_post(my_id, asset_id, id) == False:
+            if not request.user.is_staff:
+                messages.error(request, "You are not authorised to delete this Post")
+                # set these to empty
+                the_asset = []
+
+                return redirect(post_detail, asset_id, id)
+
+        post.delete()
+
+        messages.success(request, "This Blog entry has been deleted")
+
+        return redirect(reverse('post_list', kwargs={"asset_id": asset_id}))
