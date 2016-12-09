@@ -11,66 +11,82 @@
                 }
             </style>
         {% endblock %}
-        <!-- Slider ============================================= -->
-		<section id="slider" class="full-screen  slider-parallax">
 
-			<div class="full-screen section nopadding nomargin noborder ohidden" style="background: url({% static 'myimages/login1.jpg' %}) bottom center no-repeat; background-size: cover;">
+        <section id="content">
 
-				<div class="container " >
-				    <div class="vertical-middle">
+			<div class="content-wrap">
+                <div class="container clearfix"> <!--clearfix removed-->
 
-				        <div id="section-about" class="page-section">
+                    <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">{{ asset.asset_display_name }} Forum</h2>
 
-					        <div class="container clearfix"> <!--clearfix removed-->
+                        {% if errors %}
+                            {% for error in errors %}
+                                <p style="color:red">{{ error }}</p>
+                            {% endfor %}
+                        {% else %}
 
-                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">{{ asset.asset_display_name }} Forum</h2>
+                            {% if subjects %}
+                                <div id="portfolio" class="portfolio grid-container portfolio-{{ subjects | get_num_subjects }} clearfix">
+                                {% for subject in subjects %}
 
-                                    {% if errors %}
-                                        {% for error in errors %}
-                                            <p style="color:red">{{ error }}</p>
-                                        {% endfor %}
-                                    {% else %}
+                                    <article class="portfolio-item pf-media pf-icons">
+                                        <div class="portfolio-image">
+                                            <a href="{% url 'threads' asset.id subject.id %}">
+                                                <img src="/media/{{ subject.image }}" alt="{{ subject.name }}" class="img-rounded">
+                                            </a>
+                                            <div class="portfolio-overlay">
+                                                <a href="/media/{{ subject.image }}" class="left-icon" data-lightbox="image"><i class="icon-line-plus"></i></a>
+                                                <a href="{% url 'threads' asset.id subject.id %}" class="right-icon"><i class="icon-line-ellipsis"></i></a>
+                                            </div>
+                                        </div>
+                                        <div class="portfolio-desc">
+                                            <h3><a href="{% url 'threads' asset.id subject.id %}">{{ subject.name }}</a></h3>
+                                            <span>Threads: {{ subject.threads.count }} | Posts: {{ subject | get_total_subject_posts }}</span>
+                                            <p><hr>{% autoescape off %}{{ subject.description }}{% endautoescape %}
+                                            </p>
 
-                                        {% if subjects %}
-
-                                            {% for subject in subjects %}
-                                             <section class="subject">
-                                                <h2><a href="{% url 'threads' asset.id subject.id %}">{{ subject.name }}</a></h2>
-                                                <p>
-                                                    <a href="{% url 'threads' asset.id subject.id %}">
-                                                        {% autoescape off %}{{ subject.description }}{% endautoescape %}
-                                                    </a>
-                                                </p>
-                                                <table>
-                                               <tr>
-                                                   <th>Threads </th>
-                                                   <th>&nbsp|&nbsp</th>
-                                                   <th> Posts</th>
-                                               </tr>
-                                               <tr>
-                                                   <td>{{ subject.threads.count }} </td>
-                                                   <td></td>
-                                                   <td>{{ subject | get_total_subject_posts }}</td>
-                                                   <td></td>
-                                               </tr>
-                                           </table>
-                                           </section>
-                                            {% endfor %}
-
-                                        {% endif %}
-
-                                    {% endif %}
-
-                                    <div class="clear"></div>
-
-                                    <div class="row topmargin-lg divcenter" style="max-width: 1000px;"></div>
+                                        </div>
+						            </article>
 
 
 
-				            </div>
 
-                       </div>
 
+
+
+
+
+{##}
+{#                                 <section class="subject">#}
+{#                                    <h2><a href="{% url 'threads' asset.id subject.id %}">{{ subject.name }}</a></h2>#}
+{#                                    <p>#}
+{#                                        <a href="{% url 'threads' asset.id subject.id %}">#}
+{#                                            {% autoescape off %}{{ subject.description }}{% endautoescape %}#}
+{#                                        </a>#}
+{#                                    </p>#}
+{#                                    <table>#}
+{#                                   <tr>#}
+{#                                       <th>Threads </th>#}
+{#                                       <th>&nbsp|&nbsp</th>#}
+{#                                       <th> Posts</th>#}
+{#                                   </tr>#}
+{#                                   <tr>#}
+{#                                       <td>{{ subject.threads.count }} </td>#}
+{#                                       <td></td>#}
+{#                                       <td>{{ subject | get_total_subject_posts }}</td>#}
+{#                                       <td></td>#}
+{#                                   </tr>#}
+{#                               </table>#}
+{#                               </section>#}
+                                {% endfor %}
+
+                            {% endif %}
+
+                        {% endif %}
+
+                        <div class="clear"></div>
+
+                        <div class="row topmargin-lg divcenter" style="max-width: 1000px;"></div>
 					</div>
 				</div>
 

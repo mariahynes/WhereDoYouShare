@@ -5,7 +5,17 @@
     {% load staticfiles %}
     {% load assets_extras %}
         {% block head_style %}
+                <style>
+                input {
+                    width:60%;
+                    padding: 12px 20px;
+                    margin: 2px 0;
+                    box-sizing: border-box;
+                    border-radius: 10px;
+                    border: none;
+               }
 
+            </style>
         {% endblock %}
 
         {% block head_js %}
@@ -37,36 +47,43 @@
                         <div data-animate="fadeInUp" class="lead divleft bottommargin" style="max-width: 700px; ">
                             <span style="font-family: 'Playfair Display'">  </span> </div>
 
-                        <div data-animate="fadeInUp" class="col_half">
+                        <div data-animate="fadeInUp">
 
 
+                        <form role="form" method="post" action="">
+                                        {% csrf_token %}
+                                         {{ invitecodeform | as_bootstrap}}
+                                        <div class="form-group">
+                                            <button type="submit" class="btn btn-primary">Submit the Code</button>{% if code_message %}{{ code_message }}{% endif %}
+                                        </div>
+                                    </form>
                             {% if assets %}
-                            <div id="portfolio" class="portfolio grid-container portfolio-3 clearfix">
+                            <div id="portfolio" class="portfolio grid-container portfolio-1 clearfix">
 
                                 {% for asset in assets %}
 
                                     <article class="portfolio-item pf-media pf-icons">
                                         <div class="portfolio-image">
                                             <a href="portfolio-single.html">
-                                                <img src="/media/{{ asset.asset_ID.image }}" alt="{{ asset.asset_ID.asset_display_name }}">
+                                                <img src="/media/{{ asset.asset_ID.image }}" alt="{{ asset.asset_ID.asset_display_name }}" class="img-rounded">
                                             </a>
                                             <div class="portfolio-overlay">
                                                 <a href="/media/{{ asset.asset_ID.image }}" class="left-icon" data-lightbox="image"><i class="icon-line-plus"></i></a>
                                                 <a href="portfolio-single.html" class="right-icon"><i class="icon-line-ellipsis"></i></a>
                                             </div>
                                         </div>
-                                        <div class="portfolio-desc">
-                                            <div class="dropdown">
-                                                <h3>
+{#                                        <div class="portfolio-desc">#}
+                                            <div class="dropdown" id="{{ asset.id }}">
+
                                                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                                                     {% if asset.is_owner %}
-                                                        {{ asset.asset_ID.asset_display_name }} <small>(Owner)</small>
+                                                       <h3>{{ asset.asset_ID.asset_display_name }} <small>(Owner)</small></h3>
                                                     {% else %}
-                                                        {{ asset.asset_ID.asset_display_name }}
+                                                        <h3>{{ asset.asset_ID.asset_display_name }}</h3>
                                                     {% endif %}
-                                                    <span class="caret"></span>
+
                                                     </a>
-                                                </h3>
+
 
                                                 <ul class="dropdown-menu" role="menu">
     {#                                                                <li><a href="{% url 'asset_detail' asset.asset_ID_id %}">View Details</a></li>#}
@@ -120,7 +137,7 @@
 
                                             </div>
                                             <span><a href="{% url 'make_a_booking' asset.asset_ID_id %}">Check Availability</a></span>
-                                        </div>
+{#                                        </div>#}
                                 </article>
 
 
@@ -200,13 +217,13 @@
                             {% endif %}
                             <div>
 
-                                    <form role="form" method="post" action="">
-                                        {% csrf_token %}
-                                         {{ invitecodeform | as_bootstrap}}
-                                        <div class="form-group">
-                                            <button type="submit" class="btn btn-primary">Submit the Code</button>{% if code_message %}{{ code_message }}{% endif %}
-                                        </div>
-                                    </form>
+{#                                    <form role="form" method="post" action="">#}
+{#                                        {% csrf_token %}#}
+{#                                         {{ invitecodeform | as_bootstrap}}#}
+{#                                        <div class="form-group">#}
+{#                                            <button type="submit" class="btn btn-primary">Submit the Code</button>{% if code_message %}{{ code_message }}{% endif %}#}
+{#                                        </div>#}
+{#                                    </form>#}
 
                             </div>
 
@@ -227,6 +244,12 @@
 			</div>
 
 		</section> <!--#slider end -->
+
+
+        <script>
+            dropdown_check();
+        </script>
+
 
 
 

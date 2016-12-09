@@ -11,20 +11,17 @@
                 }
             </style>
         {% endblock %}
-        <!-- Slider ============================================= -->
-		<section id="slider" class="full-screen  slider-parallax">
+
+		<section id="slider" class="full-screen  ">
 
 			<div class="full-screen section nopadding nomargin noborder ohidden" style="background: url({% static 'myimages/login1.jpg' %}) bottom center no-repeat; background-size: cover;">
 
 				<div class="container " >
 				    <div class="vertical-middle">
 
-				        <div id="section-about" class="page-section">
-
-					        <div class="container clearfix"> <!--clearfix removed-->
-
+                                <div class="fancy-title title-bottom-border">
                                 <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';"> {{ asset.asset_display_name }} | {{ subject.name }} </h2>
-
+                                </div>
                                     {% if errors %}
                                         {% for error in errors %}
                                             <p style="color:red">{{ error }}</p>
@@ -32,16 +29,49 @@
                                     {% else %}
 
                                         {% if subject %}
+
+
+                                            <div id="faqs" class="faqs">
+
+                                                {% for thread in subject.threads.all %}
+
+                                                        <ul class="iconlist faqlist">
+                                                            <li><i class="icon-caret-right"></i><strong><a href="{{ thread.id }}">{{ thread.name }}
+                                                                <span class="badge">{{ thread | get_total_thread_posts }}</span>
+                                                                </a></strong><br>
+                                                            <span><small>Latest Post by: {{ thread | last_posted_user_name }}</small></span></li>
+                                                        </ul>
+
+                                                {% endfor %}
+                                                {%  if thread %}
+                                                <div class="divider divider-right"><i class="icon-heart"></i></div>
+                                                {% endif %}
+
+
+                                            </div>
+
                                             <p>
-                                            <a href="{% url 'forum' asset.id %}"class = "btn btn-primary"><< Back to Forum</a>
-                                                <a href="{%  url 'new_thread' asset.id subject.id %}" class = "btn btn-primary">New Thread</a>
+                                            <a href="{% url 'forum' asset.id %}" class = "t400 capitalize button button-border button-blue button-circle nomargin"><< Back to Forum</a>
+                                                <a href="{%  url 'new_thread' asset.id subject.id %}" class = "t400 capitalize button button-border button-blue button-circle nomargin">New {{ subject.name }} Thread</a>
 
                                             </p>
 
-                                                <h2><{{ subject.name }}</h2>
-                                                {% for thread in subject.threads.all %}
-                                                        {% include "thread_item.html" %}
-                                                {% endfor %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+{#                                                {% for thread in subject.threads.all %}#}
+{#                                                        {% include "thread_item.html" %}#}
+{#                                                {% endfor %}#}
 
 
 

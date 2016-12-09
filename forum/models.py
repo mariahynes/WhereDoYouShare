@@ -11,9 +11,10 @@ class Subject(models.Model):
     name = models.CharField(max_length=255)
     asset_id = models.ForeignKey(Asset)
     description = HTMLField(blank=True)
+    image = models.ImageField(upload_to='forum_images', blank=True, null=True)
 
     def __unicode__(self):
-        return self.name
+        return "%s | %s | %s" % (self.id, self.name, self.asset_id.asset_display_name)
 
 
 class Thread(models.Model):

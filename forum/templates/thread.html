@@ -25,10 +25,11 @@
 				        <div id="section-about" class="page-section">
 
 					        <div class="container clearfix"> <!--clearfix removed-->
-
+                                <div class="fancy-title title-bottom-border">
                                 <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';"> {{ thread.name }}
                                     <div class="visible-xs"<br></div>
                                     <small><small>({{ asset.asset_display_name }} | {{ subject.name }}) </small> </small></h2>
+                                </div>
 
                                     {% if errors %}
                                         {% for error in errors %}
@@ -37,28 +38,35 @@
                                     {% else %}
 
                                         {% if thread %}
-                                            <div>
-                                            {{ thread.user.first_name }} {{ thread.user.last_name }} |
-                                                    <time datetime="{{ thread.created_at}}">{{ thread.created_at | started_time}}</time> | {{ thread.num_views }}
-                                                {%  with total=thread.num_views %}view{{ total|pluralize }}{%  endwith %}
-                                                <p><small>Latest post: {% last_posted_user_name thread %}</small></p>
-                                            </div>
+
+                                                <small>Started by: {{ thread.user.first_name }} {{ thread.user.last_name }} |
+                                                        <time datetime="{{ thread.created_at}}">{{ thread.created_at | started_time}}</time> | {{ thread.num_views }}
+                                                    {%  with total=thread.num_views %}view{{ total|pluralize }}{%  endwith %}</small>
+                                                    <p><small>Latest post: {{ thread | last_posted_user_name }}</small></p>
+
+
+
 
                                             <p>
                                                 <a href="{% url 'threads' asset.id subject.id %}" class="btn btn-primary">Back to {{ subject.name }}</a>
                                                 <a href="{% url 'new_post' asset.id subject.id thread.id %}" class="btn btn-primary">Add Post</a>
+                                            <hr>
                                             </p>
 
                                             {% for post in thread.posts.all %}
 
                                                 <section class="post">
                                                     <div>
-                                                   {{ post.user.first_name }} {{ post.user.last_name }} says:
+                                                   <i>{{ post.user.first_name }} {{ post.user.last_name }} says:</i>
                                                     </div>
                                                     <div class="comment-content">
+                                                    <blockquote class="quote">
+
                                                      {% autoescape off %}
                                                        {{ post.comment|emoticons }}
                                                      {% endautoescape %}
+                                                    </blockquote>
+
                                                     </div>
                                                     <div>
 
@@ -71,6 +79,8 @@
 
                                                                     <a href="{% url 'edit_post' asset.id subject.id thread.id post.id %}">Edit <i class="fa fa-pencil-square-o"></i></a>
                                                                     <a href="{% url 'delete_post' asset.id subject.id thread.id post.id %}">Delete <i class="fa fa-trash-o"></i></a>
+                                                                    <hr>
+                                                                    <br>
 
                                                                 {% endif %}
                                                             </div>
