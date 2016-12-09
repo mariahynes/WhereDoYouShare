@@ -13,16 +13,9 @@
             </style>
         {% endblock %}
         <!-- Slider ============================================= -->
-		<section id="slider" class="full-screen  ">
-
-			<div class="full-screen section nopadding nomargin noborder ohidden" style="background: url({% static 'myimages/login1.jpg' %}) bottom center no-repeat; background-size: cover;">
-
-				<div class="container " >
-
-
-				    <div class="vertical-middle">
-
-				        <div id="section-about" class="page-section">
+        <section id="content"></section>
+			<div class="content-wrap">
+                <div class="container clearfix"> <!--clearfix removed-->
 
 					        <div class="container clearfix"> <!--clearfix removed-->
                                 <div class="fancy-title title-bottom-border">
@@ -39,19 +32,25 @@
 
                                         {% if thread %}
 
-                                                <small>Started by: {{ thread.user.first_name }} {{ thread.user.last_name }} |
+                                                <small><i>Started by:</i> {{ thread.user.first_name }} {{ thread.user.last_name }} |
                                                         <time datetime="{{ thread.created_at}}">{{ thread.created_at | started_time}}</time> | {{ thread.num_views }}
                                                     {%  with total=thread.num_views %}view{{ total|pluralize }}{%  endwith %}</small>
-                                                    <p><small>Latest post: {{ thread | last_posted_user_name }}</small></p>
+                                                    <p><small><i>Latest post:</i> {{ thread | last_posted_user_name }}</small></p>
 
 
 
 
                                             <p>
-                                                <a href="{% url 'threads' asset.id subject.id %}" class="btn btn-primary">Back to {{ subject.name }}</a>
-                                                <a href="{% url 'new_post' asset.id subject.id thread.id %}" class="btn btn-primary">Add Post</a>
-                                            <hr>
-                                            </p>
+                                                    <a href="{% url 'threads' asset.id subject.id %}" class="400 capitalize button button-border button-blue button-circle nomargin">
+                                                        <span class="hidden-xs"><< Back to {{ subject.name }}</span>
+                                                        <span class="visible-xs"><< Back</span>
+                                                    </a>
+                                                    <a href="{% url 'new_post' asset.id subject.id thread.id %}" class="t400 capitalize button button-border button-blue button-circle nomargin">
+                                                        <span class="hidden-xs">Add Post</span>
+                                                        <span class="visible-xs">Add</span>
+                                                    </a>
+                                                <hr>
+                                                </p>
 
                                             {% for post in thread.posts.all %}
 
@@ -92,6 +91,22 @@
                                                 </section>
 
                                             {% endfor %}
+
+                                            {% get_total_thread_posts thread as totes %}
+                                            {% if totes > 1 %}
+                                                <p>
+                                                    <a href="{% url 'threads' asset.id subject.id %}" class="400 capitalize button button-border button-blue button-circle nomargin">
+                                                        <span class="hidden-xs"><< Back to {{ subject.name }}</span>
+                                                        <span class="visible-xs"><< Back</span>
+                                                    </a>
+                                                    <a href="{% url 'new_post' asset.id subject.id thread.id %}" class="t400 capitalize button button-border button-blue button-circle nomargin">
+                                                        <span class="hidden-xs">Add Post</span>
+                                                        <span class="visible-xs">Add</span>
+                                                    </a>
+                                                <hr>
+                                                </p>
+                                            {% endif %}
+
 
                                         {% endif %}
 

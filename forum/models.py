@@ -32,7 +32,7 @@ class Thread(models.Model):
 class Post(models.Model):
 
     thread = models.ForeignKey(Thread, related_name='posts')
-    comment = HTMLField(blank=True)
+    comment = HTMLField(blank=True, verbose_name="Your Comment")
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='posts')
     created_at = models.DateTimeField(default=timezone.now)
 

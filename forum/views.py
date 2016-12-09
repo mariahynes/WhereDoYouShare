@@ -238,6 +238,7 @@ def edit_post(request, asset_id, subject_id, thread_id, post_id):
     thread = get_object_or_404(Thread, pk=thread_id)
     subject = get_object_or_404(Subject, pk=subject_id)
     the_asset = get_object_or_404(Asset, pk=asset_id)
+    form = PostForm(instance=post)
 
     my_id = request.user
     if check_user_linked_to_asset(my_id, asset_id) == False:
@@ -262,29 +263,30 @@ def edit_post(request, asset_id, subject_id, thread_id, post_id):
         the_asset = []
 
     elif check_user_linked_to_forum_post(my_id, post_id) == False:
-        errors.append("You are not authorised to edit this Post")
-        post = []
-        thread = []
-        subject = []
-        the_asset = []
+        if not request.user.is_staff:
+            errors.append("You are not authorised to edit this Post")
+            post = []
+            thread = []
+            subject = []
+            the_asset = []
+
+
+    if request.method == "POST":
+        form = PostForm(request.POST, instance=post)
+        if form.is_valid():
+            # before saving check the content of the comment field
+            if len(form.cleaned_data['comment']) == 0:
+                post = get_object_or_404(Post, pk=post_id)
+                form = PostForm(instance=post)
+                content_error = "Please don't save a blank post!"
+            else:
+                form.save()
+                messages.success(request,"This Post has been updated")
+
+                return redirect(reverse('thread', kwargs={"asset_id":asset_id, "subject_id":subject_id, "thread_id":thread.pk}))
 
     else:
-        if request.method == "POST":
-            form = PostForm(request.POST, instance=post)
-            if form.is_valid():
-                # before saving check the content of the comment field
-                if len(form.cleaned_data['comment']) == 0:
-                    post = get_object_or_404(Post, pk=post_id)
-                    form = PostForm(instance=post)
-                    content_error = "Please don't save a blank post!"
-                else:
-                    form.save()
-                    messages.success(request,"This Post has been updated")
-
-                    return redirect(reverse('thread', kwargs={"asset_id":asset_id, "subject_id":subject_id, "thread_id":thread.pk}))
-
-        else:
-            form = PostForm(instance=post)
+        form = PostForm(instance=post)
 
     args = {
         'thread': thread,

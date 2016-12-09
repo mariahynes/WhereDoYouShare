@@ -22,6 +22,20 @@ def get_total_thread_posts(thread):
 
     return total_posts
 
+@register.simple_tag
+def get_total_threads(subject):
+
+    total_threads = subject.threads.count()
+
+    return total_threads
+
+@register.simple_tag
+def get_total_thread_posts(thread):
+
+    total_posts = thread.posts.count()
+
+    return total_posts
+
 @register.filter
 def started_time(created_at):
    return arrow.get(created_at).humanize()
@@ -38,8 +52,6 @@ def last_posted_user_name(thread):
        post = thread.posts.all().order_by('-created_at')[0]
        first_name = post.user.first_name
        surname = post.user.last_name
-       # first_name = posts[posts.count()-1].user.first_name
-       # last_name = posts[posts.count()-1].user.last_name
        return "%s %s" % (first_name, surname)
    else:
        return ""

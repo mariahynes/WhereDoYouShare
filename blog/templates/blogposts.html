@@ -10,58 +10,59 @@
                 }
             </style>
         {% endblock %}
-        <!-- Slider ============================================= -->
-		<section id="slider" >
+        <section id="content">
 
-			<div class= "nopadding nomargin noborder" style="background: url({% static 'myimages/login1.jpg' %}) bottom center no-repeat; background-size: cover;">
+			<div class="content-wrap">
+                <div class="container clearfix">
 
-				<div class="container " >
-{#				    <div class="vertical-middle">#}
+                    <div class="fancy-title title-bottom-border">
+                        <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">{{ asset.asset_display_name }} Blog</h2>
+                    </div>
 
-				        <div id="section-about" class="page-section">
+                            {% if errors %}
+                                {% for error in errors %}
+                                    <p style="color:red">{{ error }}</p>
+                                {% endfor %}
+                            {% endif %}
 
-					        <div class="container clearfix"> <!--clearfix removed-->
+                       <p><button class="400 capitalize button button-border button-blue button-circle nomargin" onclick="location.href='new'">Add New Post >></button></p>
 
-                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">{{ asset.asset_display_name }} Blog</h2>
+                        {%  if posts %}
+                                {% for post in posts %}
+                                    <div>
+                                    <div class="entry-image alignleft">
+                                        {% if not post.image %}
+                                            <a href="{%  url 'post_detail' asset.id post.id %}"><img src="/media/blog_images/default_blog_small.jpg" alt="{{ post.title }}"></a>
+                                        {% else %}
+                                            <a href="{%  url 'post_detail' asset.id post.id %}"><img src="/media/{{ post.image }}" alt="{{ post.title }}"></a>
+                                        {% endif %}
+{#                                        <img class="img-rounded img-responsive"  src="/media/{{  post.title }}"#}
+									</div>
 
-                                    {% if errors %}
-                                        {% for error in errors %}
-                                            <p style="color:red">{{ error }}</p>
-                                        {% endfor %}
-                                    {% endif %}
+                                        <h2><a href="{%  url 'post_detail' asset.id post.id %}">{{ post.title }}</a>
+                                            <div class="visible-xs"<br></div>
+                                              <small><small>
+                                                  <i> by {{ post.author.first_name }} {{ post.author.last_name }} </i>
 
-                                <p><button class="btn btn-default" onclick="location.href='new'">Add New Post >></button></p>
+                                            | {{ post.created_date | started_time }} | {{ post.num_views }}
+                                        {%  with total=post.num_views %}view{{ total|pluralize }}{%  endwith %}
+                                              </small></small></h2>
 
-                                {%  if posts %}
-                                        {% for post in posts %}
-                                            <div>
-                                                <div>
-                                                    {{ post.created_date | started_time }} | {{ post.num_views }}
-                                                {%  with total=post.num_views %}view{{ total|pluralize }}{%  endwith %}
-                                                </div>
-                                                <h1><a href="{%  url 'post_detail' asset.id post.id %}">{{ post.title }}</a><small><small> by {{ post.author.first_name }} {{ post.author.last_name }}</small></small></h1>
-                                                <p> {% autoescape off %}{{ post.content|truncatewords:30 }}{% endautoescape %}</p>
-                                                <p><button class="btn btn-default" onclick="location.href='{{ post.id }}'">Read More >></button></p>
-                                                <hr>
-                                            </div>
-                                        {% endfor %}
-                                {% endif %}
+                                        <p> {% autoescape off %}{{ post.content|truncatewords:30 }}{% endautoescape %}</p>
+                                        <p><button class="btn btn-default" onclick="location.href='{{ post.id }}'">Read More >></button></p>
+                                        <hr>
+                                    </div>
+                                {% endfor %}
+                        {% endif %}
 
-                                    <div class="clear"></div>
+                            <div class="clear"></div>
 
-                                    <div class="row topmargin-lg divcenter" style="max-width: 1000px;"></div>
+                            <div class="row topmargin-lg divcenter" style="max-width: 1000px;"></div>
 
 
-
-				            </div>
-
-                       </div>
 
 					</div>
 				</div>
-
-			</div>
-
 		</section> <!--#slider end -->
 
 
