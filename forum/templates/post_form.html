@@ -18,54 +18,45 @@
                 }
             </style>
         {% endblock %}
-       <section id="content"></section>
+       <section id="content">
 			<div class="content-wrap">
-                <div class="container clearfix"> <!--clearfix removed-->
+                <div class="container clearfix">
 
-{#                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">{{ asset.asset_display_name }} | {{ subject.name }}</h2>#}
-{#                                #}
-                                <div class="fancy-title title-bottom-border">
-                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';"> {{ thread.name }}
-                                    <div class="visible-xs"<br></div>
-                                    <small><small>({{ asset.asset_display_name }} | {{ subject.name }}) </small> </small></h2>
-                                </div>
+                        <div class="fancy-title title-bottom-border">
+                        <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';"> {{ thread.name }}
+                            <div class="visible-xs"><br></div>
+                            <small><small>({{ asset.asset_display_name }} | {{ subject.name }}) </small> </small></h2>
+                        </div>
 
 
-                                    {% if errors %}
-                                        {% for error in errors %}
-                                            <p style="color:red">{{ error }}</p>
-                                        {% endfor %}
-                                    {% else %}
-                                        <section>
+                        {% if errors %}
+                            {% for error in errors %}
+                                <p style="color:red">{{ error }}</p>
+                            {% endfor %}
+                        {% else %}
 
-                                                   <form method="post" action="{{ form_action }}">
-                                                       {% csrf_token %}
-                                                       {{ form | as_bootstrap }}
-                                                        {% if content_error %}
-                                                        <div class="sb-msg" style="color: red"><i class="icon-warning-sign"></i><strong>Warning!</strong>  {{ content_error }}</div><br>
-                                                        {% endif %}
-                                                       <div class="form-group">
-                                                           <button type="button" class="t400 capitalize button button-border button-blue button-circle nomargin" onclick="location.href='/forum/forum/{{ asset.id }}/{{ subject.id }}/{{ thread.id }}'"><i class="fa fa-backward"></i> Cancel</button>
-                                                           <button type="submit" class="t400 capitalize button button-border button-blue button-circle nomargin">{{ button_text }}</button>
-                                                       </div>
-                                                   </form>
+                            <section>
 
-                                           </section>
-
-
+                               <form method="post" action="{{ form_action }}">
+                                   {% csrf_token %}
+                                   {{ form | as_bootstrap }}
+                                    {% if content_error %}
+                                    <div class="sb-msg" style="color: red"><i class="icon-warning-sign"></i><strong>Warning!</strong>  {{ content_error }}</div><br>
                                     {% endif %}
+                                   <div class="form-group">
+                                       <button type="button" class="t400 capitalize button button-border button-blue button-circle nomargin" onclick="location.href='/forum/forum/{{ asset.id }}/{{ subject.id }}/{{ thread.id }}'"><i class="fa fa-backward"></i> Cancel</button>
+                                       <button type="submit" class="t400 capitalize button button-border button-blue button-circle nomargin">{{ button_text }}</button>
+                                   </div>
+                               </form>
 
-                                    <div class="clear"></div>
-
-                                    <div class="row topmargin-lg divcenter" style="max-width: 1000px;"></div>
+                            </section>
 
 
+                        {% endif %}
 
-				            </div>
+                        <div class="clear"></div>
 
-                       </div>
-
-					</div>
+                        <div class="row topmargin-lg divcenter" style="max-width: 1000px;"></div>
 				</div>
 
 			</div>

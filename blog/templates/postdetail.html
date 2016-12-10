@@ -4,97 +4,108 @@
     {% block content %}
     {% load staticfiles %}
         {% block head_style %}
-            <style>
+            <style xmlns="http://www.w3.org/1999/html">
                 .opacity9{
                     opacity:2;
                 }
             </style>
         {% endblock %}
-        <!-- Slider ============================================= -->
-		<section id="slider" class="">
+         <section id="content">
+			<div class="content-wrap">
+                <div class="container clearfix">
+                    <div class="fancy-title title-bottom-border">
+                        <h1 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">
+                        {{ asset.asset_display_name }} Blog
+                        </h1>
+                    </div>
 
-			<div class="section nopadding nomargin noborder ohidden" style="background: url({% static 'myimages/login1.jpg' %}) bottom center no-repeat; background-size: cover;">
+                    {% if errors %}
+                        {% for error in errors %}
+                            <p style="color:red">{{ error }}</p>
+                        {% endfor %}
 
-				<div class="container " >
-				    <div class="">
+                    {% else %}
 
-				        <div id="section-about" class="page-section">
+                        {%  if post %}
 
-					        <div class="container clearfix"> <!--clearfix removed-->
+                            <p><button class="400 capitalize button button-border button-blue button-circle nomargin" onclick="location.href='/blog/blog/{{ asset_id }}'">
+                                <span class="hidden-xs"><i class="fa fa-backward"></i> Back to Blog</span>
+                                <span class="visible-xs">Back</span>
+                            </button>
 
-                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">{{ asset.asset_display_name }} Blog</h2>
-
-                                    {% if errors %}
-                                        {% for error in errors %}
-                                            <p style="color:red">{{ error }}</p>
-                                        {% endfor %}
-
-                                    {% else %}
-
-                                        {%  if post %}
-
-                                                <div>
-                                                    <div>
-                                                        {{ post.created_date | started_time }} | {{ post.num_views }}
-                                                {%  with total=post.num_views %}view{{ total|pluralize }}{%  endwith %}
-                                                    </div>
-                                           <div class="single-post nobottommargin">
-
-                                                <div class="entry clearfix">
-
-                                                    <div class="entry-title">
-                                                        <h1>{{ post.title }} <small><small>by {{ post.author.first_name }} {{ post.author.last_name }}</small></small></h1>
-                                                    </div>
-                                                    {%  if post.image %}
-                                                        <div class="entry-image bottommargin">
-
-{#                                                       <div class="row">#}
-{#                                                        <div class="col-sm-2">#}
-                                                           <img class="img-rounded img-responsive"  src="/media/{{ post.image }}">
-{#                                                       </div>#}
-                                                        </div>
-                                                    {%  endif %}
-                                                    <p> {% autoescape off %}{{ post.content|linebreaks }}{% endautoescape %}</p>
-
-                                                    <p><button class="btn btn-default" onclick="location.href='/blog/blog/{{ asset_id }}'"><i class="fa fa-backward"></i> Back to Blog</button>
-
-                                                    {% if show_edit or user.is_staff %}
-                                                        <button class="btn btn-default" onclick="location.href='/blog/blog/{{ asset_id }}/{{ post.id }}/edit'">Edit <i class="fa fa-pencil-square-o"></i> </button>
-                                                        <button class="btn btn-default" onclick="location.href='/blog/blog/{{ asset_id }}/{{ post.id }}/delete'">Delete <i class="fa fa-trash-o"></i> </button>
-                                                    {% endif %}
-                                                    </p>
-
-                                                    <div id="comments" class="clearfix">
-                                                            <h3 id="comments-title">Comments</h3>
-
-                                                            {% load disqus_tags %}
-                                                            {% set_disqus_title post.title %}
-                                                            {% disqus_show_comments %}
-                                                    </div>
-                                                </div>
-                                            </div>
+                                {% if show_edit or user.is_staff %}
+                                    <button class="400 capitalize button button-border button-blue button-circle nomargin" onclick="location.href='/blog/blog/{{ asset_id }}/{{ post.id }}/edit'">
+                                        <span class="hidden-xs">Edit <i class="fa fa-pencil-square-o"></i> </span>
+                                        <span class="visible-xs">Edit</span>
+                                    </button>
+                                    <button class="400 capitalize button button-border button-blue button-circle nomargin" onclick="location.href='/blog/blog/{{ asset_id }}/{{ post.id }}/delete'">
+                                        <span class="hidden-xs">Delete <i class="fa fa-trash-o"></i> </span>
+                                        <span class="visible-xs">Delete</span>
+                                    </button>
+                                {% endif %}
+                            </p>
 
 
+
+                            {{ post.created_date | started_time }} | {{ post.num_views }}
+                            {%  with total=post.num_views %}view{{ total|pluralize }}{%  endwith %}
+
+                            <div class="single-post nobottommargin">
+
+                                <div class="entry clearfix">
+
+                                        <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="font-family: 'Playfair Display';"> {{ post.title }}
+                                            <span class="visible-xs"><br></span>
+                                            <small><small>by {{ post.author.first_name }} {{ post.author.last_name }}</small> </small></h2>
+
+                                    <div class="entry-image bottommargin">
+                                        {%  if post.image %}
+                                           <img class="img-rounded img-responsive"  src="/media/{{ post.image }}">
+                                        {% else %}
+                                            <img class="img-rounded img-responsive"  src="/media/blog_images/default_blog_medium.jpg">
+                                        {%  endif %}
+                                    </div>
+
+                                    <p> {% autoescape off %}{{ post.content|linebreaks }}{% endautoescape %}</p>
+
+                                    <p><button class="400 capitalize button button-border button-blue button-circle nomargin" onclick="location.href='/blog/blog/{{ asset_id }}'">
+                                        <span class="hidden-xs"><i class="fa fa-backward"></i> Back to Blog</span>
+                                        <span class="visible-xs">Back</span>
+                                        </button>
+
+                                        {% if show_edit or user.is_staff %}
+                                            <button class="400 capitalize button button-border button-blue button-circle nomargin" onclick="location.href='/blog/blog/{{ asset_id }}/{{ post.id }}/edit'">
+                                                <span class="hidden-xs">Edit <i class="fa fa-pencil-square-o"></i> </span>
+                                                <span class="visible-xs">Edit</span>
+                                            </button>
+                                            <button class="400 capitalize button button-border button-blue button-circle nomargin" onclick="location.href='/blog/blog/{{ asset_id }}/{{ post.id }}/delete'">
+                                                <span class="hidden-xs">Delete <i class="fa fa-trash-o"></i> </span>
+                                                <span class="visible-xs">Delete</span>
+                                            </button>
                                         {% endif %}
+                                    </p>
 
-                                    {% endif %}
+                                    <div id="comments" class="clearfix">
+                                        <h3 id="comments-title">Comments</h3>
 
-                                    <div class="clear"></div>
+                                        {% load disqus_tags %}
+                                        {% set_disqus_title post.title %}
+                                        {% disqus_show_comments %}
+                                    </div>
+                                </div>
+                            </div>
 
-                                    <div class="row topmargin-lg divcenter" style="max-width: 1000px;"></div>
+                        {% endif %}
 
+                    {% endif %}
 
+                    <div class="clear"></div>
 
-				            </div>
+                    <div class="row topmargin-lg divcenter" style="max-width: 1000px;"></div>
 
-                       </div>
-
-					</div>
-				</div>
-
+                </div>
 			</div>
-
-		</section> <!--#slider end -->
+         </section> <!--#slider end -->
 
 
 

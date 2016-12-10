@@ -2,10 +2,12 @@ from django.shortcuts import render
 from .forms import ContactForm
 from django.core.mail import send_mail
 from django.http import HttpResponseRedirect
+from assets.models import Asset_User_Mapping
 
 
 # function to return the index.html template
 def get_index(request):
+
     return render(request, 'index.html')
 
 # function to render a basic contact form

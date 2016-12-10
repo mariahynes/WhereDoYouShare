@@ -1,4 +1,5 @@
 {% load staticfiles %}
+{% load booking_extras %}
 <!DOCTYPE html>
 <html dir="ltr" lang="en-US">
 <head>
@@ -91,7 +92,34 @@
 
                                 <li><a href="{% url 'profile' %}">Your Profile</a></li>
 							    <li><a href="{% url 'logout' %}"><div>Sign Out</div></a></li>
-                                <li><a href="{% url 'my_bookings' %}"><div>Bookings</div></a></li>
+                                <li><a href="{% url 'my_bookings' %}"><div>All My Bookings</div></a></li>
+
+
+                                {% if 'linked_assets' in request.session  %}
+                                    THERE ARE LINKED ASSETS
+                                    {{ request.session.linked_assets }}
+                                    {% with request.session.linked_assets as them %}
+
+                                        {% for item in them.iteritems %}
+
+                                            {{ item.model }}
+
+                                        {% endfor %}
+
+                                    {% endwith %}
+                                {% endif %}
+
+
+
+
+
+
+
+
+
+
+
+
 
                             {% else %}
                                 <li><a href="/pages/share"><div>Sharing</div></a></li>

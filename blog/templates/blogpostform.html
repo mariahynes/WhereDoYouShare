@@ -18,46 +18,40 @@
             </style>
         {% endblock %}
         <!-- Slider ============================================= -->
-		<section id="slider">
+		<section id="content">
+			<div class="content-wrap">
+                <div class="container clearfix">
 
-{#			<div class="full-screen section nopadding nomargin noborder ohidden" style="background: url({% static 'myimages/login1.jpg' %}) bottom center no-repeat; background-size: cover;">#}
-        <div class="nopadding nomargin noborder" style="background: url({% static 'myimages/login1.jpg' %}) bottom center no-repeat; background-size: cover;">
+{#                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">{{ asset.asset_display_name }} Blog</h2>#}
 
-				<div class="container" >
-{#				    <div class="vertical-middle">#}
-                  <div >
+                        <div class="fancy-title title-bottom-border">
+                        <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';"> {{ asset.asset_display_name }} Blog</h2>
+                        </div>
 
-				        <div id="section-about" class="page-section">
+                        {% if errors %}
 
-					        <div class="container clearfix"> <!--clearfix removed-->
+                            {% for error in errors %}
+                                <p style="color:red">{{ error }}</p>
+                            {% endfor %}
 
-                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">{{ asset.asset_display_name }} Blog</h2>
+                        {% else %}
 
-                                    {% if errors %}
+                            <form role="form" method="POST" enctype="multipart/form-data" >
+                                {% csrf_token %}
+                                {{ form | as_bootstrap }}
 
-                                        {% for error in errors %}
-                                            <p style="color:red">{{ error }}</p>
-                                        {% endfor %}
+                                {% if content_error %}
+                                <div class="sb-msg" style="color: red"><i class="icon-warning-sign"></i><strong>Warning!</strong>  {{ content_error }}</div><br>
+                                {% endif %}
 
-                                    {% else %}
-{#enctype="multipart/form-data"#}
-                                        <h1>New Post</h1>
-                                        <form role="form" method="POST" enctype="multipart/form-data" >
-                                            {% csrf_token %}
-                                            {{ form | as_bootstrap }}
-
-                                            {% if content_error %}
-                                            <div class="sb-msg" style="color: red"><i class="icon-warning-sign"></i><strong>Warning!</strong>  {{ content_error }}</div><br>
-                                            {% endif %}
-
-                                             <div class="form-group">
-                                                <button type="button" class="t400 capitalize button button-border button-dark button-circle nomargin" onclick="location.href='/blog/blog/{{ asset.id }}/{{ post.id }}'"><i class="fa fa-backward"></i> Cancel</button>
-                                                <button type="submit" class="t400 capitalize button button-border button-dark button-circle nomargin">Save</button>
-                                            </div>
+                                 <div class="form-group">
+                                    <button type="button" class="t400 capitalize button button-border button-blue button-circle nomargin" onclick="location.href='/blog/blog/{{ asset.id }}/{{ post.id }}'"><i class="fa fa-backward"></i> Cancel</button>
+                                    <button type="submit" class="t400 capitalize button button-border button-blue button-circle nomargin">Save</button>
+                                </div>
 
 
 
-                                        </form>
+                            </form>
 
                                     {% endif %}
 

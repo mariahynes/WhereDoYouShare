@@ -58,18 +58,18 @@
                                         </div>
                                     </form>
                             {% if assets %}
-                            <div id="portfolio" class="portfolio grid-container portfolio-1 clearfix">
+                            <div id="portfolio" class="portfolio grid-container portfolio-2  clearfix">
 
                                 {% for asset in assets %}
 
                                     <article class="portfolio-item pf-media pf-icons">
                                         <div class="portfolio-image">
-                                            <a href="portfolio-single.html">
+                                            <a href="#">
                                                 <img src="/media/{{ asset.asset_ID.image }}" alt="{{ asset.asset_ID.asset_display_name }}" class="img-rounded">
                                             </a>
                                             <div class="portfolio-overlay">
                                                 <a href="/media/{{ asset.asset_ID.image }}" class="left-icon" data-lightbox="image"><i class="icon-line-plus"></i></a>
-                                                <a href="portfolio-single.html" class="right-icon"><i class="icon-line-ellipsis"></i></a>
+                                                <a href="#" class="right-icon"><i class="icon-line-ellipsis"></i></a>
                                             </div>
                                         </div>
 {#                                        <div class="portfolio-desc">#}
