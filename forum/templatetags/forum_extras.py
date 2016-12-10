@@ -58,12 +58,16 @@ def last_posted_user_name(thread):
 
 
 @register.filter
-def get_num_subjects(subject):
+def get_num_subject_grids(subject):
 
     total_subjects = 0
 
     for sub in subject:
 
         total_subjects += 1
+
+    #display max 4 in the grid
+    if total_subjects > 4:
+        total_subjects = 4
 
     return total_subjects

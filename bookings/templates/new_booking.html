@@ -5,14 +5,11 @@
     {% load staticfiles %}
         {% block head_style %}
             <style>
-                input {
-                    width:60%;
-                    padding: 12px 20px;
-                    margin: 2px 0;
-                    box-sizing: border-box;
-                    border-radius: 10px;
-                    border: none;
-               }
+
+
+            @media screen and (max-width: 480px) {
+                #the_padding {padding: 10px;}
+            }
             </style>
         {% endblock %}
          {% block head_js%}
@@ -25,7 +22,7 @@
 
 {#         <div >#}
 
-         <div class=" nopadding nomargin noborder" style="background: url({% static 'myimages/booking.jpg' %}) bottom center no-repeat; background-size: cover;">
+         <div class=" nopadding nomargin noborder" style="background: url({% static 'myimages/rainbow.jpg' %}) bottom center no-repeat; background-size: cover;">
 
 
                 <div class="row nomargin" style="position: relative; z-index: 2;">
@@ -36,7 +33,8 @@
                 {% else %}
                     <div class="col-md-offset-2 col-md-5 full-screen" style="background-color: rgba(0,0,0,0.45);">
                 {% endif %}
-                    <div class="col-padding">
+
+                    <div id="the_padding" class="col-padding">
 
 
                         {% if user_ok == True %}

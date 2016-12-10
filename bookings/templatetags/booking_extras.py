@@ -3,6 +3,7 @@ import datetime
 from assets.models import Asset_User_Mapping
 from bookings.models import BookingDetail
 from home.myAuth import check_user_linked_to_owner
+import json
 
 register = template.Library()
 
@@ -549,3 +550,34 @@ def booking_has_consec_dates(booking_id):
     else:
 
         return False
+
+# @register.simple_tag
+# def return_user_asset_ids(request):
+#
+#     # this is the list of assets saved in the session object (in json format)
+#     num_linked_assets = request.session['linked_assets']
+#     # saved into a python object (from json)
+#     linked_asset_data = json.loads(num_linked_assets)
+#
+#     return linked_asset_data
+
+@register.simple_tag
+def return_user_asset_ids(request):
+
+    assets = Asset_User_Mapping.objects.all().filter(user_ID=request.user)
+
+    return assets
+
+@register.filter
+def get_num_asset_grids(assets):
+
+    total_assets = 0
+
+    for asset in assets:
+        total_assets += 1
+
+    #display max 4 in the grid
+    if total_assets > 4:
+        total_assets = 4
+
+    return total_assets

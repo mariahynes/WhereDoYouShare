@@ -10,121 +10,107 @@
                 }
             </style>
         {% endblock %}
-        <!-- Slider ============================================= -->
-		<section id="slider" class="full-screen  slider-parallax">
+    <section id="content">
 
-			<div class="full-screen section nopadding nomargin noborder ohidden" style="background: url({% static 'myimages/login1.jpg' %}) bottom center no-repeat; background-size: cover;">
+        <div class="content-wrap">
 
-				<div class="container " >
-				    <div class="vertical-middle">
+            <div class="container clearfix" >
 
-				        <div id="section-about" class="page-section">
+                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">
+                Bookings | {{ asset.asset_display_name }}</h2>
 
-					        <div class="container clearfix"> <!--clearfix removed-->
-
-                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">
-                                Bookings | {{ asset.asset_display_name }}</h2>
-
-                                 <p>
-                                       {{ page_name }}
-                                        {% if return_page_user %}
-                                        (requested by me)
-                                            {% else %}
-                                            (for all Members)
-                                        {% endif %}
-                                 </p>
+                 <p>
+                       {{ page_name }}
+                        {% if return_page_user %}
+                        (requested by me)
+                            {% else %}
+                            (for all Members)
+                        {% endif %}
+                 </p>
 
 
 
-                                {%  if errors %}
-                                     {% for error in errors %}
-                                           <p style="color:red">{{ error }}</p>
-                                     {% endfor %}
-                                {% else %}
+                {%  if errors %}
+                     {% for error in errors %}
+                           <p style="color:red">{{ error }}</p>
+                     {% endfor %}
+                {% else %}
 
-                                    {% if bookings %}
-                                            <p>
-                                        <div class = "table-responsive">
-                                            <table class = "table">
-                                                <thead>
-                                                    <tr>
-                                                        <th>ID</th>
-                                                        <th>Using it from</th>
-                                                        <th>Returning it on</th>
-                                                        <th>Days</th>
-                                                        <th>Requested By</th>
-                                                        <th>Slot Owner</th>
-                                                        <th>Status</th>
-
-
-                                                        <th></th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                {%  for booking_id in bookings %}
+                    {% if bookings %}
+                            <p>
+                        <div class = "table-responsive">
+                            <table class = "table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Using it from</th>
+                                        <th>Returning it on</th>
+                                        <th>Days</th>
+                                        <th>Requested By</th>
+                                        <th>Slot Owner</th>
+                                        <th>Status</th>
 
 
-                                                    <tr data-toggle="popover" data-html=true title="Booking Ref {{ booking_id.1 }}" data-placement="top" data-trigger="hover"
-                                                            data-content="<table class='table'>
-                                                            <tr>
-                                                            <td>
-                                                            {% get_booking_status booking_id.1 %}
-
-                                                            </td>
-                                                            </tr>
-                                                            </table>">
-                                                        <td> <a href="{% url 'booking_detail' booking_id.1 %}" class="btn btn-primary">{{ booking_id.1 }}</a> </td>
-                                                        <td>{% get_booking_start_date booking_id.1 as the_start %}{{ the_start | date:"l" }}, {{ the_start | date:"d M Y" }}</td>
-                                                        <td>{% get_booking_end_date booking_id.1 as the_end %} {{ the_end | date:"l" }}, {{ the_end | date:"d M Y" }}</td>
-
-                                                        <td>{% get_total_days_in_booking booking_id.1 %}</td>
-                                                        <td>{% get_booking_requestor booking_id.1 %}</td>
-                                                        <td>{% get_booking_slot_owner booking_id.1 %}</td>
-                                                        <td>{% get_booking_status booking_id.1 %}</td>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {%  for booking_id in bookings %}
 
 
-                                                        <td></td>
+                                    <tr data-toggle="popover" data-html=true title="Booking Ref {{ booking_id.1 }}" data-placement="top" data-trigger="hover"
+                                            data-content="<table class='table'>
+                                            <tr>
+                                            <td>
+                                            {% get_booking_status booking_id.1 %}
 
-                                                    </tr>
+                                            </td>
+                                            </tr>
+                                            </table>">
+                                        <td> <a href="{% url 'booking_detail' booking_id.1 %}" class="400 capitalize button button-border button-blue button-circle nomargin">{{ booking_id.1 }}</a> </td>
+                                        <td>{% get_booking_start_date booking_id.1 as the_start %}{{ the_start | date:"l" }}, {{ the_start | date:"d M Y" }}</td>
+                                        <td>{% get_booking_end_date booking_id.1 as the_end %} {{ the_end | date:"l" }}, {{ the_end | date:"d M Y" }}</td>
 
-                                                {% endfor %}
+                                        <td>{% get_total_days_in_booking booking_id.1 %}</td>
+                                        <td>{% get_booking_requestor booking_id.1 %}</td>
+                                        <td>{% get_booking_slot_owner booking_id.1 %}</td>
+                                        <td>{% get_booking_status booking_id.1 %}</td>
 
-                                                 </tbody>
-                                            </table>
-                                        </div>
-                                        <p>
-                                        <a href="{% url 'profile' %}" class="btn btn-primary">Back to My Profile</a>
-                                        </p>
 
-                                            </p>
-                                            {% else %}
-                                                {% if assets.count > 0 %}
-                                                    You have no upcoming bookings <br>
-                                                    {% for asset in assets %}
-                                                        <a href="{% url 'make_a_booking' asset.asset_ID_id %}" role="button" class = "btn btn-primary">Make a Booking | {{ asset.asset_ID.asset_display_name }}</a>
-                                                    {% endfor %}
-                                                {% endif %}
-                                            {% endif %}
+                                        <td></td>
 
+                                    </tr>
+
+                                {% endfor %}
+
+                                 </tbody>
+                            </table>
+                        </div>
+                        <p>
+{#                        <a href="{% url 'profile' %}" class="btn btn-primary">Back to My Profile</a>#}
+                        </p>
+
+                            </p>
+                            {% else %}
+                                {% if assets.count > 0 %}
+                                    You have no upcoming bookings <br>
+                                    {% for asset in assets %}
+                                        <a href="{% url 'make_a_booking' asset.asset_ID_id %}" role="button" class = "btn btn-primary">Make a Booking | {{ asset.asset_ID.asset_display_name }}</a>
+                                    {% endfor %}
                                 {% endif %}
+                            {% endif %}
 
-                                    <div class="clear"></div>
+                {% endif %}
 
-                                    <div class="row topmargin-lg divcenter" style="max-width: 1000px;"></div>
+                <div class="clear"></div>
 
+                <div class="row topmargin-lg divcenter" style="max-width: 1000px;"></div>
 
+            </div>
 
-				            </div>
+        </div>
 
-                       </div>
-
-					</div>
-				</div>
-
-			</div>
-
-		</section> <!--#slider end -->
-
+    </section>
 
 
     {% endblock %}
