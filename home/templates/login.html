@@ -23,7 +23,7 @@
         <!-- Slider ============================================= -->
 		<section id="slider" class="full-screen  slider-parallax">
         <div class="slider-parallax-inner">
-			<div class="full-screen section nopadding nomargin noborder ohidden" style="background: url({% static 'myimages/login.jpg' %}) bottom center no-repeat; background-size: cover;">
+			<div class="full-screen section nopadding nomargin noborder ohidden" style="background: url({% static 'images/login.jpg' %}) bottom center no-repeat; background-size: cover;">
 
                 <div class="row nomargin" style="position: relative; z-index: 2;">
 						<div class="col-md-offset-2 col-md-3 full-screen" style="background-color: rgba(0,0,0,0.45);">
@@ -51,6 +51,15 @@
                                     <div class="form-group">
                                         <button type="submit" class="t400 capitalize button button-border button-light button-circle nomargin">Start Sharing</button>
                                     </div>
+
+                                    {% if errors %}
+                                        {% for error in errors %}
+                                            <div class="style-msg errormsg">
+                                                <div class="sb-msg" style="color: red"><i class="icon-info-sign"></i>{{ error }}</div>
+                                            </div>
+                                        {% endfor %}
+                                    {% endif %}
+
                                 </form>
 
 							</div>

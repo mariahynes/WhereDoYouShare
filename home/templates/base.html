@@ -1,5 +1,6 @@
 {% load staticfiles %}
 {% load booking_extras %}
+{% load assets_extras %}
 <!DOCTYPE html>
 <html dir="ltr" lang="en-US">
 <head>
@@ -66,8 +67,8 @@
 		============================================= -->
 		<!--<header id="header" class="full-header border-full-header transparent-header dark static-sticky" data-sticky-class="not-dark" data-sticky-offset="full" data-sticky-offset-negative="100">-->
 {#        <header id="header" class="transparent-header semi-transparent full-header" data-sticky-class="not-dark">#}
-    <header id="header" class="dark full-header" data-sticky-class="dark">
-			<div id="header-wrap">
+    <header id="header" class="dark full-header static-sticky sticky-header" style="height: 110px;">
+			<div id="header-wrap" class="dark full-header static-sticky sticky-header" style="height: 110px;">
 
 				<div class="container clearfix">
 
@@ -75,33 +76,29 @@
 
 					<!-- Logo
 					============================================= -->
-					<div id="logo">
-                        <div class="hidden-xs">
-						    <a href="index.html" class="standard-logo" data-dark-logo="{% static 'myimages/website_logo_MH.png' %}"><img src="{% static 'myimages/website_logo_MH.png' %}" alt="Canvas Logo"></a>
-						    <a href="index.html" class="retina-logo" data-dark-logo="{% static 'myimages/website_logo_x2_MH.png' %}"><img src="{% static 'myimages/website_logo_x2_MH.png' %}" alt="Canvas Logo"></a>
+
+                    <div id="logo" style="border-right:none;">
+                        <div class = "hidden-xs">
+                            <div class = "allmargin-sm" style="font-family: 'Titillium Web';"> Where do you Share?<div class="bottommargin-sm" style="font-size: small">{{ user.first_name }} {{ user.last_name }} {% if user.is_authenticated %} | {% endif %}{{ user.email }}</div></div>
                         </div>
-                        <div class="visible-xs nopadding">
-
-                        <header id="header" class="dark topmargin-sm" style="font-family: 'Playfair Display'; font-style: italic; text-transform: lowercase; font-size: large;">WHERE | DO | YOU | SHARE</header>
+                        <div class = "visible-xs">
+                            <div class = "allmargin-sm" style="font-family: 'Titillium Web'"> Where do you Share? <br><div class="bottommargin-sm" style="font-size: small">{{ user.first_name }} {{ user.last_name }} {% if user.is_authenticated %} | {% endif %} {{ user.email }}</div></div>
+                        </div>
                     </div>
-					</div><!-- #logo end -->
 
-					<!-- Primary Navigation class="one-page-menu" data-easing="easeInOutExpo" data-speed="1250" data-offset="65"
+
+					<!-- Primary Navigation
 					============================================= -->
 
                     <nav id="primary-menu">
 
-						<ul >
+						<ul style="border-right:none;" >
                             {% if user.is_authenticated %}
 
                                 <li><a href="{% url 'profile' %}"><div>Home</div></a></li>
 
-                                {% if user.is_superuser %}
-                                    <li><a href="/admin"><div>Admin</div></a></li>
-                                {%  endif %}
 
 
-                                <li><a href="{% url 'my_bookings' %}"><div>My Bookings</div></a></li>
 
                                 {# show a MENU item that consists of this user's Assets #}
                                 {% if 'linked_assets' in request.session %}
@@ -140,25 +137,30 @@
                                                     <li><a href="{% url 'forum' asset.asset_ID_id %}"><div>{{ asset.asset_ID.asset_display_name }} Forum</div></a></li>
 
                                                         {%  if asset.is_owner %}
-                                                        {% get_total_for_approval asset.asset_ID user.id num_bookings=True as totes_approve %}
-                                                        {% if totes_approve > 0 %}
-                                                    <li class="divider"></li>
-                                                    <li><a href="{% url 'all_asset_bookings' asset.asset_ID_id user.id "future" "pending" user.id %}"><div>My Pending Approvals <div class="badge">{{ totes_approve }}</div></div></a></li>
-                                                        {% endif %}
+                                                            {% get_total_for_approval asset.asset_ID user.id num_bookings=True as totes_approve %}
+                                                            {% if totes_approve > 0 %}
+                                                                <li class="divider"></li>
+                                                                <li><a href="{% url 'all_asset_bookings' asset.asset_ID_id user.id "future" "pending" user.id %}"><div>My Pending Approvals <div class="badge">{{ totes_approve }}</div></div></a></li>
+                                                            {% endif %}
                                                         {% else %}
-                                                        {% get_total_for_approval_linked asset.asset_ID user.id num_bookings=True as totes_approve_linked %}
-                                                        {% if totes_approve_linked > 0 %}
-                                                    <li class="divider"></li>
-                                                    <li><a href="{% url 'all_asset_bookings' asset.asset_ID_id user.id "future" "pending" asset.inviter_id %}"><div>Pending Approvals (for your shared time-slot) <div class="badge">{{ totes_approve_linked }}</div></div></a></li>
+                                                            {% get_total_for_approval_linked asset.asset_ID user.id num_bookings=True as totes_approve_linked %}
+                                                            {% if totes_approve_linked > 0 %}
+                                                                {% get_asset_invitor asset.asset_ID request.user True as invitor %}
+                                                                <li class="divider"></li>
+                                                                <li><a href="{% url 'all_asset_bookings' asset.asset_ID_id user.id "future" "pending" asset.inviter_id %}"><div>{{ invitor }}'s Pending Approvals <div class="badge">{{ totes_approve_linked }}</div></div></a></li>
+                                                            {% endif %}
                                                         {% endif %}
-                                                        {%  endif %}
                                                 </ul>
                                             </li>
                                             {% endfor %}
                                         </ul>
                                     </li>
                                 {% endif %}
+                                <li><a href="{% url 'my_bookings' %}"><div>My Bookings</div></a></li>
                                 <li><a href="{% url 'logout' %}"><div>Sign Out</div></a></li>
+                                {% if user.is_superuser %}
+                                    <li><a href="/admin"><div>Admin</div></a></li>
+                                {%  endif %}
                             {% else %}
                                 <li><a href="/" ><div>Home</div></a></li>
                                 <li><a href="/pages/share"><div>Sharing</div></a></li>
@@ -178,7 +180,8 @@
 		</header><!-- #header end -->
 
         {% if messages %}
-            <div class="alert alert-success">
+            <div class="alert alert-info">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
                 <div class="messages">
                     {% for message in messages %}
                         {{ message }}
@@ -257,6 +260,7 @@
                                     <li><a href="/media/thank_you_images/bam.jpg" class="left-icon" data-lightbox="image"> My very understanding husband</a></li>
 									<li><a href="/media/thank_you_images/mas.jpg" class="left-icon" data-lightbox="image">My very patient children</a></li>
 									<li><a target="_blank" href="http://masteringdjango.com/django-book/" data-easing="easeInOutExpo" data-speed="1250" data-offset="70">The Django Book</a></li>
+                                    <li><a target="_blank" href="https://themeforest.net/item/canvas-the-multipurpose-html5-template/9228123" data-easing="easeInOutExpo" data-speed="1250" data-offset="70">Canvas</a></li>
 								</ul>
                                 <br><br>
 							</div>
@@ -268,12 +272,20 @@
 
 							<div class="widget clearfix">
                                 <h4>Copyright</h4>
-                                <span class="ls5" style="font-family: 'Playfair Display'; font-style: italic; text-transform: lowercase; color: #FFF;"> Databasis</span><br>
+                                <span class="ls2" style="font-family: 'Playfair Display'; font-style: italic; text-transform: lowercase; color: #FFF;"> Databasis</span><br>
 {#                                 http://stackoverflow.com/questions/4562587/shortest-way-to-print-current-year-in-javascript#}
                                 <script>document.write(new Date().getFullYear())</script><br>
                                 All Rights Reserved
-
 							</div>
+
+
+
+									<a target="_blank" href="https://github.com/mariahynes/HouseShare" class="social-icon inline-block noborder si-small si-github" title="Github">
+										<i class="icon-github"></i>
+										<i class="icon-github"></i>
+									</a>
+
+
                             <br><br>
 						</div>
 
@@ -281,18 +293,11 @@
 
 							<div class="widget clearfix">
 								<h4>Contact</h4>
-
-								<p class="lead"><a target="_blank" href="http://www.databasis.ie"><span class="ls5" style="font-family: 'Playfair Display'; font-style: italic; text-transform: lowercase; color: #FFF;">DATABASIS</span></a>
-                                    <br>Dublin, Ireland</p>
-
-								<div class="center topmargin-sm">
-
-									<a target="_blank" href="https://github.com/mariahynes/HouseShare" class="social-icon inline-block noborder si-small si-github" title="Github">
-										<i class="icon-github"></i>
-										<i class="icon-github"></i>
-									</a>
-
-								</div>
+                                <a target="_blank" href="http://www.databasis.ie"><span class="ls2" style="font-family: 'Playfair Display'; font-style: italic; font-size: 25px; text-transform: lowercase; color: #FFF;"> Databasis</span></a>
+                                 <ul class="list-unstyled footer-site-links nobottommargin">
+                                     <li>Dublin</li>
+                                     <li>Ireland</li>
+                                     </ul>
 							</div>
 
 						</div>

@@ -22,10 +22,14 @@
 
 {#         <div >#}
 
-         <div class=" nopadding nomargin noborder" style="background: url({% static 'myimages/rainbow.jpg' %}) bottom center no-repeat; background-size: cover;">
+{#         <div class=" nopadding nomargin noborder" style="background: url({% static 'myimages/rainbow.jpg' %}) bottom center no-repeat; background-size: cover;">#}
+        {% if user_ok == True %}
+            <div class=" nopadding nomargin noborder" style="background: url('/media/{{ the_asset.image }}') bottom center no-repeat; background-size: cover;">
+        {% else %}
+            <div class=" nopadding nomargin noborder" style="background: url({% static 'images/rainbow.jpg' %}) bottom center no-repeat; background-size: cover;">
+        {% endif %}
 
-
-                <div class="row nomargin" style="position: relative; z-index: 2;">
+            <div class="row nomargin" style="position: relative; z-index: 2;">
 {#						<div class="col-md-offset-2 col-md-5 full-screen" style="background-color: rgba(0,0,0,0.45);">#}
 
                 {% if owner_date_object %}
@@ -57,10 +61,12 @@
 
                                         <br>
                                                 {% if errors %}
-                                                        {% for error in errors %}
-                                                            <p style="color:red">{{ error }}</p>
-                                                        {% endfor %}
-                                                    {% endif %}
+                                                    {% for error in errors %}
+                                                        <div class="style-msg errormsg">
+                                                            <div class="sb-msg" style="color: red"><i class="icon-warning-sign"></i><strong>Warning! </strong>{{ error }}</div><br>
+                                                        </div>
+                                                    {% endfor %}
+                                                {% endif %}
 
                                         <div class="form-group">
                                             <button type="submit" class="t400 capitalize button button-border button-light button-circle nomargin">Check Availability</button>
@@ -214,7 +220,9 @@
 
                             {% if errors %}
                                 {% for error in errors %}
-                                    <p style="color:red">{{ error }}</p>
+                                    <div class="style-msg errormsg">
+                                     <div class="sb-msg not-dark" style="color: red"><i class="icon-warning-sign"></i><strong>Warning! </strong>{{ error }}</div><br>
+                                    </div>
                                 {% endfor %}
                             {% endif %}
 

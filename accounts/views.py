@@ -57,7 +57,7 @@ def profile(request):
             # hard-coding the actions here for purposes of testing the concept of using an invitation code
             cd = form.cleaned_data
             the_date = timezone.now().strftime("%Y-%m-%d %H:%M:%S")
-            if cd['invitecode'] == "12345":
+            if cd['invitecode'] == "11111":
                 # check if the code has been used
                 if check_user_linked_to_asset(request.user,1) == False:
                     new_mapping = Asset_User_Mapping(user_ID=request.user,asset_ID_id=1,date_activated=the_date, is_owner=0,is_activated=True,inviter_id=13)
@@ -65,13 +65,22 @@ def profile(request):
                 else:
                     code_message = "You have already used that code"
 
-            elif cd['invitecode'] == "54321":
+            elif cd['invitecode'] == "22222":
                 if check_user_linked_to_asset(request.user,2) == False:
-                    new_mapping = Asset_User_Mapping(user_ID=request.user, asset_ID_id=2, date_activated=the_date, is_owner=0, is_activated=True, inviter_id=13)
+                    new_mapping = Asset_User_Mapping(user_ID=request.user, asset_ID_id=2, date_activated=the_date, is_owner=0, is_activated=True, inviter_id=21)
                     new_mapping.save()
                 else:
                     code_message = "You have already used that code"
 
+            elif cd['invitecode'] == "33333":
+                if check_user_linked_to_asset(request.user,3) == False:
+                    new_mapping = Asset_User_Mapping(user_ID=request.user, asset_ID_id=3, date_activated=the_date, is_owner=0, is_activated=True, inviter_id=19)
+                    new_mapping.save()
+                else:
+                    code_message = "You have already used that code"
+
+            else:
+                code_message = "Code not recognised"
     else:
 
         invitecodeform = InviteCodeForm()
@@ -105,6 +114,8 @@ def profile(request):
 
 
 def login(request):
+    errors = []
+
     if request.method == 'POST':
         form = UserLoginForm(request.POST)
         if form.is_valid():
@@ -116,12 +127,14 @@ def login(request):
                 # messages.error(request, "You're very welcome in!")
                 return redirect(reverse('profile'))
             else:
-                form.add_error(None, "Now, this could be our problem, but your either your email or your password was not recognised")
+                errors.append("Your details were not recognised")
 
     else:
         form = UserLoginForm()
 
-    args = {'form': form}
+    args = {'form': form,
+            'errors':errors}
+
     args.update(csrf(request))
     return render(request, 'login.html', args)
 

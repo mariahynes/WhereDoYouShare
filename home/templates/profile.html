@@ -28,12 +28,12 @@
             <div class="container clearfix" >
 
 
-                <h3 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">{{ user.first_name }} {{ user.last_name }}
-                    <div class="visible-xs"><br></div>
+                <h3 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">You
+
                     {% if assets %}
-                        <small><small>is sharing...</small></small>
+                        <small><small>are sharing...</small></small>
                     {% else %}
-                        <small><small>is about to start sharing!</small></small>
+                        <small><small>are about to start sharing!</small></small>
                     {% endif %}
                 </h3>
 
@@ -48,7 +48,11 @@
                                         {% csrf_token %}
                                          {{ invitecodeform | as_bootstrap}}
                                         <div class="form-group">
-                                            <button type="submit" class="400 capitalize button button-border button-blue button-circle nomargin">Submit the Code</button>{% if code_message %}{{ code_message }}{% endif %}
+                                            <button type="submit" class="400 capitalize button button-border button-blue button-circle nomargin">Submit the Code</button>
+                                            {% if code_message %}
+                                                <div class = "visible-xs"><br></div>
+                                                <span class="sb-msg" style="color: deepskyblue"><i class="icon-info-sign"></i><strong>Sorry!</strong> {{ code_message }}</span>
+                                            {% endif %}
                                         </div>
                                     </form>
                             {% if assets %}
@@ -81,6 +85,27 @@
                                                     {% get_total_asset_members asset.asset_ID as totes_owners %}
                                                             Member{{ totes_members|pluralize }}
                                             </span>
+                                            <span>
+                                                {% get_slot_desc_summary asset.asset_ID_id as slot_desc %}
+                                                {% if slot_desc %}
+                                                    Rotates: {{ slot_desc }}
+                                                {% endif %}
+                                            </span>
+                                            <span>
+                                                {% get_asset_invitor_for_display asset.asset_ID request.user as linked_owner %}
+                                                {% if linked_owner %}
+                                                    You're linked to Owner: {{ linked_owner }}
+                                                {% endif %}
+                                            </span>
+                                            <span>
+                                                {% get_next_slot_start asset.asset_ID_id asset.inviter_id as next_slot_start %}
+                                                {% get_asset_invitor asset.asset_ID request.user True as owner_first %}
+                                                {% if asset.inviter_id == request.user.id %}
+                                                    Your next slot starts: {{ next_slot_start }}
+                                                {% elif next_slot_start %}
+                                                    {{ owner_first }}'s next slot starts: {{ next_slot_start }}
+                                                {% endif %}
+                                            </span>
 
 
 
@@ -99,13 +124,6 @@
                             {% endif %}
                             <div>
 
-{#                                    <form role="form" method="post" action="">#}
-{#                                        {% csrf_token %}#}
-{#                                         {{ invitecodeform | as_bootstrap}}#}
-{#                                        <div class="form-group">#}
-{#                                            <button type="submit" class="btn btn-primary">Submit the Code</button>{% if code_message %}{{ code_message }}{% endif %}#}
-{#                                        </div>#}
-{#                                    </form>#}
 
                             </div>
 

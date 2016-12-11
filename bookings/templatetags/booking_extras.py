@@ -3,7 +3,6 @@ import datetime
 from assets.models import Asset_User_Mapping
 from bookings.models import BookingDetail
 from home.myAuth import check_user_linked_to_owner
-import json
 
 register = template.Library()
 

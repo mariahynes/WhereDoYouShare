@@ -553,7 +553,7 @@ def get_end_slot_date(start_date, days_step):
     return end_slot_date
 
 
-def check_availability(asset_id,start_date, end_date):
+def check_availability(asset_id, start_date, end_date):
 
     # check each date in the span between start_date and end_date to see if it is in the bookingdetail table for this asset_id
     # could be pending or confirmed

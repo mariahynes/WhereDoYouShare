@@ -31,7 +31,9 @@
                         {% if errors %}
 
                             {% for error in errors %}
-                                <p style="color:red">{{ error }}</p>
+                                <div class="style-msg errormsg">
+                                    <div class="sb-msg" style="color: red"><i class="icon-warning-sign"></i><strong>Warning!</strong>{{ error }}</div><br>
+                                </div>
                             {% endfor %}
 
                         {% else %}
@@ -41,7 +43,9 @@
                                 {{ form | as_bootstrap }}
 
                                 {% if content_error %}
-                                <div class="sb-msg" style="color: red"><i class="icon-warning-sign"></i><strong>Warning!</strong>  {{ content_error }}</div><br>
+                                    <div class="style-msg errormsg">
+                                        <div class="sb-msg" style="color: red"><i class="icon-warning-sign"></i><strong>Warning! </strong>{{ content_error }}</div><br>
+                                    </div>
                                 {% endif %}
 
                                  <div class="form-group">
