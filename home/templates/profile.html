@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 {% load booking_extras %}
+{% load assets_extras %}
     {% load bootstrap_tags %}
     {% block content %}
     {% load staticfiles %}
-    {% load assets_extras %}
         {% block head_style %}
                 <style>
                 input {
@@ -62,21 +62,28 @@
                                             </a>
                                             <div class="portfolio-overlay">
                                                 <a href="/media/{{ asset.asset_ID.image }}" class="left-icon" data-lightbox="image"><i class="icon-line-plus"></i></a>
-                                                <a href="#" class="right-icon"><i class="icon-line-ellipsis"></i></a>
+                                                <a href="{% url 'make_a_booking' asset.asset_ID_id %}" class="right-icon"><i class="icon-line-ellipsis"></i></a>
                                             </div>
                                         </div>
                                         <div class="portfolio-desc">
-                                            <div class="dropdown" id="{{ asset.id }}">
 
-                                                    {% if asset.is_owner %}
-                                                       <h3>{{ asset.asset_ID.asset_display_name }} <small>(Owner)</small></h3>
-                                                    {% else %}
-                                                        <h3>{{ asset.asset_ID.asset_display_name }}</h3>
-                                                    {% endif %}
+                                            {% if asset.is_owner %}
+                                               <h3><a href="{% url 'make_a_booking' asset.asset_ID_id %}">{{ asset.asset_ID.asset_display_name }} <small>(Owner)</small></a></h3>
+                                            {% else %}
+                                                <h3><a href="{% url 'make_a_booking' asset.asset_ID_id %}">{{ asset.asset_ID.asset_display_name }}</a></h3>
+                                            {% endif %}
+
+                                            <span>{% get_total_asset_owners asset.asset_ID %}
+                                                    {% get_total_asset_owners asset.asset_ID as totes_members %}
+                                                        Owner{{ totes_members|pluralize }}
+
+                                                    | {% get_total_asset_members asset.asset_ID %}
+                                                    {% get_total_asset_members asset.asset_ID as totes_owners %}
+                                                            Member{{ totes_members|pluralize }}
+                                            </span>
 
 
-                                            </div>
-                                            <span><a href="{% url 'make_a_booking' asset.asset_ID_id %}">Check Availability</a></span>
+
                                         </div>
                                 </article>
 

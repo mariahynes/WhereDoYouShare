@@ -38,11 +38,12 @@
 
 
                         {% if user_ok == True %}
-                                <div class="heading-block nobottomborder bottommargin-sm dark">
-									<h1 style="font-size: 22px;font-family: 'Titillium Web'">Check Availability | {{ the_asset.asset_display_name }}</h1>
-									<div class="not-dark">
-                                        <span style="font-size: 16px;" class="t300 capitalize ls1 notopmargin"></span></div>
-								</div>
+
+                            <div class="fancy-title title-bottom-border">
+                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3 dark" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">Check Dates
+                                    <span class="visible-xs"><br></span>
+                                    <span style="color: #FFF; font-size: smaller;">({{ the_asset.asset_display_name }})</span></h2>
+                                </div>
 
                                     <form role="form" method="get" action="{% url 'make_a_booking' the_asset.id %}">
     {#                                    {% csrf_token %}#}
@@ -197,7 +198,7 @@
                                                                  {{ booking_form | as_bootstrap }}
                                                         </div>
                                                         <div class="form-group">
-                                                            <button type="submit" class="btn btn-primary">Request the Date{{ owner_date_object | get_total_days_available | pluralize}}</button>
+                                                            <button type="submit" class="400 capitalize button button-border button-blue button-circle nomargin">Request the Date{{ owner_date_object | get_total_days_available | pluralize}}</button>
                                                         </div>
                                                     </form>
                                                     </div>

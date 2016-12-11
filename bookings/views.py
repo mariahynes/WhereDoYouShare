@@ -597,7 +597,7 @@ def delete_booking(request,booking_id):
     the_booking = get_object_or_404(Booking, pk=booking_id)
     the_id = request.user
 
-    if check_if_user_is_booking_requestor(the_id,booking_id):
+    if check_if_user_is_booking_requestor(the_id,booking_id) or request.user.is_superuser:
 
         # extract the asset_id from the booking so that
         # user can be returned to their Bookings Page for that Asset

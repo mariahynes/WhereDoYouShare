@@ -100,19 +100,18 @@
                                                 <p>
                                                 {%  if new == "new" %}
 
-                                                    <a href="{% url 'all_asset_bookings' asset.id user.id %}">View My Bookings</a>
+                                                    <a href="{% url 'all_asset_bookings' asset.id user.id %}" class="400 capitalize button button-border button-blue button-circle nomargin">View My Bookings</a>
 
                                                 {% else %}
 
-                                                    <a href="{{ request.META.HTTP_REFERER }} " class="btn btn-primary">Back </a>
+                                                    <a href="{{ request.META.HTTP_REFERER }} " class="400 capitalize button button-border button-blue button-circle nomargin">Back </a>
 
                                                 {% endif %}
                                                 </p>
 
-                                            {% if include_delete_booking_button %}
-                                                    <a href="{% url 'delete_booking' booking.booking_id %}" class="btn btn-primary" >Delete Booking</a>
-                                            {% elif user.is_superuser %}
-                                                <a href="{% url 'delete_booking' booking.booking_id %}" class="btn btn-primary" >Delete Booking</a>
+
+                                            {% if user.is_superuser %}
+                                                <a href="{% url 'delete_booking' booking.booking_id %}" class="400 capitalize button button-border button-red button-circle nomargin" >Delete Booking (Superuser only)</a>
                                             {% endif %}
 
 

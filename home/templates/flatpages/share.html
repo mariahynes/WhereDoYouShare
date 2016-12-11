@@ -12,17 +12,21 @@
                     border-radius: 10px;
                     border: none;
                }
+             @media screen and (max-width: 480px) {
+                    #the_padding {padding: 10px;}
+                }
 
             </style>
         {% endblock %}
         <!-- Slider ============================================= -->
-		<section id="slider" class="full-screen slider-parallax ">
+{#		<section id="slider" class="full-screen slider-parallax ">#}
+        		<section id="slider" class="full-screen">
         <div class="slider-parallax-inner">
-			<div class="full-screen section nopadding nomargin noborder ohidden" style="background: url({% static 'myimages/wex1.jpg' %}) bottom center no-repeat; background-size: cover;">
+			<div class="full-screen section nopadding nomargin noborder ohidden" style="background: url({% static 'myimages/stones.jpg' %}) bottom center no-repeat; background-size: cover;">
 
                 <div class="row nomargin" style="position: relative; z-index: 2;">
 						<div class="col-md-offset-2 col-md-5 full-screen" style="background-color: rgba(0,0,0,0.45);">
-							<div class="vertical-middle col-padding">
+							<div id="the_padding" class="vertical-middle col-padding">
 								<div class="heading-block nobottomborder bottommargin-sm dark">
 									<h1 style="max-width: 700px;font-style: normal; font-size: 40px; font-family: 'Titillium Web';">{{ flatpage.title }}</h1>
 									<div class="not-dark">
@@ -35,7 +39,7 @@
 							</div>
 
 						</div>
-					</div>
+                </div>
 
 			</div>
         </div>

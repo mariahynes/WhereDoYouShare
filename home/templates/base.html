@@ -47,6 +47,13 @@
 
    <link rel="stylesheet" href="{% static 'css/colors.css' %}" type="text/css" />
 
+    <style>
+
+        @media screen and (max-width: 480px) {
+                    #primary-menu {padding: 10px;}
+                }
+    </style>
+
 </head>
 
 <body class="stretched  data-loader='1' data-animation-in='fadeIn' data-speed-in='100' data-animation-out='fadeOut' data-speed-out='100'">
@@ -58,7 +65,8 @@
 		<!-- Header
 		============================================= -->
 		<!--<header id="header" class="full-header border-full-header transparent-header dark static-sticky" data-sticky-class="not-dark" data-sticky-offset="full" data-sticky-offset-negative="100">-->
-        <header id="header" class="transparent-header semi-transparent full-header" data-sticky-class="not-dark">
+{#        <header id="header" class="transparent-header semi-transparent full-header" data-sticky-class="not-dark">#}
+    <header id="header" class="dark full-header" data-sticky-class="dark">
 			<div id="header-wrap">
 
 				<div class="container clearfix">
@@ -68,8 +76,14 @@
 					<!-- Logo
 					============================================= -->
 					<div id="logo">
-						<a href="index.html" class="standard-logo" data-dark-logo="{% static 'myimages/website_logo_MH.png' %}"><img src="{% static 'myimages/website_logo_MH.png' %}" alt="Canvas Logo"></a>
-						<a href="index.html" class="retina-logo" data-dark-logo="{% static 'myimages/website_logo_x2_MH.png' %}"><img src="{% static 'myimages/website_logo_x2_MH.png' %}" alt="Canvas Logo"></a>
+                        <div class="hidden-xs">
+						    <a href="index.html" class="standard-logo" data-dark-logo="{% static 'myimages/website_logo_MH.png' %}"><img src="{% static 'myimages/website_logo_MH.png' %}" alt="Canvas Logo"></a>
+						    <a href="index.html" class="retina-logo" data-dark-logo="{% static 'myimages/website_logo_x2_MH.png' %}"><img src="{% static 'myimages/website_logo_x2_MH.png' %}" alt="Canvas Logo"></a>
+                        </div>
+                        <div class="visible-xs nopadding">
+
+                        <header id="header" class="dark topmargin-sm" style="font-family: 'Playfair Display'; font-style: italic; text-transform: lowercase; font-size: large;">WHERE | DO | YOU | SHARE</header>
+                    </div>
 					</div><!-- #logo end -->
 
 					<!-- Primary Navigation class="one-page-menu" data-easing="easeInOutExpo" data-speed="1250" data-offset="65"

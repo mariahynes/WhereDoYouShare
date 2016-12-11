@@ -551,16 +551,6 @@ def booking_has_consec_dates(booking_id):
 
         return False
 
-# @register.simple_tag
-# def return_user_asset_ids(request):
-#
-#     # this is the list of assets saved in the session object (in json format)
-#     num_linked_assets = request.session['linked_assets']
-#     # saved into a python object (from json)
-#     linked_asset_data = json.loads(num_linked_assets)
-#
-#     return linked_asset_data
-
 @register.simple_tag
 def return_user_asset_ids(request):
 
