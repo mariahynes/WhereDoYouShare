@@ -16,4 +16,5 @@ six==1.10.0
 sqlparse==0.2.2
 stripe==1.38.0
 gunicorn==19.4
+whitenoise==3.2
 git+https://github.com/mariahynes/HouseShare.git
