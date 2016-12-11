@@ -1,0 +1,1 @@
+web: gunicorn HouseShare.wsgi:application

@@ -17,7 +17,7 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from accounts import views as accounts_views
 from home import views as home_views
-from .settings import MEDIA_ROOT, MEDIA_URL
+from settings.base import MEDIA_ROOT, MEDIA_URL
 from django.conf.urls.static import static
 
 

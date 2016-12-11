@@ -22,9 +22,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = ')6h^q-zr8&)whv8a7d*ijp&f0bzh9vc0gb-7=af3hc6xvyubp5'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
 ALLOWED_HOSTS = []
 SITE_ID = 2
 
@@ -46,7 +43,6 @@ INSTALLED_APPS = [
     'assets',
     'bookings',
     'blog',
-    'debug_toolbar',
     'tinymce',
     'emoticons',
     'forum',
@@ -91,18 +87,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'HouseShare.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/1.10/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
-
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
@@ -151,20 +135,7 @@ STATICFILES_DIRS = (
 
 TINYMCE_JS_ROOT = os.path.join(BASE_DIR, "static", 'js', 'tinymce', 'tinymce.min.js')
 
-EMAIL_HOST = 'smtp1r.cp.blacknight.com'
-EMAIL_HOST_USER = 'maria@databasis.ie'
-EMAIL_HOST_PASSWORD = 'Ggarr3tt!'
-DEFAULT_FROM_EMAIL = 'maria@databasis.ie'
-SERVER_EMAIL = 'maria@databasis.ie'
-EMAIL_PORT = 25
-EMAIL_USE_TLS = False
-
-# DISQUS_API_KEY = 'PoUD226GfdtdFlsx3B7E0BAsqgV3gdQGDEjhVDAlJ0mOLShFshqs1yUW18qyK7I4'
 DISQUS_WEBSITE_SHORTNAME = 'wheredoyoushare'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
-
-# Stripe environment variables
-STRIPE_PUBLISHABLE = os.getenv('STRIPE_PUBLISHABLE', 'pk_test_uO9j8R0OdPOhbUzwSI4VTevH')
-STRIPE_SECRET = os.getenv('STRIPE_SECRET', 'sk_test_D3WTWnQ99nHuosPRBfpnpSSs')
