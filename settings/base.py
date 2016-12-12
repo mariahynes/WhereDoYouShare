@@ -134,6 +134,7 @@ STATICFILES_DIRS = (
 
 TINYMCE_JS_ROOT = os.path.join(BASE_DIR, "static", 'js', 'tinymce', 'tinymce.min.js')
 
+DISQUS_API_KEY='BHR6lUbtA2mUDLe2N848DB4IISpA1TX8S9L8pdmIfH2NGwLR0DQ1vzRymWvVH2L5'
 DISQUS_WEBSITE_SHORTNAME = 'wheredoyoushare'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
