@@ -2,8 +2,6 @@ from base import *
 
 DEBUG = True
 
-INSTALLED_APPS.append('debug_toolbar')
-
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 

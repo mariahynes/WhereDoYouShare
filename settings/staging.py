@@ -1,6 +1,5 @@
 from base import *
 import dj_database_url
-
 DEBUG = True
 
 # Database
@@ -13,7 +12,8 @@ DATABASES = {
     }
 }
 
-DATABASES['default'] = dj_database_url.config("mysql://b7ab21e69f38ee:5ceb1621@eu-cdbr-west-01.cleardb.com/heroku_a101d16357a9fdc?reconnect=true")
+DATABASES['default'] = dj_database_url.parse("mysql://b7ab21e69f38ee:5ceb1621@eu-cdbr-west-01.cleardb.com/heroku_a101d16357a9fdc")
+
 
 # Stripe environment variables
 STRIPE_PUBLISHABLE = os.getenv('STRIPE_PUBLISHABLE', 'pk_test_uO9j8R0OdPOhbUzwSI4VTevH')
