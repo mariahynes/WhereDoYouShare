@@ -144,7 +144,7 @@ def logout(request):
     return redirect(reverse('index'))
 
 
-stripe.api_key = settings.STRIPE_SECRET
+stripe.api_key = settings.staging.STRIPE_SECRET
 
 
 def register_stripe(request):
