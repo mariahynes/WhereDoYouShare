@@ -271,7 +271,7 @@ def get_owners_and_dates(asset_ID, request_start, request_end):
     # extract the variables needed for later
     static_start_date = the_asset.sharing_start_date
     slot_duration = the_asset.slot_duration_unit
-    num_slots = the_asset.number_of_slot_units
+    num_slots = int(the_asset.number_of_slot_units)
 
     # don't continue if no slots entered (will get divide by zero error)
     if num_slots == 0:
