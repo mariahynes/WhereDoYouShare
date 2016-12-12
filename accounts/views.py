@@ -144,7 +144,7 @@ def logout(request):
     return redirect(reverse('index'))
 
 
-stripe.api_key = settings.staging.STRIPE_SECRET
+stripe.api_key = settings.STRIPE_SECRET
 
 
 def register_stripe(request):
@@ -187,10 +187,10 @@ def register_stripe(request):
                 return redirect(reverse('make_a_booking', kwargs={"asset_id": asset_id}))
 
             else:
-                messages.error(request, "Sorry, we are unable to take a payment with that card")
+                messages.error(request, "Sorry, we are unable to take a payment with that card - no customer id")
         else:
             print "form not valid %s" % form.errors
-            messages.error(request, "Sorry, we are unable to take a payment with that card")
+            messages.error(request, "Sorry, we are unable to take a payment with that card form errors: %s" % form.errors)
     else:
 
         form = StripeRegistrationForm()
