@@ -14,6 +14,8 @@ from django.conf import settings
 from accounts.models import User, StripeDetail
 import stripe
 
+stripe.api_key = settings.STRIPE_SECRET
+
 def register(request):
 
     if request.method == 'POST':
@@ -144,7 +146,7 @@ def logout(request):
     return redirect(reverse('index'))
 
 
-stripe.api_key = settings.STRIPE_SECRET
+
 
 
 def register_stripe(request):
@@ -190,7 +192,7 @@ def register_stripe(request):
                 messages.error(request, "Sorry, we are unable to take a payment with that card - no customer id")
         else:
             print "form not valid %s" % form.errors
-            messages.error(request, "Sorry, we are unable to take a payment with that card form errors: %s" % form.errors)
+            messages.error(request, "Sorry, we are unable to take a payment with that card form - no stripe id" )
     else:
 
         form = StripeRegistrationForm()
