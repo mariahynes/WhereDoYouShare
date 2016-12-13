@@ -75,22 +75,38 @@
 
 				<div class="container clearfix">
 
-					<div id="primary-menu-trigger" style="width: auto"><i class="icon-reorder"></i></div>
+					<div id="primary-menu-trigger"><i class="icon-reorder"></i></div>
 
 					<!-- Logo
 					============================================= -->
 
-                    <div id="logo" style="border-right:none;">
+{#                    <div id="logo" style="border-right:none;">#}
+{#                        <div class = "hidden-xs hidden-sm">#}
+{#                            <div class = "allmargin-sm" style="font-family: 'Titillium Web';"> Where do you Share?<div class="bottommargin-sm" style="font-size: small">{{ user.first_name }} {{ user.last_name }} {% if user.is_authenticated %} | {% endif %}{{ user.email }}</div></div>#}
+{#                        </div>#}
+{##}
+{#                        <div class = "visible-xs visible-sm col-md-offset-1">#}
+{#                            <div class = "container">#}
+{#                                <div class = "topmargin-sm" style="font-family: 'Titillium Web'; font-size:30px;"> Where do you Share? <div class="bottommargin-sm" style="font-size: 12px">{{ user.first_name }} {{ user.last_name }} {% if user.is_authenticated %} | {% endif %} {{ user.email }}</div></div>#}
+{#                            </div>#}
+{#                            </div>#}
+{#                    </div>#}
+
+
+
                         <div class = "hidden-xs hidden-sm">
-                            <div class = "allmargin-sm" style="font-family: 'Titillium Web';"> Where do you Share?<div class="bottommargin-sm" style="font-size: small">{{ user.first_name }} {{ user.last_name }} {% if user.is_authenticated %} | {% endif %}{{ user.email }}</div></div>
+                            <div id="logo" style="border-right:none;">
+                                <div class = "allmargin-sm" style="font-family: 'Titillium Web';"> Where do you Share?<div class="bottommargin-sm" style="font-size: small">{{ user.first_name }} {{ user.last_name }} {% if user.is_authenticated %} | {% endif %}{{ user.email }}</div></div>
+                            </div>
                         </div>
 
-                        <div class = "visible-xs visible-sm col-md-offset-1">
-                            <div class = "container">
-                                <div class = "topmargin-sm" style="font-family: 'Titillium Web'; font-size:30px;"> Where do you Share? <div class="bottommargin-sm" style="font-size: 12px">{{ user.first_name }} {{ user.last_name }} {% if user.is_authenticated %} | {% endif %} {{ user.email }}</div></div>
+                        <div class = "visible-xs visible-sm">
+                            <div id="logo" style="border-right:none;">
+                                <div class = "container leftmargin-sm">
+                                    <div class = "topmargin-sm tleft" style="font-family: 'Titillium Web'; font-size:30px;">Where do you Share? <div class="bottommargin-sm" style="font-size: 12px">{{ user.first_name }} {{ user.last_name }} {% if user.is_authenticated %} | {% endif %} {{ user.email }}</div></div>
+                                </div>
                             </div>
-                            </div>
-                    </div>
+                        </div>
 
 
 					<!-- Primary Navigation
