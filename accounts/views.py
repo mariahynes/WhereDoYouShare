@@ -192,7 +192,7 @@ def register_stripe(request):
                 messages.error(request, "Sorry, we are unable to take a payment with that card - no customer id")
         else:
             print "form not valid %s" % form.errors
-            messages.error(request, "Sorry, we are unable to take a payment with that card form - no stripe id" )
+            messages.error(request, "Sorry, we are unable to take a payment with that card - no stripe id" )
     else:
 
         form = StripeRegistrationForm()
