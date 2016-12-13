@@ -97,8 +97,8 @@
                                         <h3 id="comments-title">Comments</h3>
 
                                         {% load disqus_tags %}
-                                        {% disqus_dev %}
                                         {% set_disqus_url object.get_absolute_url %}
+                                        {% disqus_dev %}
                                         {% set_disqus_title post.title %}
                                         {% disqus_show_comments %}
                                     </div>
