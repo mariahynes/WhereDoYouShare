@@ -32,9 +32,9 @@
 {#						<div class="col-md-offset-2 col-md-5 full-screen" style="background-color: rgba(0,0,0,0.45);">#}
 
                 {% if owner_date_object %}
-                    <div class="col-md-offset-1 col-md-8" style="background-color: rgba(0,0,0,0.45);">
+                    <div class="col-md-offset-1 col-md-8" style="background-color: rgba(0,0,0,0.60);">
                 {% else %}
-                    <div class="col-md-offset-1 col-md-5 full-screen" style="background-color: rgba(0,0,0,0.45);">
+                    <div class="col-md-offset-1 col-md-5 full-screen" style="background-color: rgba(0,0,0,0.60);">
                 {% endif %}
 
                     <div id="the_padding" class="col-padding">
@@ -76,7 +76,7 @@
                                 {% if owner_date_object %}
                                     <div class="dark">
                                              <p><span style="font-family: 'Playfair Display'">
-                                                 <i class="fa fa-calendar" aria-hidden="true"></i>
+                                                 <i class="fa fa-calendar" style="font-size: large; color:orange" aria-hidden="true"></i>
                                                  You are checking {{ owner_date_object | get_total_days_requested }}
                                                  date{{ owner_date_object | get_total_days_requested | pluralize }}<br>
 
@@ -84,9 +84,9 @@
 {#                                                {% if totes_avail > 0 %}#}
                                                     {%  with total=owner_date_object|length %}
                                                      {% if total > 1 %}
-                                                        <i class="fa fa-user-plus" aria-hidden="true"></i>
+                                                        <i class="fa fa-user-plus" style="font-size: large; color:yellow" aria-hidden="true"></i>
                                                     {% else %}
-                                                         <i class="fa fa-user" aria-hidden="true"></i>
+                                                         <i class="fa fa-user" style="font-size: large; color:yellow" style="font-size: large; color:red" aria-hidden="true"></i>
                                                     {% endif %}
                                                     {%  endwith %}
                                                     {{ owner_date_object | get_total_days_requested | pluralize:" It,They"}} fall{{ owner_date_object | get_total_days_requested | pluralize:"s,"}}
@@ -101,7 +101,7 @@
 
                                              {% with totes_unavail=owner_date_object|get_total_days_unavailable %}
                                                  {% if totes_unavail > 0 %}
-                                                      <i class="fa fa-times" aria-hidden="true"></i>
+                                                      <i class="fa fa-times" style="font-size: large; color:red" aria-hidden="true"></i>
 
                                                      {% with totes_requested=owner_date_object|get_total_days_requested %}
                                                         {% if totes_unavail == totes_requested %}
@@ -118,7 +118,7 @@
                                                      {% endwith %}
 
                                                 {% else %}
-                                                     <i class="fa fa-check" aria-hidden="true"></i>
+                                                     <i class="fa fa-check" style="font-size: large; color:lawngreen" aria-hidden="true"></i>
                                                      The {{ owner_date_object | get_total_days_available | pluralize:"date is, dates are" }}
                                                      available <br>
                                                  {% endif %}

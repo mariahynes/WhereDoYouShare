@@ -85,27 +85,29 @@
                                                     {% get_total_asset_members asset.asset_ID as totes_members %}
                                                             Member{{ totes_members|pluralize }}
                                             </span>
-                                            <span>
+                                            <span style="font-size: smaller; font-style: italic; color:darkslategrey">
                                                 {% get_slot_desc_summary asset.asset_ID_id as slot_desc %}
                                                 {% if slot_desc %}
-                                                    Rotates: {{ slot_desc }}
+
+                                                    <i class="fa fa-repeat" style="font-size: large; color:darkorange" aria-hidden="true"></i> {{ slot_desc }}
                                                 {% endif %}
                                             </span>
-                                            <span>
+                                            <span style="font-size: smaller; font-style: italic; color:darkslategrey">
                                                 {% get_asset_invitor_for_display asset.asset_ID request.user as linked_owner %}
                                                 {% if linked_owner %}
-                                                    You're linked to Owner: {{ linked_owner }}
+                                                   <i class="fa fa-user" style="font-size: large; color:deepskyblue" aria-hidden="true"></i> you're linked to {{ linked_owner }}
                                                 {% endif %}
                                             </span>
-                                            <span>
+                                            <span style="font-size: smaller; font-style: italic; color:darkslategrey">
                                                 {% get_next_slot_start asset.asset_ID_id asset.inviter_id as next_slot_start %}
                                                 {% get_asset_invitor asset.asset_ID request.user True as owner_first %}
                                                 {% if asset.inviter_id == request.user.id %}
-                                                    Your next slot starts: {{ next_slot_start }}
+                                                    Your next slot starts {{ next_slot_start }}
                                                 {% elif next_slot_start %}
-                                                    {{ owner_first }}'s next slot starts: {{ next_slot_start }}
+                                                    <i class="fa fa-calendar" style="font-size: large; color:green" aria-hidden="true"></i> {{ owner_first }}'s next slot starts {{ next_slot_start }}
                                                 {% endif %}
                                             </span>
+                                        <hr>
 
 
 

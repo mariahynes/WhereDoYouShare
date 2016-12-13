@@ -95,11 +95,11 @@ def get_slot_desc_summary(asset_id):
 
         if num_slots < 2:
 
-            desc_summary = "Every 2%s %s starting on %s " % (get_ordinal(2),unit_desc.lower(), start_desc)
+            desc_summary = "every 2%s %s starting on %s " % (get_ordinal(2),unit_desc.lower(), start_desc)
 
         else:
 
-            desc_summary = "Every %s %s%s starting on %s" % (num_slots, unit_desc.lower(),"s",start_desc)
+            desc_summary = "every %s %s%s starting on %s" % (num_slots, unit_desc.lower(),"s",start_desc)
 
     else:
 
