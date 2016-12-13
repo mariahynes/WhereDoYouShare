@@ -44,22 +44,32 @@
 
 
         <!-- Slider ============================================= -->
-		<section id="slider" class="full-screen ">
-        <div class="slider-parallax-inner">
-			<div class="full-screen section nopadding nomargin noborder ohidden" style="background: url({% static 'images/stripe.jpg' %}) bottom center no-repeat; background-size: cover;">
+		<section id="slider" class="">
+        <div >
+			<div class="section nopadding nomargin noborder ohidden   " style="background: url({% static 'images/stripe.jpg' %}) bottom center no-repeat; background-size: cover;">
 
                 <div class="row nomargin" style="position: relative; z-index: 2;">
-						<div class="col-md-offset-2 col-md-3 full-screen" style="background-color: rgba(0,0,0,0.45);">
-							<div id="the_padding" class="vertical-middle col-padding">
+						<div class="col-md-offset-1 col-md-5" style="background-color: rgba(0,0,0,0.45);">
+						        {% if not user.is_authenticated %}
+								<div id="the_padding" class="col-padding full-screen ">
+                                    <div class="dark">
+                                    <h1 style="font-size: 22px;">You must be signed-in to view this page</h1>
+                                    </div>
+                                {% else %}
+                                <div id="the_padding" class="col-padding  ">
+                                {% endif %}
+                                {% if user.is_authenticated %}
 								<div class="heading-block nobottomborder bottommargin-sm dark">
+
 									<h1 style="font-size: 22px;">Register</h1>
 									<div class="not-dark">
                                         <span style="font-size: 16px;" class="t300 ls1 notopmargin">
                                             <br>Before making a booking, please register your Credit Card securely with Stripe.<br>
                                                                 <br>
-                                                            No payment details will be stored on this site
+                                                            No payment details will be stored on this site.
                                         </span></div>
 								</div>
+
                                 <form role="form"  method="post" id="register-stripe-form" action="{% url 'register_stripe' %}">
 
                                     {% csrf_token %}
@@ -89,6 +99,7 @@
                                      </div>
 
                                 </form>
+                                {% endif %}
 
 							</div>
 
