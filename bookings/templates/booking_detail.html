@@ -38,22 +38,27 @@
 
                                         {% if booking %}
 
-                                                <p> <span style="font-family: 'Playfair Display'">Booking Reference:</span><span style="font-family: 'Calibri'; font-weight:bold"> {{ booking.booking_id }}</span>
+                                                <p> <span style="font-family: 'Playfair Display'">
+                                                Booking Reference:</span><span style="font-family: 'Calibri'; font-weight:bold; color: #2e8ece"> {{ booking.booking_id }}</span>
 
 
                                                 <br>
-                                                <span style="font-family: 'Playfair Display'">Total days:</span><span style="font-family: 'Calibri'; font-weight:bold"> {% get_total_days_in_booking booking.booking_id %}</span>
+                                                <span style="font-family: 'Playfair Display'">
+                                                Total days:</span><span style="font-family: 'Calibri'; font-weight:bold; color: #2e8ece"> {% get_total_days_in_booking booking.booking_id %}</span>
                                                 <br>
-                                                <span style="font-family: 'Playfair Display'">Requested By:</span> <span style="font-family: 'Calibri'; font-weight:bold">{{ booking.requested_by_user_ID.first_name }} {{ booking.requested_by_user_ID.last_name }} on {{ booking.date_created | date:"d M Y" }}</span>
+                                                <span style="font-family: 'Playfair Display'">
+                                                    Requested By:</span> <span style="font-family: 'Calibri'; font-weight:bold; color: #2e8ece">{{ booking.requested_by_user_ID.first_name }} {{ booking.requested_by_user_ID.last_name }} on {{ booking.date_created | date:"d M Y" }}</span>
                                                 <br>
-                                                <span style="font-family: 'Playfair Display'">Confirmed:</span> <span style="font-family: 'Calibri'; font-weight:bold">
+                                                {% is_booking_confirmed booking.booking_id as the_answer %}
+                                                {% get_confirmed_date booking.booking_id as confo_date %}
 
-                                                        {% is_booking_confirmed booking.booking_id as the_answer %}
-                                                        {% get_confirmed_date booking.booking_id as confo_date %}
+                                                <span style="font-family: 'Playfair Display'">
+                                                    Confirmed:</span> <span style="font-family: 'Calibri'; font-weight:bold; color: #2e8ece">
+
                                                         {% if the_answer == False %}
-                                                            Not Yet
+                                                          Not Yet
                                                         {% else %}
-                                                            Yes on {{ confo_date | date:"d M Y" }}
+                                                       Yes on {{ confo_date | date:"d M Y" }}
                                                         {%  endif %}
 
                                                     </span>
