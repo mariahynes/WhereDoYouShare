@@ -51,8 +51,10 @@
 
     <style>
 
-        @media screen and (max-width: 480px) {
-                    #primary-menu {padding: 10px;}
+        @media screen and (max-width: 991px) {
+{#                    #primary-menu {padding: 10px;}#}
+            #header {height: 110px !important;}
+            #header-wrap {height: 110px !important;}
                 }
     </style>
 
@@ -84,7 +86,7 @@
                         </div>
 
                         <div class = "visible-xs visible-sm">
-                            <div class = "allmargin-sm" style="font-family: 'Titillium Web'; font-size: 20px;"> Where do you Share? <br><div class="bottommargin-sm" style="font-size: 10px">{{ user.first_name }} {{ user.last_name }} {% if user.is_authenticated %} | {% endif %} {{ user.email }}</div></div>
+                            <div class = "topmargin-sm nobottommargin" style="font-family: 'Titillium Web'; font-size: 20px;"> Where do you Share? <br><div class="bottommargin-sm" style="font-size: 10px">{{ user.first_name }} {{ user.last_name }} {% if user.is_authenticated %} | {% endif %} {{ user.email }}</div></div>
                         </div>
                     </div>
 
