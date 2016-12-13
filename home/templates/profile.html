@@ -78,11 +78,11 @@
                                             {% endif %}
 
                                             <span>{% get_total_asset_owners asset.asset_ID %}
-                                                    {% get_total_asset_owners asset.asset_ID as totes_members %}
-                                                        Owner{{ totes_members|pluralize }}
+                                                    {% get_total_asset_owners asset.asset_ID as totes_owners %}
+                                                        Owner{{ totes_owners|pluralize }}
 
                                                     | {% get_total_asset_members asset.asset_ID %}
-                                                    {% get_total_asset_members asset.asset_ID as totes_owners %}
+                                                    {% get_total_asset_members asset.asset_ID as totes_members %}
                                                             Member{{ totes_members|pluralize }}
                                             </span>
                                             <span>
