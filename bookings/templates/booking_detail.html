@@ -22,7 +22,11 @@
 			                <br><br>
 					       		        <div class="container "> <!--clearfix removed-->
 
-                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">Booking | {{ asset.asset_display_name }}</h2>
+{#                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">Booking | {{ asset.asset_display_name }}</h2>#}
+                                <div class="fancy-title title-bottom-border">
+                    <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">Booking</h2>
+                        <div class="font-primary ls3" style="font-size: medium">{{ asset.asset_display_name }}</div>
+                    </div>
 
                                 {%  if errors %}
                                      {% for error in errors %}
@@ -96,7 +100,9 @@
 
                                                                  </tbody>
                                                             </table>
+
                                                         </div>
+                                                        <div class = "visible-xs small ls2 fright"> >>>>>></div>
                                                     {% endif %}
                                             <br>
                                                 <p>

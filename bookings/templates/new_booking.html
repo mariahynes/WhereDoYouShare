@@ -43,9 +43,9 @@
                         {% if user_ok == True %}
 
                             <div class="fancy-title title-bottom-border">
-                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3 dark" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">Check Dates
-                                    <span class="visible-xs"><br></span>
-                                    <span style="color: #FFF; font-size: smaller;">({{ the_asset.asset_display_name }})</span></h2>
+                            <br>
+                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3 dark" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">Check Dates</h2>
+                                    <div class="dark font-primary ls3" style="font-size: medium">{{ the_asset.asset_display_name }}</div>
                                 </div>
 
                                     <form role="form" method="get" action="{% url 'make_a_booking' the_asset.id %}">
@@ -186,8 +186,10 @@
                                                              {% endfor %}
                                                         </tbody>
                                                     </table>
-                                            <br><br>
+
                                                 </div>
+                                    <div class = "visible-xs small ls2 fright"> >>>>>></div>
+                                    <br><br><br><br><br>
 
                                             </p>
 
