@@ -97,6 +97,8 @@
                                             {% get_total_thread_posts thread as totes %}
                                             {% if totes > 1 %}
                                                 <p>
+                                                 <hr>
+                                                <br>
                                                     <a href="{% url 'threads' asset.id subject.id %}" class="400 capitalize button button-border button-blue button-circle nomargin">
                                                         <span class="hidden-xs"><< Back to {{ subject.name }}</span>
                                                         <span class="visible-xs"><< Back</span>
