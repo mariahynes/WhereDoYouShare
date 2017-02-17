@@ -1,0 +1,114 @@
+{% extends 'baseforStripe.html' %}
+{% load booking_extras %}
+    {% load bootstrap_tags %}
+    {% block content %}
+    {% load staticfiles %}
+    {% load assets_extras %}
+
+        {% block head_js %}
+
+          <script src="https://js.stripe.com/v2/" type="text/javascript"></script>
+          <script type="text/javascript">
+              //<![CDATA[
+              Stripe.publishableKey = '{{ publishable }}';
+              //]]>
+          </script>
+
+          <script type="text/javascript" src="{% static "js/stripe.js" %}"></script>
+
+
+        {% endblock %}
+        {% block head_style %}
+            <style>
+                input {
+                    width: 100%;
+                    padding: 12px 20px;
+                    margin: 2px 0;
+                    box-sizing: border-box;
+                    border-radius: 10px;
+                    border: none;
+               }
+            select {
+                    width: 25%;
+                    padding: 12px 5px;
+                    margin: 2px 0;
+                    box-sizing: border-box;
+                    border-radius: 10px;
+                    border: none;
+               }
+            @media screen and (max-width: 480px) {
+                #the_padding {padding: 10px;}
+            }
+            </style>
+        {% endblock %}
+
+
+        <!-- Slider ============================================= -->
+		<section id="slider" class="">
+        <div >
+			<div class="section nopadding nomargin noborder ohidden   " style="background: url({% static 'images/stripe.jpg' %}) bottom center no-repeat; background-size: cover;">
+
+                <div class="row nomargin" style="position: relative; z-index: 2;">
+						<div class="col-md-offset-1 col-md-5" style="background-color: rgba(0,0,0,0.45);">
+						        {% if not user.is_authenticated %}
+								<div id="the_padding" class="col-padding full-screen ">
+                                    <div class="dark">
+                                    <h1 style="font-size: 22px;">You must be signed-in to view this page</h1>
+                                    </div>
+                                {% else %}
+                                <div id="the_padding" class="col-padding  ">
+                                {% endif %}
+                                {% if user.is_authenticated %}
+								<div class="heading-block nobottomborder bottommargin-sm dark">
+
+									<h1 style="font-size: 22px;">Register</h1>
+									<div class="not-dark">
+                                        <span style="font-size: 16px;" class="t300 ls1 notopmargin">
+                                            <br>Before making a booking, please register your Credit Card securely with Stripe.<br>
+                                                                <br>
+                                                            No payment details will be stored on this site.
+                                        </span></div>
+								</div>
+
+                                <form role="form"  method="post" id="register-stripe-form" action="{% url 'register_stripe' %}">
+
+                                    {% csrf_token %}
+                                    <div class="col_full not-dark">
+										 <label for="id_credit_card_number" class="capitalize t600 dark">Credit Card Number</label>
+                                           <div class="not-dark"> {{ form.credit_card_number }} </div><br>
+                                        <label for="id_cvv" class="capitalize t600 dark">CVV Code</label>
+                                           <div class="not-dark"> {{ form.cvv }} </div><br>
+                                        <label for="id_expiry_month" class="capitalize t600 dark">Expires</label>
+                                           <div class="not-dark"> {{ form.expiry_month }} {{ form.expiry_year }}</div><br>
+                                           {{ form.stripe_id }}
+
+                                    </div>
+
+
+                                    <br>
+                                    <div class="form-group">
+                                    <div id="credit-card-errors" style="display:none">
+                                         <div class="alert-message block-message error" id="stripe-error-message"></div>
+                                     </div>
+
+
+
+                                    <br>
+
+                                         <input class="t400 capitalize button button-border button-light button-circle nomargin" id="validate_card_btn" name="commit" type="submit" value="Validate Credit Card">
+                                     </div>
+
+                                </form>
+                                {% endif %}
+
+							</div>
+
+						</div>
+					</div>
+
+			</div>
+        </div>
+		</section> <!--#slider end -->
+
+    {% endblock %}
+

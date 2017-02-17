@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+    {% load bootstrap_tags %}
+    {% block content %}
+    {% load staticfiles %}
+
+        {% block head_js %}
+            <script src="{% static 'js/tinymce/tinymce.min.js' %}"></script>
+            <script>
+                tinyMCE.init({mode: "textareas", theme: 'modern', plugins: 'paste'})
+            </script>
+        {% endblock %}
+
+        {% block head_style %}
+            <style>
+                .opacity9{
+                    opacity:2;
+                }
+            </style>
+        {% endblock %}
+        <!-- Slider ============================================= -->
+		<section id="content">
+			<div class="content-wrap">
+                <div class="container clearfix">
+
+{#                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">{{ asset.asset_display_name }} Blog</h2>#}
+
+                        <div class="fancy-title title-bottom-border">
+                        <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';"> {{ asset.asset_display_name }} Blog</h2>
+                        </div>
+
+                        {% if errors %}
+
+                            {% for error in errors %}
+                                <div class="style-msg errormsg">
+                                    <div class="sb-msg" style="color: red"><i class="icon-warning-sign"></i><strong>Warning!</strong>{{ error }}</div><br>
+                                </div>
+                            {% endfor %}
+
+                        {% else %}
+
+                            <form role="form" method="POST" enctype="multipart/form-data" >
+                                {% csrf_token %}
+                                {{ form | as_bootstrap }}
+
+                                {% if content_error %}
+                                    <div class="style-msg errormsg">
+                                        <div class="sb-msg" style="color: red"><i class="icon-warning-sign"></i><strong>Warning! </strong>{{ content_error }}</div><br>
+                                    </div>
+                                {% endif %}
+
+                                 <div class="form-group">
+                                    <button type="button" class="t400 capitalize button button-border button-blue button-circle nomargin" onclick="location.href='/blog/blog/{{ asset.id }}/{{ post.id }}'"><i class="fa fa-backward"></i> Cancel</button>
+                                    <button type="submit" class="t400 capitalize button button-border button-blue button-circle nomargin">Save</button>
+                                </div>
+
+
+
+                            </form>
+
+                                    {% endif %}
+
+                                    <div class="clear"></div>
+
+                                    <div class="row topmargin-lg divcenter" style="max-width: 1000px;"></div>
+
+
+
+				            </div>
+
+                       </div>
+
+					</div>
+				</div>
+
+			</div>
+
+		</section> <!--#slider end -->
+
+
+
+    {% endblock %}

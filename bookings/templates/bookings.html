@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% load booking_extras %}
+    {% load bootstrap_tags %}
+    {% block content %}
+    {% load staticfiles %}
+        {% block head_style %}
+            <style>
+                .opacity9{
+                    opacity:2;
+                }
+            </style>
+        {% endblock %}
+        <!-- Slider ============================================= -->
+    <section id="content">
+
+        <div class="content-wrap">
+
+            <div class="container clearfix" >
+
+{#                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">Your Bookings</h2>#}
+            <div class="fancy-title title-bottom-border">
+                    <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">My Bookings</h2>
+
+                    </div>
+
+                        {% if num_bookings_future > 0 %}
+
+                                <p> <span style="font-family: 'Playfair Display'">Your future
+                                    {%  with total=num_bookings_future %}
+                                         booking{{ total|pluralize }}: </span>
+                                    {%  endwith %}
+                                    <div class="col_full">
+                                        <div class = "table-responsive">
+                                        <table class = "table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Ref</th>
+                                                    <th>Name</th>
+                                                    <th>From</th>
+                                                    <th>Until</th>
+                                                    <th>Status</th>
+                                                    <th>Slot Owner</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            {%  for booking_id in future_bookings %}
+                                                <tr>
+                                                    <td><a href="{% url 'booking_detail' booking_id.1 %}" class="400 capitalize button button-border button-blue button-circle nomargin">{{ booking_id.1 }}</a> </td>
+                                                    <td>{% get_booking_asset_name booking_id.1 %}
+                                                       <span data-toggle="popover" data-html=true title="Check Availability" data-placement="top" data-trigger="hover"
+                                                            data-content="<table class='table'>
+                                                            <tr>
+                                                            <td>
+                                                            for {% get_booking_asset_name booking_id.1 %}
+
+                                                            </td>
+                                                            </tr>
+                                                            </table>">
+                                                           {% get_booking_asset_id booking_id.1 as ref_id %}
+                                                       <a href="{% url 'make_a_booking' ref_id %}">  <i class="fa fa-plus" aria-hidden="true"></i></span></a>
+                                                    </td>
+                                                    <td>{% get_booking_start_date  booking_id.1 as the_start %}{{ the_start | date:"D" }}, {{ the_start | date:"d M Y" }} </td>
+                                                    <td>{% get_booking_end_date  booking_id.1 as the_end %}{{ the_end | date:"D" }}, {{ the_end | date:"d M Y" }} </td>
+                                                    <td>{% get_booking_status booking_id.1 %}</td>
+                                                    <td>{% get_booking_slot_owner booking_id.1 %}</td>
+                                                    <td></td>
+                                                </tr>
+                                            {% endfor %}
+
+                                             </tbody>
+                                        </table>
+                                        </div>
+                                    <div class = "visible-xs small ls2 fright"> >>>>>></div>
+                                    </div>
+
+
+                                </p>
+
+                        {% else %}
+
+                                You have no future bookings <br>
+
+                        {% endif %}
+
+
+                    {% if num_bookings_past > 0 %}
+
+                        <p> <span style="font-family: 'Playfair Display'">Your past
+                                    {%  with total=num_bookings_past %}
+                                         booking{{ total|pluralize }}: </span>
+                                    {%  endwith %}
+                                    <div class="col_full">
+                                        <div class = "table-responsive">
+                                        <table class = "table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Ref</th>
+                                                    <th>Name</th>
+                                                    <th>From</th>
+                                                    <th>Until</th>
+                                                    <th>Status</th>
+                                                    <th>Slot Owner</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            {%  for booking_id in past_bookings %}
+                                                <tr>
+                                                    <td><a href="{% url 'booking_detail' booking_id.1 %}" class="400 capitalize button button-border button-blue button-circle nomargin">{{ booking_id.1 }}</a> </td></td>
+                                                    <td>{% get_booking_asset_name booking_id.1 %}
+                                                       <span data-toggle="popover" data-html=true title="Check Availability" data-placement="top" data-trigger="hover"
+                                                            data-content="<table class='table'>
+                                                            <tr>
+                                                            <td>
+                                                            for {% get_booking_asset_name booking_id.1 %}
+
+                                                            </td>
+                                                            </tr>
+                                                            </table>">
+                                                           {% get_booking_asset_id booking_id.1 as ref_id %}
+                                                       <a href="{% url 'make_a_booking' ref_id %}">  <i class="fa fa-plus" aria-hidden="true"></i></span></a>
+                                                    </td>
+                                                    <td>{% get_booking_start_date  booking_id.1 as the_start %}{{ the_start | date:"D" }}, {{ the_start | date:"d M Y" }} </td>
+                                                    <td>{% get_booking_end_date  booking_id.1 as the_end %}{{ the_end | date:"D" }}, {{ the_end | date:"d M Y" }} </td>
+                                                    <td>{% get_booking_status booking_id.1 %}</td>
+                                                    <td>{% get_booking_slot_owner booking_id.1 %}</td>
+                                                    <td></td>
+                                                </tr>
+                                            {% endfor %}
+
+                                             </tbody>
+                                        </table>
+                                        </div>
+                                    <div class = "visible-xs small ls2 fright"> >>>>>></div>
+                                    </div>
+
+
+                                </p>
+                        <br><br>
+
+
+
+                        {% else %}
+
+                                You have no previous bookings <br>
+
+                        {% endif %}
+
+
+
+                    <div class="clear"></div>
+
+                    <div class="row topmargin-lg divcenter" style="max-width: 1000px;"></div>
+				</div>
+
+			</div>
+
+		</section> <!--#slider end -->
+
+
+
+    {% endblock %}

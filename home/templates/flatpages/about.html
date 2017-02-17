@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+    {% block content %}
+    {% load staticfiles %}
+        <!-- Slider ============================================= -->
+		<section id="slider" class="full-screen  slider-parallax">
+
+			<div class="full-screen section nopadding nomargin noborder ohidden" style="background: url({% static 'images/ought4.jpg' %}) bottom center no-repeat; background-size: cover;">
+
+				<div class="container dark" >
+				    <div class="vertical-middle">
+
+				        <div id="section-about" class="page-section">
+
+					        <div class="container clearfix">
+
+                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">{{ flatpage.title }}</h2>
+
+                                <p data-animate="fadeInUp" class="lead divleft bottommargin" style="max-width: 700px;">{{ flatpage.content }}</p>
+
+
+
+                                <div class="clear"></div>
+
+                                <div class="row topmargin-lg divcenter" style="max-width: 1000px;"></div>
+
+				            </div>
+
+                       </div>
+
+					</div>
+				</div>
+
+			</div>
+
+		</section> <!--#slider end -->
+
+
+
+    {% endblock %}

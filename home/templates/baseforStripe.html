@@ -1,0 +1,460 @@
+{% load staticfiles %}
+{% load booking_extras %}
+{% load assets_extras %}
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="author" content="SemiColonWeb" />
+
+	<!-- Stylesheets
+	============================================= -->
+	<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700|Roboto:300,400,500,700|Playfair+Display:400italic" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css?family=Titillium+Web" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}" type="text/css" />
+	<link rel="stylesheet" href="{% static 'style.css' %}" type="text/css" />
+
+
+	<link rel="stylesheet" href="{% static 'css/dark.css' %}" type="text/css" />
+	<link rel="stylesheet" href="{% static 'css/font-icons.css' %}" type="text/css" />
+	<link rel="stylesheet" href="{% static 'css/animate.css' %}" type="text/css" />
+	<link rel="stylesheet" href="{% static 'css/magnific-popup.css' %}" type="text/css" />
+
+	<link rel="stylesheet" href="{% static 'css/components/datepicker.css' %}" type="text/css" />
+	<link rel="stylesheet" href="{% static 'css/components/timepicker.css' %}" type="text/css" />
+	<link rel="stylesheet" href="{% static 'css/components/daterangepicker.css' %}" type="text/css" />
+
+
+
+    <link rel="stylesheet" href="{% static 'css/components/bs-switches.css' %}" type="text/css" />
+    <link rel="stylesheet" href="{% static 'css/components/radio-checkbox.css' %}" type="text/css" />
+	<link rel="stylesheet" href="{% static 'css/responsive.css' %}" type="text/css" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<!--[if lt IE 9]>
+		<script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script>
+	<![endif]-->
+
+    <script type="text/javascript" src="{% static 'js/jquery.js' %}"></script>
+    <!-- NEXT LINE NEEDED FOR STRIPE -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha/js/bootstrap.min.js" />
+
+    <script type="text/javascript" src="{% static 'js/myjquery.js' %}"></script>
+    <link rel="stylesheet" href="{% static "css/font-awesome-4.6.3/css/font-awesome.css" %}">
+    <script type="text/javascript" src="{% static 'js/components/bs-switches.js' %}"></script>
+
+
+
+	<!-- Document Title
+	============================================= -->
+	<title>Where | do you Share?</title>
+
+    {% block head_js %}{% endblock %}
+    {% block head_style %}{% endblock %}
+
+   <link rel="stylesheet" href="{% static 'css/colors.css' %}" type="text/css" />
+
+    <style>
+
+        @media screen and (max-width: 480px) {
+                    #primary-menu {padding: 10px;}
+                }
+    </style>
+
+</head>
+
+<body class="stretched  data-loader='1' data-animation-in='fadeIn' data-speed-in='100' data-animation-out='fadeOut' data-speed-out='100'">
+
+	<!-- Document Wrapper class="clearfix"
+	============================================= -->
+	<div id="wrapper" class="clearfix">
+
+		<!-- Header
+		============================================= -->
+		<!--<header id="header" class="full-header border-full-header transparent-header dark static-sticky" data-sticky-class="not-dark" data-sticky-offset="full" data-sticky-offset-negative="100">-->
+{#        <header id="header" class="transparent-header semi-transparent full-header" data-sticky-class="not-dark">#}
+    <header id="header" class="dark full-header static-sticky sticky-header" style="height: 110px;">
+			<div id="header-wrap" class="dark full-header static-sticky sticky-header" style="height: 110px;">
+
+				<div class="container clearfix">
+
+					<div id="primary-menu-trigger"><i class="icon-reorder"></i></div>
+
+					<!-- Logo
+					============================================= -->
+
+                    <div id="logo" style="border-right:none;">
+                        <div class = "hidden-xs">
+                            <div class = "allmargin-sm" style="font-family: 'Titillium Web';"> Where do you Share?<div class="bottommargin-sm" style="font-size: small">{{ user.first_name }} {{ user.last_name }} {% if user.is_authenticated %} | {% endif %}{{ user.email }}</div></div>
+                        </div>
+                        <div class = "visible-xs">
+                            <div class = "allmargin-sm" style="font-family: 'Titillium Web'"> Where do you Share? <br><div class="bottommargin-sm" style="font-size: small">{{ user.first_name }} {{ user.last_name }} {% if user.is_authenticated %} | {% endif %} {{ user.email }}</div></div>
+                        </div>
+                    </div>
+
+
+					<!-- Primary Navigation
+					============================================= -->
+
+                    <nav id="primary-menu">
+
+						<ul style="border-right:none;" >
+                            {% if user.is_authenticated %}
+
+                                <li><a href="{% url 'profile' %}"><div>Home</div></a></li>
+
+
+
+
+                                {# show a MENU item that consists of this user's Assets #}
+                                {% if 'linked_assets' in request.session %}
+                                    {% return_user_asset_ids request as asset_list %}
+                                    <li><a href="#"><div>My Shares</div></a>
+                                        <ul>
+                                            {% for asset in asset_list %}
+                                            <li><a href="#"><div>{{ asset.asset_ID.asset_display_name }}</div></a>
+                                                <ul>
+                                                    <li><a href="{% url 'make_a_booking' asset.asset_ID_id %}"><div>Make a Booking</div></a></li>
+                                                    <li class="divider"></li>
+                                                        {% get_total_pending asset.asset_ID user.id num_bookings=True as totes_pending %}
+                                                        {%  if totes_pending > 0 %}
+                                                    <li><a href="{% url 'all_asset_bookings' asset.asset_ID_id user.id "future" "pending" %}"><div>My Pending Requests <div class="badge">{{totes_pending}}</div></div></a></li>
+                                                        {% endif %}
+                                                        {% get_total_for_confirmation asset.asset_ID user.id num_bookings=True as totes_confirm %}
+                                                        {% if totes_confirm > 0 %}
+                                                    <li><a href="{% url 'all_asset_bookings' asset.asset_ID_id user.id "future" "confirming" %}"><div>My Requests to Confirm <div class="badge">{{ totes_confirm }}</div></div></a></li>
+                                                        {% endif %}
+                                                        {% get_total_confirmed_bookings asset.asset_ID user.id as totes_fully_confirmed %}
+                                                        {% if totes_fully_confirmed > 0 %}
+                                                    <li><a href="{% url 'all_asset_bookings' asset.asset_ID_id user.id "future" "confirmed" %}"><div>My Bookings <div class="badge">{{ totes_fully_confirmed }}</div></div></a></li>
+                                                        {% endif %}
+
+                                                        {% get_total_bookings asset.asset_ID as totes_bookings %}
+                                                        {% if totes_bookings > 0 %}
+                                                    <li class="divider"></li>
+                                                    <li><a href="{% url 'all_asset_bookings' asset.asset_ID_id "future" %}"><div>View all Future Bookings <div class="badge">{{ totes_bookings }}</div></div></a></li>
+                                                        {% endif %}
+                                                        {% get_total_bookings_past asset.asset_ID as totes_bookings_past %}
+                                                        {% if totes_bookings_past > 0 %}
+                                                    <li><a href="{% url 'all_asset_bookings' asset.asset_ID_id "past" %}"><div>View all Past Bookings <div class="badge">{{ totes_bookings_past }}</div></div></a></li>
+                                                        {% endif %}
+                                                    <li class="divider"></li>
+                                                    <li><a href="{% url 'post_list' asset.asset_ID_id %}"><div>{{ asset.asset_ID.asset_display_name }} Blog</div></a></li>
+                                                    <li><a href="{% url 'forum' asset.asset_ID_id %}"><div>{{ asset.asset_ID.asset_display_name }} Forum</div></a></li>
+
+                                                        {%  if asset.is_owner %}
+                                                            {% get_total_for_approval asset.asset_ID user.id num_bookings=True as totes_approve %}
+                                                            {% if totes_approve > 0 %}
+                                                                <li class="divider"></li>
+                                                                <li><a href="{% url 'all_asset_bookings' asset.asset_ID_id user.id "future" "pending" user.id %}"><div>My Pending Approvals <div class="badge">{{ totes_approve }}</div></div></a></li>
+                                                            {% endif %}
+                                                        {% else %}
+                                                            {% get_total_for_approval_linked asset.asset_ID user.id num_bookings=True as totes_approve_linked %}
+                                                            {% if totes_approve_linked > 0 %}
+                                                                {% get_asset_invitor asset.asset_ID request.user True as invitor %}
+                                                                <li class="divider"></li>
+                                                                <li><a href="{% url 'all_asset_bookings' asset.asset_ID_id user.id "future" "pending" asset.inviter_id %}"><div>{{ invitor }}'s Pending Approvals <div class="badge">{{ totes_approve_linked }}</div></div></a></li>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                </ul>
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </li>
+                                {% endif %}
+                                <li><a href="{% url 'my_bookings' %}"><div>My Bookings</div></a></li>
+                                <li><a href="{% url 'logout' %}"><div>Sign Out</div></a></li>
+                                {% if user.is_superuser %}
+                                    <li><a href="/admin"><div>Admin</div></a></li>
+                                {%  endif %}
+                            {% else %}
+                                <li><a href="/" ><div>Home</div></a></li>
+                                <li><a href="/pages/share"><div>Sharing</div></a></li>
+                                <li><a href="{% url 'login' %}"><div>Sign In</div></a></li>
+							    <li><a href="{% url 'register' %}"><div>Register</div></a></li>
+
+                            {%  endif %}
+
+						</ul>
+
+					</nav><!-- #primary-menu end -->
+
+				</div>
+
+			</div>
+
+		</header><!-- #header end -->
+
+        {% if messages %}
+            <div class="alert alert-info">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <div class="messages">
+                    {% for message in messages %}
+                        {{ message }}
+                    {% endfor %}
+                </div>
+            </div>
+
+        <script type="text/javascript">
+        $(document).ready(function(){
+            $(function() {
+              $('#myModal').modal({show: true});
+            });
+
+        });
+        </script>
+
+        {% endif %}
+        {% if messages %}
+        <div class="messages">
+            <div id="myModal" class="modal" role="dialog">
+              <div class="modal-dialog modal-sm">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Where | do | you | Share ?</h4>
+                  </div>
+                  <div class="modal-body">
+
+                    {% for message in messages %}
+                        {{ message }}
+                    {% endfor %}
+
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% block content %}
+
+
+
+
+        {% endblock %}
+
+
+
+
+
+
+
+
+		<!-- Footer
+		============================================= -->
+		<footer id="footer" class="dark noborder">
+
+			<div class="container center">
+				<div class="footer-widgets-wrap">
+
+					<div class="row divcenter clearfix">
+
+						<div class="col-md-4">
+
+							<div class="widget clearfix">
+								<h4>Thanks To</h4>
+
+								<ul class="list-unstyled footer-site-links nobottommargin">
+									<li><a target="_blank" href="https://www.codeinstitute.net/" data-easing="easeInOutExpo" data-speed="1250" data-offset="70">The Code Institute</a></li>
+                                    <li><a href="/media/thank_you_images/bam.jpg" class="left-icon" data-lightbox="image"> My very understanding husband</a></li>
+									<li><a href="/media/thank_you_images/mas.jpg" class="left-icon" data-lightbox="image">My very patient children</a></li>
+									<li><a target="_blank" href="http://masteringdjango.com/django-book/" data-easing="easeInOutExpo" data-speed="1250" data-offset="70">The Django Book</a></li>
+                                    <li><a target="_blank" href="https://themeforest.net/item/canvas-the-multipurpose-html5-template/9228123" data-easing="easeInOutExpo" data-speed="1250" data-offset="70">Canvas</a></li>
+								</ul>
+                                <br><br>
+							</div>
+
+
+						</div>
+
+						<div class="col-md-4">
+
+							<div class="widget clearfix">
+                                <h4>Copyright</h4>
+                                <span class="ls2" style="font-family: 'Playfair Display'; font-style: italic; text-transform: lowercase; color: #FFF;"> Databasis</span><br>
+{#                                 http://stackoverflow.com/questions/4562587/shortest-way-to-print-current-year-in-javascript#}
+                                <script>document.write(new Date().getFullYear())</script><br>
+                                All Rights Reserved
+							</div>
+
+
+
+									<a target="_blank" href="https://github.com/mariahynes/HouseShare" class="social-icon inline-block noborder si-small si-github" title="Github">
+										<i class="icon-github"></i>
+										<i class="icon-github"></i>
+									</a>
+
+
+                            <br><br>
+						</div>
+
+						<div class="col-md-4">
+
+							<div class="widget clearfix">
+								<h4>Contact</h4>
+                                <a target="_blank" href="http://www.databasis.ie"><span class="ls2" style="font-family: 'Playfair Display'; font-style: italic; font-size: 25px; text-transform: lowercase; color: #FFF;"> Databasis</span></a>
+                                 <ul class="list-unstyled footer-site-links nobottommargin">
+                                     <li>Dublin</li>
+                                     <li>Ireland</li>
+                                     </ul>
+							</div>
+
+						</div>
+
+					</div>
+
+				</div>
+			</div>
+
+{#			<div id="copyrights">#}
+{#				<div class="container center clearfix">#}
+                    {#                                 http://stackoverflow.com/questions/4562587/shortest-way-to-print-current-year-in-javascript#}
+{#					Copyright  <span class="ls5" style="font-family: 'Playfair Display'; font-style: italic; text-transform: lowercase; color: #FFF;"> Databasis</span>  <script>document.write(new Date().getFullYear())</script> | All Rights Reserved#}
+{#				</div>#}
+{#			</div>#}
+
+		</footer><!-- #footer end -->
+
+	</div><!-- #wrapper end -->
+
+	<!-- Go To Top
+	============================================= -->
+	<div id="gotoTop" class="icon-angle-up"></div>
+
+	<!-- External JavaScripts
+	============================================= -->
+	<script type="text/javascript" src="{% static 'js/jquery.js' %}"></script>
+	<script type="text/javascript" src="{% static 'js/plugins.js' %}"></script>
+
+
+	<script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=true"></script>
+	<script type="text/javascript" src="{% static 'js/jquery.gmap.js' %}"></script>
+
+	<!-- Footer Scripts
+	============================================= -->
+	<script type="text/javascript" src="{% static 'js/functions.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/components/bs-switches.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/components/daterangepicker.js' %}"></script>
+
+    <script type="text/javascript" src="{% static 'js/components/moment.js' %}"></script>
+	<script type="text/javascript" src="{% static 'js/components/datepicker.js' %}"></script>
+	<script type="text/javascript" src="{% static 'js/components/timepicker.js' %}"></script>
+
+
+	<script type="text/javascript">
+
+		// Portfolio Script
+		jQuery(window).load(function(){
+
+			var jQuerycontainer = jQuery('#portfolio');
+			jQuerycontainer.isotope({
+				transitionDuration: '0.65s',
+				masonry: {
+					columnWidth: jQuerycontainer.find('.portfolio-item:not(.wide)')[0]
+				}
+			});
+			jQuery(window).resize(function() {
+				jQuerycontainer.isotope('layout');
+				SEMICOLON.portfolio.portfolioDescMargin();
+			});
+			var t = setTimeout(function(){ SEMICOLON.portfolio.portfolioDescMargin(); }, 200);
+
+			// Google Map
+			jQuery('#headquarters-map').gMap({
+				address: 'Melbourne, Australia',
+				maptype: 'ROADMAP',
+				zoom: 14,
+				markers: [
+					{
+						address: "Melbourne, Australia",
+						html: "Melbourne, Australia",
+						icon: {
+							image: "images/icons/map-icon-red.png",
+							iconsize: [32, 32],
+							iconanchor: [14,44]
+						}
+					}
+				],
+				doubleclickzoom: false,
+				controls: {
+					panControl: false,
+					zoomControl: false,
+					mapTypeControl: false,
+					scaleControl: false,
+					streetViewControl: false,
+					overviewMapControl: false
+				},
+				styles: [{"featureType":"all","elementType":"labels.text.fill","stylers":[{"saturation":36},{"color":"#000000"},{"lightness":40}]},{"featureType":"all","elementType":"labels.text.stroke","stylers":[{"visibility":"on"},{"color":"#000000"},{"lightness":16}]},{"featureType":"all","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"administrative","elementType":"geometry.fill","stylers":[{"color":"#000000"},{"lightness":20}]},{"featureType":"administrative","elementType":"geometry.stroke","stylers":[{"color":"#000000"},{"lightness":17},{"weight":1.2}]},{"featureType":"administrative","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"administrative.country","elementType":"all","stylers":[{"visibility":"simplified"}]},{"featureType":"administrative.country","elementType":"geometry","stylers":[{"visibility":"simplified"}]},{"featureType":"administrative.country","elementType":"labels.text","stylers":[{"visibility":"simplified"}]},{"featureType":"administrative.province","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"administrative.locality","elementType":"all","stylers":[{"visibility":"simplified"},{"saturation":"-100"},{"lightness":"30"}]},{"featureType":"administrative.neighborhood","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"administrative.land_parcel","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"landscape","elementType":"all","stylers":[{"visibility":"simplified"},{"gamma":"0.00"},{"lightness":"74"}]},{"featureType":"landscape","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":20}]},{"featureType":"landscape.man_made","elementType":"all","stylers":[{"lightness":"3"}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"poi","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":21}]},{"featureType":"road","elementType":"geometry","stylers":[{"visibility":"simplified"}]},{"featureType":"road.highway","elementType":"geometry.fill","stylers":[{"color":"#000000"},{"lightness":17}]},{"featureType":"road.highway","elementType":"geometry.stroke","stylers":[{"color":"#000000"},{"lightness":29},{"weight":0.2}]},{"featureType":"road.arterial","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":18}]},{"featureType":"road.local","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":16}]},{"featureType":"transit","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":19}]},{"featureType":"water","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":17}]}]
+			});
+
+		});
+
+		// Owl Carousel
+		jQuery(document).ready(function($) {
+
+			var ocClients = $("#oc-clients");
+			ocClients.owlCarousel({
+				margin: 80,
+				loop: true,
+				nav: false,
+				autoplay: true,
+				dots: false,
+				autoplayHoverPause: true,
+				responsive:{
+					0:{ items:2 },
+					480:{ items:3 },
+					768:{ items:4 },
+					992:{ items:5 },
+					1200:{ items:6 }
+				}
+			});
+
+		});
+
+		// Contact Form
+		$("#template-contactform").validate({
+				submitHandler: function(form) {
+					$('.form-process').fadeIn();
+					$(form).ajaxSubmit({
+						target: '#contact-form-result',
+						success: function() {
+							$('.form-process').fadeOut();
+							$(form).find('.sm-form-control').val('');
+							$('#contact-form-result').attr('data-notify-msg', $('#contact-form-result').html()).html('');
+							SEMICOLON.widget.notifications($('#contact-form-result'));
+						}
+					});
+				}
+			});
+
+			// Widget Subscribe Form
+			$("#widget-subscribe-form").validate({
+				submitHandler: function(form) {
+					$(form).find('.input-group-addon').find('.icon-email2').removeClass('icon-email2').addClass('icon-line-loader icon-spin');
+					$(form).ajaxSubmit({
+						target: '#widget-subscribe-form-result',
+						success: function() {
+							$(form).find('.input-group-addon').find('.icon-line-loader').removeClass('icon-line-loader icon-spin').addClass('icon-email2');
+							$('#widget-subscribe-form').find('.form-control').val('');
+							$('#widget-subscribe-form-result').attr('data-notify-msg', $('#widget-subscribe-form-result').html()).html('');
+							SEMICOLON.widget.notifications($('#widget-subscribe-form-result'));
+						}
+					});
+				}
+			});
+
+
+
+
+
+	</script><!-- Portfolio Script End -->
+
+</body>
+</html>

@@ -1,0 +1,60 @@
+{% load booking_extras %}
+
+    <form method="post" action="">
+        <div class = "table-responsive">
+            <table class = "table">
+                <thead>
+                    <tr>
+
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Owner</th>
+                        <th>Remove?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% csrf_token %}
+                    {{ formset_requestor_confirmed_or_pending.management_form }}
+                        {% for form in formset_requestor_confirmed_or_pending %}
+                            {{ form.id }}
+                            <tr>
+                                {% with form.booking_date.value as the_id %}
+                                     <td>{{ the_id | date:"D, d M Y "}} {{ form.booking_date }}</td>
+                                {% endwith %}
+                                {% with form.id.value as the_f_id %}
+                                <td>{%  get_booking_date_status the_f_id %}</td>
+
+                                <td>{%  get_booking_date_owner the_f_id %}</td>
+                                {% endwith %}
+                                <td>
+
+                                    <span data-toggle="popover" data-html=true title="You are removing..." data-placement="top" data-trigger="hover"
+                                     data-content="<table class='table'>
+                                                    <tr>
+                                                    <td>
+                                                    {% with form.booking_date.value as the_id %}
+                                                        {{ the_id | date:"D, d M Y "}}
+                                                    {% endwith %}
+
+                                                    </td>
+                                                    </tr>
+                                                    </table>">
+
+                                    {{ form.DELETE }}</span></td>
+
+                            </tr>
+
+                        {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    <div class = "visible-xs small ls2 fright"> >>>>>></div>
+    <br><br>
+        <button type="submit" class="400 capitalize button button-border button-red button-circle nomargin">Delete Selected Dates</button>
+        {% if include_delete_booking_button %}
+            <a href="{% url 'delete_booking' booking.booking_id %}" class="400 capitalize button button-border button-red button-circle nomargin" >Delete Entire Booking</a>
+        {% elif user.is_superuser %}
+            <a href="{% url 'delete_booking' booking.booking_id %}" class="400 capitalize button button-border button-red button-circle nomargin" >Delete Entire Booking</a>
+        {% endif %}
+    </form>
+

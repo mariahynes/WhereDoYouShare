@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+    {% load bootstrap_tags %}
+    {% block content %}
+    {% load staticfiles %}
+        {% block head_style %}
+            <style>
+                input {
+                    width: 100%;
+                    padding: 12px 20px;
+                    margin: 2px 0;
+                    box-sizing: border-box;
+                    border-radius: 10px;
+                    border: none;
+                }
+
+                @media screen and (max-width: 480px) {
+                    #the_padding {padding: 10px;}
+                }
+
+
+            </style>
+        {% endblock %}
+        <!-- Slider ============================================= -->
+		<section id="slider" class="full-screen  slider-parallax">
+        <div class="slider-parallax-inner">
+			<div class="full-screen section nopadding nomargin noborder ohidden" style="background: url({% static 'images/login.jpg' %}) bottom center no-repeat; background-size: cover;">
+
+                <div class="row nomargin" style="position: relative; z-index: 2;">
+						<div class="col-md-offset-1 col-md-5 full-screen" style="background-color: rgba(0,0,0,0.45);">
+							<div id="the_padding" class="vertical-middle col-padding">
+								<div class="heading-block nobottomborder bottommargin-sm dark">
+									<h1 style="font-size: 22px;">Sign In</h1>
+									<div class="not-dark">
+                                        <span style="font-size: 16px;" class="t300 capitalize ls1 notopmargin"></span></div>
+								</div>
+                                <form role="form" class="clearfix" method="post" action="{% url 'login' %}">
+
+                                    {% csrf_token %}
+                                    <div class="col_full not-dark">
+										 <label for="id_email" class="capitalize t600 dark">Email</label>
+                                           <div class="not-dark"> {{ form.email }} </div>
+                                    </div>
+
+
+                                    <div class="col_full not-dark">
+										<label for="id_password" class="capitalize t600 dark">Password</label>
+                                           <div class="not-dark"> {{ form.password }}</div>
+                                    </div>
+
+
+                                    <div class="form-group">
+                                        <button type="submit" class="t400 capitalize button button-border button-light button-circle nomargin">Start Sharing</button>
+                                    </div>
+
+                                    {% if errors %}
+                                        {% for error in errors %}
+                                            <div class="style-msg errormsg">
+                                                <div class="sb-msg" style="color: red"><i class="icon-info-sign"></i>{{ error }}</div>
+                                            </div>
+                                        {% endfor %}
+                                    {% endif %}
+
+                                </form>
+
+							</div>
+
+						</div>
+					</div>
+
+			</div>
+        </div>
+		</section> <!--#slider end -->
+
+
+
+    {% endblock %}

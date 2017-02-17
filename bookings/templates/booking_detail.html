@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+{% load booking_extras %}
+    {% load bootstrap_tags %}
+    {% block content %}
+    {% load staticfiles %}
+        {% block head_style %}
+
+        {% endblock %}
+        {% block head_js %}
+
+        {% endblock %}
+        <!-- Slider ============================================= -->
+{#		<section id="slider" class="full-screen  slider-parallax">#}
+{##}
+{#			<div class="full-screen section nopadding nomargin noborder ohidden" style="background: url({% static 'myimages/login1.jpg' %}) bottom center no-repeat; background-size: cover;">#}
+{##}
+{#				<div class="container " >#}
+{#				    <div class="vertical-middle">#}
+{##}
+{#				        <div id="section-about" class="page-section">#}
+{##}
+			                <br><br>
+					       		        <div class="container "> <!--clearfix removed-->
+
+{#                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">Booking | {{ asset.asset_display_name }}</h2>#}
+                                <div class="fancy-title title-bottom-border">
+                    <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">Booking</h2>
+                        <div class="font-primary ls3" style="font-size: medium">{{ asset.asset_display_name }}</div>
+                    </div>
+
+                                {%  if errors %}
+                                     {% for error in errors %}
+                                         <div class="style-msg errormsg">
+                                            <div class="sb-msg" style="color: red"><i class="icon-warning-sign"></i><strong>Warning! </strong>{{ error }}</div><br>
+                                        </div>
+                                     {% endfor %}
+                                {% else %}
+
+                                        {% if booking %}
+
+                                                <p> <span style="font-family: 'Playfair Display'">
+                                                Booking Reference:</span><span style="font-family: 'Calibri'; font-weight:bold; color: #2e8ece"> {{ booking.booking_id }}</span>
+
+
+                                                <br>
+                                                <span style="font-family: 'Playfair Display'">
+                                                Total days:</span><span style="font-family: 'Calibri'; font-weight:bold; color: #2e8ece"> {% get_total_days_in_booking booking.booking_id %}</span>
+                                                <br>
+                                                <span style="font-family: 'Playfair Display'">
+                                                    Requested By:</span> <span style="font-family: 'Calibri'; font-weight:bold; color: #2e8ece">{{ booking.requested_by_user_ID.first_name }} {{ booking.requested_by_user_ID.last_name }} on {{ booking.date_created | date:"d M Y" }}</span>
+                                                <br>
+                                                {% is_booking_confirmed booking.booking_id as the_answer %}
+                                                {% get_confirmed_date booking.booking_id as confo_date %}
+
+                                                <span style="font-family: 'Playfair Display'">
+                                                    Confirmed:</span> <span style="font-family: 'Calibri'; font-weight:bold; color: #2e8ece">
+
+                                                        {% if the_answer == False %}
+                                                          Not Yet
+                                                        {% else %}
+                                                       Yes on {{ confo_date | date:"d M Y" }}
+                                                        {%  endif %}
+
+                                                    </span>
+                                                <br>
+                                                    {% if formset_owner %}
+                                                        <div class="col_full">
+                                                            {% include "owner_approval_form.html" %}
+                                                        </div>
+                                                    {% elif formset_requestor_to_confirm %}
+                                                        <div class="col_full">
+                                                        {% include "requestor_form_to_confirm.html" %}
+                                                        </div>
+                                                    {% elif formset_requestor_confirmed_or_pending %}
+                                                        <div class="col_full">
+                                                        {% include "requestor_form_confirmed_or_pending.html" %}
+                                                        </div>
+
+                                                    {% else %}
+                                                        <div class = "table-responsive">
+                                                            <table class = "table">
+
+                                                                <thead>
+                                                                    <tr>
+
+                                                                        <th>Date</th>
+                                                                        <th>Booking Status</th>
+                                                                        <th>Slot Owner</th>
+                                                                        <th></th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+
+                                                                {%  for item in booking_detail %}
+
+                                                                    <tr>
+
+                                                                        <td>{{ item.booking_date | date:"D"}}, {{ item.booking_date | date:"d M Y"}}</td>
+                                                                        <td>{% get_booking_date_status item.pk %} </td>
+                                                                        <td>{{ item.slot_owner_id.first_name }} {{ item.slot_owner_id.last_name }}</td>
+                                                                        <td></td>
+                                                                        <td></td>
+                                                                    </tr>
+                                                                {% endfor %}
+
+                                                                 </tbody>
+                                                            </table>
+
+                                                        </div>
+                                                        <div class = "visible-xs small ls2 fright"> >>>>>></div>
+                                                    {% endif %}
+                                            <br>
+                                                <p>
+                                                {%  if new == "new" %}
+
+                                                    <a href="{% url 'all_asset_bookings' asset.id user.id %}" class="400 capitalize button button-border button-blue button-circle nomargin">View My Bookings</a>
+
+                                                {% else %}
+
+                                                    <a href="{{ request.META.HTTP_REFERER }} " class="400 capitalize button button-border button-blue button-circle nomargin">Back </a>
+
+                                                {% endif %}
+                                                </p>
+
+
+                                            {% if user.is_superuser %}
+                                                <a href="{% url 'delete_booking' booking.booking_id %}" class="400 capitalize button button-border button-red button-circle nomargin" >Delete Booking (Superuser only)</a>
+                                            {% endif %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                        {% else %}
+
+                                                You have no future bookings <br>
+
+                                        {% endif %}
+                            {% endif %}
+
+
+
+
+
+
+                                    <div class="clear"></div>
+
+                                    <div class="row topmargin-lg divcenter" style="max-width: 1000px;"></div>
+
+
+
+				            </div>
+{##}
+{#                       </div>#}
+{##}
+{#					</div>#}
+{#				</div>#}
+{##}
+{#			</div>#}
+
+{#		</section> <!--#slider end -->#}
+
+<script>
+    jQuery(".bt-switch").bootstrapSwitch();
+    updateCheckboxes();
+</script>
+
+
+    {% endblock %}

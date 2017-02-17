@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% load blog_extras %}
+    {% load bootstrap_tags %}
+    {% block content %}
+    {% load staticfiles %}
+        {% block head_style %}
+            <style xmlns="http://www.w3.org/1999/html">
+                .opacity9{
+                    opacity:2;
+                }
+            </style>
+        {% endblock %}
+        <section id="content">
+
+			<div class="content-wrap">
+                <div class="container clearfix">
+
+                    <div class="fancy-title title-bottom-border">
+                        <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">{{ asset.asset_display_name }} Blog</h2>
+                    </div>
+
+                            {% if errors %}
+                                {% for error in errors %}
+                                    <div class="style-msg errormsg">
+                                        <div class="sb-msg" style="color: red"><i class="icon-warning-sign"></i><strong>Warning! </strong>{{ error }}</div><br>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+
+                       <p><button class="400 capitalize button button-border button-blue button-circle nomargin" onclick="location.href='new'">Add New Post >></button></p>
+
+                        {%  if posts %}
+                                {% for post in posts %}
+
+                                    <div class="spost clearfix">
+{#										<div class="entry-image">#}
+
+                                            <div class="col-xs-6 col-md-3 hidden-xs" style="padding-left: 0px">
+                                                {% if not post.image %}
+                                                    <a href="{%  url 'post_detail' asset.id post.id %}" class="thumbnail img-rounded img-responsive"><img src="/media/blog_images/default_blog_small.jpg" alt="{{ post.title }}"></a>
+                                                {% else %}
+                                                    <a href="{%  url 'post_detail' asset.id post.id %}" class="thumbnail img-rounded img-responsive"><img src="/media/{{ post.image }}" alt="{{ post.title }}"></a>
+                                                {% endif %}
+                                            </div>
+
+                                             <div class = "thumbnail visible-xs">
+                                                {% if not post.image %}
+                                                    <a href="{%  url 'post_detail' asset.id post.id %}" class="thumbnail img-rounded img-responsive" style="display: block;"><img src="/media/blog_images/default_blog_small.jpg" alt="{{ post.title }}"></a>
+                                                {% else %}
+                                                    <a href="{%  url 'post_detail' asset.id post.id %}" class="thumbnail img-rounded img-responsive" style="display: block;"><img src="/media/{{ post.image }}" alt="{{ post.title }}"></a>
+                                                {% endif %}
+
+                                                <div class = "caption visible-xs">
+                                                     <h2><a href="{%  url 'post_detail' asset.id post.id %}">{{ post.title }}</a>
+                                                            <small><small><br>
+                                                            <i>by {{ post.author.first_name }} {{ post.author.last_name }} </i>
+                                                            | {{ post.created_date | started_time }} | {{ post.num_views }}
+                                                            {%  with total=post.num_views %}view{{ total|pluralize }}{%  endwith %}
+                                                             </small></small>
+                                                        </h2>
+
+                                                     {% autoescape off %}{{ post.content|truncatewords:20 }}{% endautoescape %}
+
+
+
+                                                </div>
+                                             </div>
+
+
+                                            <div class="entry-c hidden-xs">
+                                                <div class="entry-title">
+                                                <br><br>
+                                                     <h2><a href="{%  url 'post_detail' asset.id post.id %}">{{ post.title }}</a>
+                                                        <small><small>
+                                                        <i> by {{ post.author.first_name }} {{ post.author.last_name }} </i>
+                                                        | {{ post.created_date | started_time }} | {{ post.num_views }}
+                                                        {%  with total=post.num_views %}view{{ total|pluralize }}{%  endwith %}
+                                                         </small></small>
+                                                    </h2>
+                                                </div>
+                                                <ul class="entry-meta">
+                                                    <div class="visible-xs">
+
+                                                        <li>{% autoescape off %}{{ post.content|truncatewords:20 }}{% endautoescape %}</li>
+
+                                                    </div>
+                                                    <div class="hidden-xs">
+                                                        <li style="font-size: 20px;">{% autoescape off %}{{ post.content|truncatewords:30 }}{% endautoescape %}</li>
+
+                                                    </div>
+                                                </ul>
+
+                                            </div>
+                                    </div>
+
+
+
+{#                                    <div>#}
+{#                                    <div class="entry-image alignleft">#}
+{#                                        {% if not post.image %}#}
+{#                                            <a href="{%  url 'post_detail' asset.id post.id %}"><img src="/media/blog_images/default_blog_small.jpg" alt="{{ post.title }}"></a>#}
+{#                                        {% else %}#}
+{#                                            <a href="{%  url 'post_detail' asset.id post.id %}"><img src="/media/{{ post.image }}" alt="{{ post.title }}"></a>#}
+{#                                        {% endif %}#}
+{#                                        <img class="img-rounded img-responsive"  src="/media/{{  post.title }}"#}
+{#									</div>#}
+{##}
+{#                                        <h2><a href="{%  url 'post_detail' asset.id post.id %}">{{ post.title }}</a>#}
+{#                                            <div class="visible-xs"<br></div>#}
+{#                                              <small><small>#}
+{#                                                  <i> by {{ post.author.first_name }} {{ post.author.last_name }} </i>#}
+{##}
+{#                                            | {{ post.created_date | started_time }} | {{ post.num_views }}#}
+{#                                        {%  with total=post.num_views %}view{{ total|pluralize }}{%  endwith %}#}
+{#                                              </small></small></h2>#}
+{##}
+{#                                        <p> {% autoescape off %}{{ post.content|truncatewords:30 }}{% endautoescape %}</p>#}
+{#                                        <p><button class="btn btn-default" onclick="location.href='{{ post.id }}'">Read More >></button></p>#}
+{#                                        <hr>#}
+{#                                    </div>#}
+                                {% endfor %}
+                        {% endif %}
+
+                            <div class="clear"></div>
+
+                            <div class="row topmargin-lg divcenter" style="max-width: 1000px;"></div>
+
+
+
+					</div>
+				</div>
+		</section> <!--#slider end -->
+
+
+
+    {% endblock %}

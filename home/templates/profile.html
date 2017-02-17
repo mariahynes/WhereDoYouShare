@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+{% load booking_extras %}
+{% load assets_extras %}
+    {% load bootstrap_tags %}
+    {% block content %}
+    {% load staticfiles %}
+        {% block head_style %}
+                <style>
+                input {
+                    width:60%;
+                    padding: 12px 20px;
+                    margin: 2px 0;
+                    box-sizing: border-box;
+                    border-radius: 10px;
+                    border: none;
+               }
+
+            </style>
+        {% endblock %}
+
+        {% block head_js %}
+
+
+        {% endblock %}
+
+    <section id="content">
+        <div class="content-wrap">
+            <div class="container clearfix" >
+
+
+                <h3 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">You
+
+                    {% if assets %}
+                        <small><small>are sharing...</small></small>
+                    {% else %}
+                        <small><small>are about to start sharing!</small></small>
+                    {% endif %}
+                </h3>
+
+
+                        <div data-animate="fadeInUp" class="lead divleft bottommargin" style="max-width: 700px; ">
+                            <span style="font-family: 'Playfair Display'">  </span> </div>
+
+                        <div data-animate="fadeInUp">
+
+
+                        <form role="form" method="post" action="">
+                                        {% csrf_token %}
+                                         {{ invitecodeform | as_bootstrap}}
+                                        <div class="form-group">
+                                            <button type="submit" class="400 capitalize button button-border button-blue button-circle nomargin">Submit the Code</button>
+                                            {% if code_message %}
+                                                <div class = "visible-xs"><br></div>
+                                                <span class="sb-msg" style="color: deepskyblue"><i class="icon-info-sign"></i><strong>Sorry!</strong> {{ code_message }}</span>
+                                            {% endif %}
+                                        </div>
+                                    </form>
+                            {% if assets %}
+                             <div id="portfolio" class="portfolio grid-container portfolio-{{ assets | get_num_asset_grids }} clearfix">
+                                {% for asset in assets %}
+
+                                    <article class="portfolio-item pf-media pf-icons">
+                                        <div class="portfolio-image">
+                                            <a href="#">
+                                                <img src="/media/{{ asset.asset_ID.image }}" alt="{{ asset.asset_ID.asset_display_name }}" class="img-rounded">
+                                            </a>
+                                            <div class="portfolio-overlay">
+                                                <a href="/media/{{ asset.asset_ID.image }}" class="left-icon" data-lightbox="image"><i class="icon-line-plus"></i></a>
+                                                <a href="{% url 'make_a_booking' asset.asset_ID_id %}" class="right-icon"><i class="icon-line-ellipsis"></i></a>
+                                            </div>
+                                        </div>
+                                        <div class="portfolio-desc">
+
+                                            {% if asset.is_owner %}
+                                               <h3><a href="{% url 'make_a_booking' asset.asset_ID_id %}">{{ asset.asset_ID.asset_display_name }} <small>(Owner)</small></a></h3>
+                                            {% else %}
+                                                <h3><a href="{% url 'make_a_booking' asset.asset_ID_id %}">{{ asset.asset_ID.asset_display_name }}</a></h3>
+                                            {% endif %}
+
+                                            <span>{% get_total_asset_owners asset.asset_ID %}
+                                                    {% get_total_asset_owners asset.asset_ID as totes_owners %}
+                                                        Owner{{ totes_owners|pluralize }}
+
+                                                    | {% get_total_asset_members asset.asset_ID %}
+                                                    {% get_total_asset_members asset.asset_ID as totes_members %}
+                                                            Member{{ totes_members|pluralize }}
+                                            </span>
+                                            <span style="font-size: smaller; font-style: italic; color:darkslategrey">
+                                                {% get_slot_desc_summary asset.asset_ID_id as slot_desc %}
+                                                {% if slot_desc %}
+
+                                                    <i class="fa fa-repeat" style="font-size: large; color:darkorange" aria-hidden="true"></i> {{ slot_desc }}
+                                                {% endif %}
+                                            </span>
+                                            <span style="font-size: smaller; font-style: italic; color:darkslategrey">
+                                                {% get_asset_invitor_for_display asset.asset_ID request.user as linked_owner %}
+                                                {% if linked_owner %}
+                                                   <i class="fa fa-user" style="font-size: large; color:deepskyblue" aria-hidden="true"></i> you're linked to {{ linked_owner }}
+                                                {% endif %}
+                                            </span>
+                                            <span style="font-size: smaller; font-style: italic; color:darkslategrey">
+                                                {% get_next_slot_start asset.asset_ID_id asset.inviter_id as next_slot_start %}
+                                                {% get_asset_invitor asset.asset_ID request.user True as owner_first %}
+                                                {% if asset.inviter_id == request.user.id %}
+                                                    Your next slot starts {{ next_slot_start }}
+                                                {% elif next_slot_start %}
+                                                    <i class="fa fa-calendar" style="font-size: large; color:green" aria-hidden="true"></i> {{ owner_first }}'s next slot starts {{ next_slot_start }}
+                                                {% endif %}
+                                            </span>
+                                        <hr>
+
+
+
+                                        </div>
+                                </article>
+
+
+
+
+
+
+                                {% endfor %}
+
+                            </div>
+
+                            {% endif %}
+                            <div>
+
+
+                            </div>
+
+                        </div>
+                        <div class="clear"></div>
+
+                        <div class="row topmargin-lg divcenter" style="max-width: 1000px;"></div>
+
+
+
+
+
+{##}
+{#                    </div>#}
+
+				</div>
+
+			</div>
+
+		</section> <!--#slider end -->
+
+
+        <script>
+            dropdown_check();
+        </script>
+
+
+
+
+    {% endblock %}

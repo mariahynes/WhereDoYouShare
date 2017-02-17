@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load forum_extras %}
+
+    {% load bootstrap_tags %}
+    {% block content %}
+    {% load staticfiles %}
+
+        {% block head_js %}
+           <script src="{% static 'js/tinymce/tinymce.min.js' %}"></script>
+           <script>
+               tinyMCE.init({mode: "textareas", theme: 'modern', plugins: 'paste'})
+           </script>
+        {% endblock %}
+        {% block head_style %}
+
+            <style>
+                input {
+                    width:60%;
+                    padding: 12px 20px;
+                    margin: 2px 0;
+                    box-sizing: border-box;
+                    border-radius: 10px;
+                    border: none;
+               }
+            </style>
+
+        {% endblock %}
+        <section id="content">
+
+			<div class="content-wrap">
+                <div class="container clearfix">
+
+                    <div class="fancy-title title-bottom-border">
+                    <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">
+                        {{ subject.name }} <span class="hidden-xs">| {{ asset.asset_display_name }}</span>  <span class="visible-xs"><small>{{ asset.asset_display_name }}</small></span></h2>
+                    </div>
+
+                    {% if errors %}
+                        {% for error in errors %}
+                            <p style="color:red">{{ error }}</p>
+                        {% endfor %}
+                    {% else %}
+                        <section>
+
+                                   <form method="post" action="{% url 'new_thread' asset.id subject.id %}">
+                                       {% csrf_token %}
+                                       {{ thread_form | as_bootstrap }}
+                                       <hr>
+                                       {{ post_form | as_bootstrap }}
+                                       {% if content_error %}
+                                        <div class="style-msg errormsg">
+                                            <div class="sb-msg" style="color: red"><i class="icon-warning-sign"></i><strong>Warning! </strong>{{ content_error }}</div><br>
+                                        </div><br>
+                                        {% endif %}
+
+                                       <div class="form-group">
+                                           <a href="{% url 'threads' asset.id subject.id %}" class="400 capitalize button button-border button-blue button-circle nomargin"><i class="fa fa-backward"></i> Cancel</a>
+                                           <button type="submit" class="t400 capitalize button button-border button-blue button-circle nomargin">Save New Thread</button>
+                                       </div>
+
+                                   </form>
+
+                           </section>
+
+
+                    {% endif %}
+
+                    <div class="clear"></div>
+
+                    <div class="row topmargin-lg divcenter" style="max-width: 1000px;"></div>
+
+				</div>
+
+			</div>
+
+		</section>
+
+
+
+    {% endblock %}

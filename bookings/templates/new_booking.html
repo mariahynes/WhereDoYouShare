@@ -1,0 +1,247 @@
+{% extends 'base.html' %}
+{% load booking_extras %}
+    {% load bootstrap_tags %}
+    {% block content %}
+    {% load staticfiles %}
+        {% block head_style %}
+            <style>
+
+
+            @media screen and (max-width: 480px) {
+                #the_padding {padding: 10px;}
+            }
+            </style>
+        {% endblock %}
+         {% block head_js%}
+
+        {% endblock %}
+        <!-- Slider ============================================= -->
+        <section id="slider" >
+        <div >
+
+{#         <div >#}
+
+{#         <div class=" nopadding nomargin noborder" style="background: url({% static 'myimages/rainbow.jpg' %}) bottom center no-repeat; background-size: cover;">#}
+        {% if user_ok == True %}
+            <div class=" nopadding nomargin noborder" style="background: url('/media/{{ the_asset.image }}') bottom center no-repeat; background-size: cover;">
+        {% else %}
+            <div class=" nopadding nomargin noborder" style="background: url({% static 'images/rainbow.jpg' %}) bottom center no-repeat; background-size: cover;">
+        {% endif %}
+
+            <div class="row nomargin" style="position: relative; z-index: 2;">
+{#						<div class="col-md-offset-2 col-md-5 full-screen" style="background-color: rgba(0,0,0,0.45);">#}
+
+                {% if owner_date_object %}
+                    <div class="col-md-offset-1 col-md-8" style="background-color: rgba(0,0,0,0.60);">
+                {% else %}
+                    <div class="col-md-offset-1 col-md-5 full-screen" style="background-color: rgba(0,0,0,0.60);">
+                {% endif %}
+
+                    <div id="the_padding" class="col-padding">
+
+
+                        {% if user_ok == True %}
+
+                            <div class="fancy-title title-bottom-border">
+                            <br>
+                                <h2 data-animate="fadeInDown" class="divleft bottommargin font-body ls3 dark" style="max-width: 700px;font-style: italic; font-size: 40px; font-family: 'Playfair Display';">Check Dates</h2>
+                                    <div class="dark font-primary ls3" style="font-size: medium">{{ the_asset.asset_display_name }}</div>
+                                </div>
+
+                                    <form role="form" method="get" action="{% url 'make_a_booking' the_asset.id %}">
+    {#                                    {% csrf_token %}#}
+                                     <div class="input-daterange travel-date-group not-dark">
+
+                                                 <label for="id_start_date" class="t600 dark">I need it from</label><br>
+                                                    {{ booking_form.start_date }}<br>
+                                                <label for="id_end_date" class="t600 dark">I will give it back on</label><br>
+                                                   {{ booking_form.end_date }}
+                                     </div>
+
+                                        <br>
+                                                {% if errors %}
+                                                    {% for error in errors %}
+                                                        <div class="style-msg errormsg">
+                                                            <div class="sb-msg" style="color: red"><i class="icon-warning-sign"></i><strong>Warning! </strong>{{ error }}</div><br>
+                                                        </div>
+                                                    {% endfor %}
+                                                {% endif %}
+
+                                        <div class="form-group">
+                                            <button type="submit" class="t400 capitalize button button-border button-light button-circle nomargin">Check Availability</button>
+                                        </div>
+
+                                    </form>
+
+                                {% if owner_date_object %}
+                                    <div class="dark">
+                                             <p><span style="font-family: 'Playfair Display'">
+                                                 <i class="fa fa-calendar" style="font-size: large; color:orange" aria-hidden="true"></i>
+                                                 You are checking {{ owner_date_object | get_total_days_requested }}
+                                                 date{{ owner_date_object | get_total_days_requested | pluralize }}<br>
+
+{#                                             {% with totes_avail=owner_date_object|get_total_days_available %}#}
+{#                                                {% if totes_avail > 0 %}#}
+                                                    {%  with total=owner_date_object|length %}
+                                                     {% if total > 1 %}
+                                                        <i class="fa fa-user-plus" style="font-size: large; color:yellow" aria-hidden="true"></i>
+                                                    {% else %}
+                                                         <i class="fa fa-user" style="font-size: large; color:yellow" style="font-size: large; color:red" aria-hidden="true"></i>
+                                                    {% endif %}
+                                                    {%  endwith %}
+                                                    {{ owner_date_object | get_total_days_requested | pluralize:" It,They"}} fall{{ owner_date_object | get_total_days_requested | pluralize:"s,"}}
+                                                        in {{ owner_date_object | get_total_owner_slots }}
+                                                    {%  with total=owner_date_object|length %}
+                                                         owner-slot{{ total|pluralize }}
+                                                    {%  endwith %}
+{#                                                 {% endif %}#}
+{#                                             {% endwith %}#}
+                                            <br>
+
+
+                                             {% with totes_unavail=owner_date_object|get_total_days_unavailable %}
+                                                 {% if totes_unavail > 0 %}
+                                                      <i class="fa fa-times" style="font-size: large; color:red" aria-hidden="true"></i>
+
+                                                     {% with totes_requested=owner_date_object|get_total_days_requested %}
+                                                        {% if totes_unavail == totes_requested %}
+
+                                                            {{ totes_unavail|pluralize:"It is,They are"}} unavailable
+
+                                                        {% else %}
+                                                             {{ owner_date_object | get_total_days_unavailable }}
+                                                             of {{ owner_date_object | get_total_days_unavailable |pluralize:"them,these dates"}}
+                                                             {{ owner_date_object | get_total_days_unavailable | pluralize:"is,are"}}
+                                                            unavailable<br>
+
+                                                         {% endif %}
+                                                     {% endwith %}
+
+                                                {% else %}
+                                                     <i class="fa fa-check" style="font-size: large; color:lawngreen" aria-hidden="true"></i>
+                                                     The {{ owner_date_object | get_total_days_available | pluralize:"date is, dates are" }}
+                                                     available <br>
+                                                 {% endif %}
+                                             {% endwith %}
+
+
+{#table table-striped #}
+                                             </span>
+
+                                            <div class = "table-responsive">
+                                                    <table class = "table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Slot Owner</th>
+                                                                <th>Requested From</th>
+                                                                <th>Requested Until</th>
+                                                                <th>Available</th>
+                                                                <th>Unavailable</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+
+                                                            {% for owner in owner_date_object %}
+                                                                <tr>
+                                                                    <td>
+                                                                        <button class="btn btn-primary" data-toggle="popover" data-html=true title="Slot Dates" data-trigger="hover"
+                                                                                data-content="<table class='table'>
+                                                                                <tr><td>From</td><td>{{ owner.start_for_owner | date:'D d M y'}}</td></tr>
+                                                                                <tr><td>Until</td><td> {{ owner.end_for_owner | date:'D d M y'}}</td></tr>
+                                                                                </table>">{{ owner.first_name }} {{ owner.last_name }}</button>
+                                                                    </td>
+                                                                    <td>{{ owner.start_requested | date:"l"}}, {{ owner.start_requested | date:"d M y"}}</td>
+                                                                    <td>{{ owner.end_requested | date:"l"}}, {{ owner.end_requested | date:"d M y"}}</td>
+
+                                                                <td>
+                                                                    {% if owner.days_available > 0 %}
+                                                                    <button class="btn btn-success" data-toggle="popover" data-html=true, data-placement="left"  title="Available Dates" data-trigger="hover"
+                                                                            data-content="<table class='table'>
+                                                                                        {% for item in owner.date_span_available_detail %}
+                                                                                        <tr><td> {{ item | date:'l'}}</td><td> {{ item | date:'d M y'}}</td></tr>
+                                                                                        {% endfor %}
+                                                                                        </table>">{{ owner.days_available }}</button>
+                                                                    {% endif %}
+                                                                </td>
+                                                                <td>
+                                                                    {% if owner.days_unavailable > 0 %}
+                                                                    <button class="btn btn-danger" data-toggle="popover" data-html=true, data-placement="left"  title="Unavailable Dates" data-trigger="hover"
+                                                                            data-content="<table class='table'>
+                                                                                        {% for item in owner.date_span_unavailable_detail %}
+                                                                                        <tr>
+                                                                                           {% if item.requested_by_user_id.id == user.id %}
+                                                                                            <td> {{ item.date_booked | date:'D'}} </td><td> {{ item.date_booked | date:'d M y'}} </td>
+                                                                                            <td> {{ item.status }} for you </td>
+                                                                                            {% else %}
+                                                                                             <td> {{ item.date_booked | date:'D'}} </td><td> {{ item.date_booked | date:'d M y'}} </td>
+                                                                                             <td> {{ item.status }} for {{ item.requested_by_user }} </td>                                                                                                     </td>
+                                                                                              {% endif %}
+                                                                                               </tr>
+                                                                                             {% endfor %}</table>">{{ owner.days_unavailable }} </button>
+                                                                    {% endif %}
+
+                                                                </td>
+
+                                                                </tr>
+                                                             {% endfor %}
+                                                        </tbody>
+                                                    </table>
+
+                                                </div>
+                                    <div class = "visible-xs small ls2 fright"> >>>>>></div>
+                                    <br><br><br><br><br>
+
+                                            </p>
+
+
+                                            {% with totes_unavail=owner_date_object|get_total_days_unavailable %}
+
+                                                {% if totes_unavail == 0 %}
+
+                                                    <div class="col_half">
+                                                    <form role="form" method="post" action="{% url 'make_a_booking' the_asset.id %}">
+                                                        {% csrf_token %}
+                                                        <div class="hidden">
+                                                                 {{ booking_form | as_bootstrap }}
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <button type="submit" class="400 capitalize button button-border button-blue button-circle nomargin">Request Date{{ owner_date_object | get_total_days_available | pluralize}}</button>
+                                                        </div>
+                                                    </form>
+                                                    </div>
+
+                                                {% endif %}
+
+                                            {% endwith %}
+
+                                        {% endif %}
+                                    </div>
+                                {%  else %}
+
+
+                            {% if errors %}
+                                {% for error in errors %}
+                                    <div class="style-msg errormsg">
+                                     <div class="sb-msg not-dark" style="color: red"><i class="icon-warning-sign"></i><strong>Warning! </strong>{{ error }}</div><br>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+
+                        {% endif %}
+
+                    </div>
+                    </div>
+                </div>
+
+			</div>
+        </div>
+		</section> <!--#slider end -->
+
+    <script>
+
+        updateDateFields_showToday();
+
+    </script>
+
+    {% endblock %}
+

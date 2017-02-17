@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Assets</title>
+</head>
+<body>
+<h1>Assets</h1>
+
+
+<ul>
+{% for asset in assets %}
+  <li>
+    <h2>{{ asset.asset_display_name }}</h2>
+  </li>
+{% endfor %}
+</ul>
+</body>
+</html>
